@@ -1,0 +1,522 @@
+/* components/overlays/SignUpOverlay.css */
+
+.signup-overlay {
+    max-width: 520px;
+    padding: 32px !important;
+}
+
+/* Step Indicator */
+.step-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 24px 0 32px;
+    padding: 0 8px;
+}
+
+.step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+}
+
+.step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #F3F4F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9CA3AF;
+    transition: all 0.3s ease;
+}
+
+.step-item.active .step-circle {
+    background: #7C3AED;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.step-item.completed .step-circle {
+    background: #10B981;
+    color: white;
+}
+
+.step-label {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #6B7280;
+}
+
+.step-item.active .step-label {
+    color: #7C3AED;
+}
+
+.step-connector {
+    width: 40px;
+    height: 2px;
+    background: #E5E7EB;
+    margin: 0 4px;
+    transition: background 0.3s ease;
+}
+
+.step-connector.completed {
+    background: #10B981;
+}
+
+/* Step Content */
+.step-content {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Form Groups */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+.form-label svg {
+    color: #7C3AED;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+    background: white;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+}
+
+.form-input.error {
+    border-color: #EF4444;
+}
+
+.error-message {
+    display: block;
+    font-size: 0.75rem;
+    color: #EF4444;
+    margin-top: 4px;
+}
+
+.error-message.center {
+    text-align: center;
+}
+
+/* Form Info */
+.form-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    background: #F3F4F6;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: #6B7280;
+    margin-top: 16px;
+}
+
+.form-info svg {
+    color: #7C3AED;
+}
+
+/* OTP Step */
+.otp-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.otp-icon {
+    color: #7C3AED;
+    margin-bottom: 12px;
+}
+
+.otp-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 4px;
+}
+
+.otp-header p {
+    font-size: 0.85rem;
+    color: #6B7280;
+}
+
+.otp-input {
+    text-align: center;
+    font-size: 1.5rem;
+    letter-spacing: 8px;
+    font-weight: 600;
+    padding: 12px;
+}
+
+.otp-timer {
+    text-align: center;
+    margin: 16px 0;
+    font-size: 0.85rem;
+    color: #6B7280;
+}
+
+.resend-btn {
+    background: none;
+    border: none;
+    color: #7C3AED;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.resend-btn:hover {
+    color: #6D28D9;
+}
+
+.otp-demo-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 12px;
+    background: #FEF3C7;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    color: #92400E;
+    margin-top: 16px;
+}
+
+/* Password Step */
+.password-input-wrapper {
+    position: relative;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #9CA3AF;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.password-toggle:hover {
+    color: #7C3AED;
+}
+
+/* Password Strength */
+.password-strength {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.strength-bars {
+    display: flex;
+    gap: 4px;
+    flex: 1;
+}
+
+.strength-bar {
+    height: 4px;
+    flex: 1;
+    border-radius: 2px;
+    transition: background-color 0.3s ease;
+}
+
+.strength-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: 70px;
+}
+
+/* Password Requirements */
+.password-requirements {
+    background: #F9FAFB;
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+}
+
+.password-requirements p {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.password-requirements ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.password-requirements li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #9CA3AF;
+    margin-bottom: 4px;
+}
+
+.password-requirements li.met {
+    color: #10B981;
+}
+
+.password-requirements li svg {
+    flex-shrink: 0;
+}
+
+/* Education Step */
+.education-header {
+    text-align: center;
+    /*margin-bottom: 24px;*/
+}
+
+.education-icon {
+    color: #7C3AED;
+    margin-bottom: 12px;
+}
+
+.education-header h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1F2937;
+    /*margin-bottom: 4px;*/
+}
+
+.education-header p {
+    font-size: 0.85rem;
+    color: #6B7280;
+}
+
+.education-grid {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.education-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: 2px solid;
+    border-radius: 16px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    width: 100%;
+    text-align: left;
+}
+
+.education-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.education-card.selected {
+    border-width: 2px;
+    box-shadow: 0 8px 24px rgba(124, 58, 237, 0.15);
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.card-content {
+    flex: 1;
+}
+
+.card-content h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1F2937;
+    margin-bottom: 2px;
+}
+
+.card-grades {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6B7280;
+    margin-bottom: 2px;
+}
+
+.card-description {
+    font-size: 0.7rem;
+    color: #9CA3AF;
+}
+
+.selected-check {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+}
+
+.education-features {
+    display: flex;
+    /*flex-wrap: wrap;*/
+    gap: 16px;
+    justify-content: center;
+    /*margin-top: 20px;*/
+    /*padding-top: 16px;*/
+    border-top: 1px solid #E5E7EB;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: #6B7280;
+}
+
+/* Navigation */
+.step-navigation {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-top: 24px;
+}
+
+.nav-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.nav-btn.back {
+    background: #F3F4F6;
+    color: #4B5563;
+}
+
+.nav-btn.back:hover {
+    background: #E5E7EB;
+}
+
+.nav-btn.next {
+    background: #7C3AED;
+    color: white;
+}
+
+.nav-btn.next:hover {
+    background: #6D28D9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+/* Form Footer */
+.form-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.85rem;
+    color: #6B7280;
+}
+
+.form-link {
+    color: #7C3AED;
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+}
+
+.form-link:hover {
+    color: #6D28D9;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .signup-overlay {
+        padding: 24px !important;
+    }
+
+    .step-indicator {
+        margin: 16px 0 24px;
+    }
+
+    .step-connector {
+        width: 20px;
+    }
+
+    .step-label {
+        font-size: 0.6rem;
+    }
+
+    .education-card {
+        padding: 12px;
+    }
+
+    .card-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .card-icon svg {
+        width: 20px;
+        height: 20px;
+    }
+
+    .education-features {
+        flex-direction: row;
+        gap: 8px;
+        align-items: center;
+    }
+
+    /*.step-navigation {*/
+    /*    flex-direction: column;*/
+    /*}*/
+}
