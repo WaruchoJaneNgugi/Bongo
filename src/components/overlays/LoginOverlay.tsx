@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { useStore } from '../../store/useStore';
 import type { EducationLevel } from '../../data/quizData';
+import {useNavigate} from "react-router-dom";
 
 const LoginOverlay: React.FC = () => {
   const { setOverlay, login } = useStore();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +31,7 @@ const LoginOverlay: React.FC = () => {
       phone: '',
       educationLevel: 'middle_school' as EducationLevel,
     });
-    setOverlay('dashboard');
+    navigate('/dashboard');
   };
 
   return (
@@ -44,7 +46,7 @@ const LoginOverlay: React.FC = () => {
         {error && <div className="error-msg">{error}</div>}
 
         <div className="form-group">
-          <label className="form-label">Email Address</label>
+          <div className="form-label">Email Address</div>
           <input
             className="form-input"
             name="email"
@@ -56,7 +58,7 @@ const LoginOverlay: React.FC = () => {
         </div>
 
         <div className="form-group">
-          <label className="form-label">Password</label>
+          <div className="form-label">Password</div>
           <input
             className="form-input"
             name="password"
