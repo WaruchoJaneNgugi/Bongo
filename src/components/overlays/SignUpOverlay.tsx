@@ -1,9 +1,7 @@
-// components/overlays/SignUpOverlay.tsx
 import React, { useState, useEffect } from 'react';
 import { useStore } from '../../store/useStore';
 import {
   User,
-  Mail,
   Phone,
   Lock,
   CheckCircle,
@@ -17,17 +15,17 @@ import {
   GraduationCap,
   BookOpen,
   Users,
-  Award
+  Award,
+  Sparkles
 } from 'lucide-react';
 import type { EducationLevel } from '../../data/quizData';
 import '../../styles/SignUpOverlay.css';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type Step = 'account' | 'otp' | 'password' | 'education';
 
 interface FormData {
   username: string;
-  email: string;
   phone: string;
   password: string;
   confirmPassword: string;
@@ -40,7 +38,6 @@ const SignUpOverlay: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<Step>('account');
   const [formData, setFormData] = useState<FormData>({
     username: '',
-    email: '',
     phone: '',
     password: '',
     confirmPassword: '',
@@ -53,13 +50,16 @@ const SignUpOverlay: React.FC = () => {
   const [generatedOtp, setGeneratedOtp] = useState('');
   const [otpTimer, setOtpTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
-const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
   // Generate random OTP when step becomes 'otp'
   useEffect(() => {
     if (currentStep === 'otp') {
       const otp = Math.floor(100000 + Math.random() * 900000).toString();
       setGeneratedOtp(otp);
       console.log('📱 Your OTP is:', otp); // In production, this would be sent via SMS
+      // eslint-disable-next-line react-hooks/immutability
       startOtpTimer();
     }
   }, [currentStep]);
@@ -103,6 +103,23 @@ const navigate = useNavigate();
     }
   };
 
+  const validatePhoneNumber = (phone: string) => {
+    const cleaned = phone.replace(/\s/g, '');
+    return /^(\+254|0)[7][0-9]{8}$/.test(cleaned);
+  };
+
+  const formatPhoneNumber = (phone: string) => {
+    const cleaned = phone.replace(/\s/g, '');
+    if (cleaned.length === 10 && cleaned.startsWith('0')) {
+      return cleaned.replace(/^0/, '+254 ');
+    } else if (cleaned.length === 12 && cleaned.startsWith('254')) {
+      return '+' + cleaned.replace(/^254/, '254 ');
+    } else if (cleaned.length === 13 && cleaned.startsWith('+254')) {
+      return cleaned.replace(/^\+254/, '+254 ');
+    }
+    return phone;
+  };
+
   const validateAccount = () => {
     const newErrors: Record<string, string> = {};
 
@@ -110,18 +127,14 @@ const navigate = useNavigate();
       newErrors.username = 'Username is required';
     } else if (formData.username.length < 3) {
       newErrors.username = 'Username must be at least 3 characters';
-    }
-
-    if (!formData.email) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Enter a valid email address';
+    } else if (formData.username.length > 20) {
+      newErrors.username = 'Username must be less than 20 characters';
     }
 
     if (!formData.phone) {
       newErrors.phone = 'Phone number is required';
-    } else if (!/^(\+254|0)[7][0-9]{8}$/.test(formData.phone.replace(/\s/g, ''))) {
-      newErrors.phone = 'Enter a valid Kenyan phone number';
+    } else if (!validatePhoneNumber(formData.phone)) {
+      newErrors.phone = 'Enter a valid Kenyan phone number (e.g., 0712345678 or +254712345678)';
     }
 
     return newErrors;
@@ -131,6 +144,8 @@ const navigate = useNavigate();
     const newErrors: Record<string, string> = {};
     if (!formData.otp) {
       newErrors.otp = 'OTP is required';
+    } else if (formData.otp.length !== 6) {
+      newErrors.otp = 'OTP must be 6 digits';
     } else if (formData.otp !== generatedOtp) {
       newErrors.otp = 'Invalid OTP code';
     }
@@ -190,13 +205,19 @@ const navigate = useNavigate();
 
     if (currentStep === 'education') {
       // Final submission
-      login({
-        username: formData.username,
-        email: formData.email,
-        phone: formData.phone,
-        educationLevel: formData.educationLevel as EducationLevel
-      });
-      navigate('/dashboard');
+      setIsLoading(true);
+
+      // Simulate API call
+      setTimeout(() => {
+        login({
+          username: formData.username,
+          phone: formData.phone,
+          educationLevel: formData.educationLevel as EducationLevel
+        });
+        setIsLoading(false);
+        navigate('/');
+        setOverlay(null);
+      }, 1000);
     } else {
       // Move to next step
       const steps: Step[] = ['account', 'otp', 'password', 'education'];
@@ -232,7 +253,7 @@ const navigate = useNavigate();
     if (password.length >= 8) score += 1;
     if (/(?=.*[a-z])/.test(password)) score += 1;
     if (/(?=.*[A-Z])/.test(password)) score += 1;
-    if(/(?=.*\d)/.test(password)) score += 1;
+    if (/(?=.*\d)/.test(password)) score += 1;
 
     const strengths = [
       { score: 0, label: 'Weak', color: '#EF4444' },
@@ -310,9 +331,13 @@ const navigate = useNavigate();
         <div className="overlay-card signup-overlay" onClick={(e) => e.stopPropagation()}>
           <button className="overlay-close" onClick={() => setOverlay(null)}>✕</button>
 
-          <div className="overlay-logo">BongoQuiz</div>
+          <div className="overlay-logo">
+            <span className="logo-text">Bongo<span>Quiz</span></span>
+            <Sparkles size={20} className="logo-sparkle" />
+          </div>
+
           <h2 className="overlay-title">Create Account</h2>
-          <p className="overlay-subtitle">Start revising for free today!</p>
+          <p className="overlay-subtitle">Start your learning journey today!</p>
 
           {renderStepIndicator()}
 
@@ -321,13 +346,13 @@ const navigate = useNavigate();
               <div className="step-content">
                 <div className="form-group">
                   <div className="form-label">
-                    <User size={16} />
-                    Username
+                    <User size={18} />
+                    <span>Username</span>
                   </div>
                   <input
                       className={`form-input ${errors.username ? 'error' : ''}`}
                       name="username"
-                      placeholder="e.g. brian_254"
+                      placeholder="e.g., brian_kenya"
                       value={formData.username}
                       onChange={handleChange}
                   />
@@ -336,37 +361,23 @@ const navigate = useNavigate();
 
                 <div className="form-group">
                   <div className="form-label">
-                    <Mail size={16} />
-                    Email Address
-                  </div>
-                  <input
-                      className={`form-input ${errors.email ? 'error' : ''}`}
-                      name="email"
-                      type="email"
-                      placeholder="you@email.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                  />
-                  {errors.email && <span className="error-message">{errors.email}</span>}
-                </div>
-
-                <div className="form-group">
-                  <div className="form-label">
-                    <Phone size={16} />
-                    Phone Number
+                    <Phone size={18} />
+                    <span>Phone Number</span>
                   </div>
                   <input
                       className={`form-input ${errors.phone ? 'error' : ''}`}
                       name="phone"
-                      placeholder="+254 7XX XXX XXX"
+                      type="tel"
+                      placeholder="0712 345 678"
                       value={formData.phone}
                       onChange={handleChange}
                   />
+                  <small className="input-hint">We'll send a verification code to this number</small>
                   {errors.phone && <span className="error-message">{errors.phone}</span>}
                 </div>
 
                 <div className="form-info">
-                  <Shield size={14} />
+                  <Shield size={16} />
                   <span>Your information is secure and encrypted</span>
                 </div>
               </div>
@@ -376,9 +387,10 @@ const navigate = useNavigate();
           {currentStep === 'otp' && (
               <div className="step-content">
                 <div className="otp-header">
-                  <Smartphone size={32} className="otp-icon" />
+                  <Smartphone size={48} className="otp-icon" />
                   <h3>Verify Your Phone</h3>
-                  <p>We've sent a 6-digit code to {formData.phone}</p>
+                  <p>We've sent a 6-digit code to</p>
+                  <p className="otp-phone">{formatPhoneNumber(formData.phone)}</p>
                 </div>
 
                 <div className="form-group">
@@ -407,7 +419,7 @@ const navigate = useNavigate();
 
                 <div className="otp-demo-note">
                   <Key size={14} />
-                  <span>Demo OTP: {generatedOtp}</span>
+                  <span>Demo OTP: <strong>{generatedOtp}</strong></span>
                 </div>
               </div>
           )}
@@ -416,7 +428,10 @@ const navigate = useNavigate();
           {currentStep === 'password' && (
               <div className="step-content">
                 <div className="form-group">
-                  <div className="form-label">Password</div>
+                  <div className="form-label">
+                    <Lock size={18} />
+                    <span>Password</span>
+                  </div>
                   <div className="password-input-wrapper">
                     <input
                         className={`form-input ${errors.password ? 'error' : ''}`}
@@ -451,14 +466,17 @@ const navigate = useNavigate();
                           ))}
                         </div>
                         <span className="strength-label" style={{ color: strength.color }}>
-                                        {strength.label}
-                                    </span>
+                    {strength.label}
+                  </span>
                       </div>
                   )}
                 </div>
 
                 <div className="form-group">
-                  <div className="form-label">Confirm Password</div>
+                  <div className="form-label">
+                    <Lock size={18} />
+                    <span>Confirm Password</span>
+                  </div>
                   <div className="password-input-wrapper">
                     <input
                         className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
@@ -503,7 +521,7 @@ const navigate = useNavigate();
           {currentStep === 'education' && (
               <div className="step-content">
                 <div className="education-header">
-                  <GraduationCap size={32} className="education-icon" />
+                  <GraduationCap size={48} className="education-icon" />
                   <h3>What's your education level?</h3>
                   <p>Select your current class to get personalized content</p>
                 </div>
@@ -560,14 +578,24 @@ const navigate = useNavigate();
           {/* Navigation Buttons */}
           <div className="step-navigation">
             {currentStep !== 'account' && (
-                <button className="nav-btn back" onClick={handleBack}>
+                <button className="nav-btn back" onClick={handleBack} disabled={isLoading}>
                   <ArrowLeft size={18} />
                   Back
                 </button>
             )}
-            <button className="nav-btn next" onClick={handleNext}>
-              {currentStep === 'education' ? 'Create Account' : 'Continue'}
-              <ArrowRight size={18} />
+            <button
+                className={`nav-btn next ${isLoading ? 'loading' : ''}`}
+                onClick={handleNext}
+                disabled={isLoading}
+            >
+              {isLoading ? (
+                  <span>Creating Account...</span>
+              ) : (
+                  <>
+                    <span>{currentStep === 'education' ? 'Create Account' : 'Continue'}</span>
+                    <ArrowRight size={18} />
+                  </>
+              )}
             </button>
           </div>
 

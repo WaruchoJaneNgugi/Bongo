@@ -7,10 +7,10 @@ import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
 import SignUpOverlay from './components/overlays/SignUpOverlay';
 import LoginOverlay from './components/overlays/LoginOverlay';
-import DashboardOverlay from './components/overlays/DashboardOverlay';
+// import DashboardOverlay from './components/overlays/DashboardOverlay';
 import SubjectsOverlay from './components/overlays/SubjectsOverlay';
-import QuizOverlay from './components/overlays/QuizOverlay';
-import ResultsOverlay from './components/overlays/ResultsOverlay';
+// import QuizOverlay from './components/overlays/QuizOverlay';
+// import ResultsOverlay from './components/overlays/ResultsOverlay';
 import ContactPage from "./components/ContactPage.tsx";
 import LevelLayout from "./components/overlays/LevelLayout.tsx";
 import AboutPage from "./components/AboutPage.tsx";
@@ -43,10 +43,10 @@ const AppContent: React.FC = () => {
             {/* Overlays remain the same */}
             {overlay === 'signup' && <SignUpOverlay />}
             {overlay === 'login' && <LoginOverlay />}
-            {overlay === 'dashboard' && <DashboardOverlay />}
+            {/*{overlay === 'dashboard' && <DashboardOverlay />}*/}
             {/*{overlay === 'subjects' && <SubjectsOverlay />}*/}
-            {overlay === 'quiz' && <QuizOverlay />}
-            {overlay === 'results' && <ResultsOverlay />}
+            {/*{overlay === 'quiz' && <QuizOverlay />}*/}
+            {/*{overlay === 'results' && <ResultsOverlay />}*/}
         </div>
     );
 };

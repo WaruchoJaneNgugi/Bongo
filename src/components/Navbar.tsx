@@ -62,7 +62,7 @@ const Navbar: React.FC = () => {
     // Mobile Bottom Navigation Items
     const bottomNavItems = isLoggedIn ? [
         { path: '/', icon: Home, label: 'Home' },
-        { path: '/dashboard', icon: BarChart3, label: 'Stats' },
+        // { path: '/dashboard', icon: BarChart3, label: 'Stats' },
         { path: '/level/lower-primary', icon: BookOpen, label: 'Learn' },
         { path: '/about', icon: Info, label: 'About' },
         { path: '/contact', icon: Phone, label: 'Contact' }
@@ -303,7 +303,7 @@ const Navbar: React.FC = () => {
 
                             <div className="user-dropdown">
                                 <div className="dropdown-header">
-                                    <p className="user-email">{user?.email}</p>
+                                    <p className="user-email">{user?.username}</p>
                                 </div>
                                 <Link to="/profile" className="dropdown-item">
                                     <User size={18} /> Profile
