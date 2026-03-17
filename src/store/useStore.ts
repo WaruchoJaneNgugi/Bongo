@@ -1,6 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { EducationLevel } from '../data/quizData';
+
+export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
+export type Grade =
+    | 'grade1' | 'grade2' | 'grade3'
+    | 'grade4' | 'grade5' | 'grade6' | 'grade7' | 'grade8' | 'grade9'
+    | 'grade10' | 'grade11' | 'grade12';
 
 export type Overlay =
     | null
@@ -11,15 +16,7 @@ export interface User {
     username: string;
     phone: string;
     educationLevel: EducationLevel;
-}
-
-export interface QuizResult {
-    topicId: string;
-    topicName: string;
-    subjectName: string;
-    score: number;
-    total: number;
-    date: string;
+    grade: Grade;  // Add grade to user
 }
 
 interface AppState {
@@ -28,15 +25,12 @@ interface AppState {
     isLoggedIn: boolean;
     currentSubjectId: string | null;
     currentTopicId: string | null;
-    lastResult: QuizResult | null;
-    results: QuizResult[];
 
     setOverlay: (overlay: Overlay) => void;
     login: (user: User) => void;
     logout: () => void;
     setCurrentSubject: (id: string) => void;
     setCurrentTopic: (id: string) => void;
-    saveResult: (result: QuizResult) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -47,8 +41,6 @@ export const useStore = create<AppState>()(
             isLoggedIn: false,
             currentSubjectId: null,
             currentTopicId: null,
-            lastResult: null,
-            results: [],
 
             setOverlay: (overlay) => set({ overlay }),
 
@@ -66,19 +58,12 @@ export const useStore = create<AppState>()(
             setCurrentSubject: (id) => set({ currentSubjectId: id }),
 
             setCurrentTopic: (id) => set({ currentTopicId: id }),
-
-            saveResult: (result) =>
-                set((state) => ({
-                    lastResult: result,
-                    results: [result, ...state.results].slice(0, 50),
-                })),
         }),
         {
             name: 'bongo-quiz-storage',
             partialize: (state) => ({
                 user: state.user,
                 isLoggedIn: state.isLoggedIn,
-                results: state.results,
             }),
         }
     )

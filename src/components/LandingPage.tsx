@@ -5,49 +5,9 @@ import {useStore} from '../store/useStore';
 import heroImg from '/hero.png';
 import "../styles/hero-loggedin.css";
 import DashboardOverlay from "./overlays/DashboardOverlay.tsx";
-//
-// const levelLabel: Record<string, string> = {
-//     lower_primary: 'Lower Primary',
-//     middle_school: 'Middle School',
-//     senior_school: 'Senior School',
-// };
-//
-// const levelGrade: Record<string, string> = {
-//     lower_primary: 'Grade 1 – 3',
-//     middle_school: 'Grade 4 – 9',
-//     senior_school: 'Grade 10 – 12',
-// };
-
-// const MOTIVATIONAL_QUOTES = [
-//     'Every question you answer makes you stronger. Keep going!',
-//     'Great students aren\'t born — they\'re made through practice!',
-//     'One quiz at a time, you\'re building a brilliant future.',
-//     'Champions revise. You\'re already a champion!',
-//     'Progress, not perfection. You\'ve got this! 🇰🇪',
-// ];
 
 const LoggedInHero: React.FC = () => {
-    // const {setOverlay, user, results} = useStore();
-    // const navigate = useNavigate();
 
-    // const quote = useMemo(() => {
-    //     const idx = Math.floor(Math.random() * MOTIVATIONAL_QUOTES.length);
-    //     return MOTIVATIONAL_QUOTES[idx];
-    // }, []);
-    //
-    // const totalQuizzes = results.length;
-    // const avgScore =
-    //     results.length > 0
-    //         ? Math.round(
-    //             (results.reduce((acc, r) => acc + r.score / r.total, 0) /
-    //                 results.length) *
-    //             100
-    //         )
-    //         : null;
-    //
-    // const level = user?.educationLevel ?? '';
-
-    // Updated LoggedInHero component
     return (
         <section className="hero hero--loggedin">
             <DashboardOverlay/>
@@ -158,7 +118,6 @@ const LandingPage: React.FC = () => {
         <main>
             {isLoggedIn ? <LoggedInHero/> : <GuestHero/>}
 
-            {/* Features Section */}
 
         </main>
     );

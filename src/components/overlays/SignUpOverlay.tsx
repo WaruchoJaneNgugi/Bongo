@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useStore } from '../../store/useStore';
+import { useStore, type EducationLevel, type Grade } from '../../store/useStore';
 import {
   User,
   Phone,
@@ -16,13 +16,13 @@ import {
   BookOpen,
   Users,
   Award,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
-import type { EducationLevel } from '../../data/quizData';
 import '../../styles/SignUpOverlay.css';
 import { useNavigate } from "react-router-dom";
 
-type Step = 'account' | 'otp' | 'password' | 'education';
+type Step = 'account' | 'otp' | 'password' | 'education' | 'grade';
 
 interface FormData {
   username: string;
@@ -30,8 +30,31 @@ interface FormData {
   password: string;
   confirmPassword: string;
   educationLevel: EducationLevel | '';
+  grade: Grade | '';
   otp: string;
 }
+
+// Grade definitions
+const gradeGroups = {
+  lower_primary: [
+    { id: 'grade1', label: 'Grade 1', description: 'Beginning readers' },
+    { id: 'grade2', label: 'Grade 2', description: 'Building foundations' },
+    { id: 'grade3', label: 'Grade 3', description: 'Developing skills' }
+  ],
+  middle_school: [
+    { id: 'grade4', label: 'Grade 4', description: 'Upper primary start' },
+    { id: 'grade5', label: 'Grade 5', description: 'Intermediate' },
+    { id: 'grade6', label: 'Grade 6', description: 'KCPE preparation' },
+    { id: 'grade7', label: 'Grade 7', description: 'Junior secondary' },
+    { id: 'grade8', label: 'Grade 8', description: 'Junior secondary' },
+    { id: 'grade9', label: 'Grade 9', description: 'Junior secondary' }
+  ],
+  senior_school: [
+    { id: 'grade10', label: 'Grade 10', description: 'Senior school start' },
+    { id: 'grade11', label: 'Grade 11', description: 'Advanced' },
+    { id: 'grade12', label: 'Grade 12', description: 'KCSE preparation' }
+  ]
+};
 
 const SignUpOverlay: React.FC = () => {
   const { setOverlay, login } = useStore();
@@ -42,6 +65,7 @@ const SignUpOverlay: React.FC = () => {
     password: '',
     confirmPassword: '',
     educationLevel: '',
+    grade: '',
     otp: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -96,10 +120,21 @@ const SignUpOverlay: React.FC = () => {
   const handleEducationSelect = (level: EducationLevel) => {
     setFormData({
       ...formData,
-      educationLevel: level
+      educationLevel: level,
+      grade: '' // Reset grade when education level changes
     });
     if (errors.educationLevel) {
       setErrors({ ...errors, educationLevel: '' });
+    }
+  };
+
+  const handleGradeSelect = (grade: Grade) => {
+    setFormData({
+      ...formData,
+      grade
+    });
+    if (errors.grade) {
+      setErrors({ ...errors, grade: '' });
     }
   };
 
@@ -180,6 +215,14 @@ const SignUpOverlay: React.FC = () => {
     return newErrors;
   };
 
+  const validateGrade = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.grade) {
+      newErrors.grade = 'Please select your grade';
+    }
+    return newErrors;
+  };
+
   const handleNext = () => {
     let validationErrors = {};
 
@@ -195,6 +238,43 @@ const SignUpOverlay: React.FC = () => {
         break;
       case 'education':
         validationErrors = validateEducation();
+        if (Object.keys(validationErrors).length === 0) {
+          // Move to grade selection
+          const steps: Step[] = ['account', 'otp', 'password', 'education', 'grade'];
+          const currentIndex = steps.indexOf(currentStep);
+          setCurrentStep(steps[currentIndex + 1]);
+          setErrors({});
+          return;
+        }
+        break;
+      case 'grade':
+        validationErrors = validateGrade();
+        if (Object.keys(validationErrors).length === 0) {
+          // Final submission
+          setIsLoading(true);
+
+          // Simulate API call
+          setTimeout(() => {
+            login({
+              username: formData.username,
+              phone: formData.phone,
+              educationLevel: formData.educationLevel as EducationLevel,
+              grade: formData.grade as Grade
+            });
+            setIsLoading(false);
+
+            // Navigate based on education level
+            const levelRoutes = {
+              lower_primary: '/level/lower-primary',
+              middle_school: '/level/middle-school',
+              senior_school: '/level/senior-school'
+            };
+
+            navigate(levelRoutes[formData.educationLevel as EducationLevel]);
+            setOverlay(null);
+          }, 1000);
+          return;
+        }
         break;
     }
 
@@ -203,24 +283,9 @@ const SignUpOverlay: React.FC = () => {
       return;
     }
 
-    if (currentStep === 'education') {
-      // Final submission
-      setIsLoading(true);
-
-      // Simulate API call
-      setTimeout(() => {
-        login({
-          username: formData.username,
-          phone: formData.phone,
-          educationLevel: formData.educationLevel as EducationLevel
-        });
-        setIsLoading(false);
-        navigate('/');
-        setOverlay(null);
-      }, 1000);
-    } else {
-      // Move to next step
-      const steps: Step[] = ['account', 'otp', 'password', 'education'];
+    // Move to next step for non-education steps
+    if (currentStep !== 'education' && currentStep !== 'grade') {
+      const steps: Step[] = ['account', 'otp', 'password', 'education', 'grade'];
       const currentIndex = steps.indexOf(currentStep);
       setCurrentStep(steps[currentIndex + 1]);
       setErrors({});
@@ -228,7 +293,7 @@ const SignUpOverlay: React.FC = () => {
   };
 
   const handleBack = () => {
-    const steps: Step[] = ['account', 'otp', 'password', 'education'];
+    const steps: Step[] = ['account', 'otp', 'password', 'education', 'grade'];
     const currentIndex = steps.indexOf(currentStep);
     if (currentIndex > 0) {
       setCurrentStep(steps[currentIndex - 1]);
@@ -300,7 +365,8 @@ const SignUpOverlay: React.FC = () => {
       { key: 'account', label: 'Account', icon: User },
       { key: 'otp', label: 'Verify', icon: Smartphone },
       { key: 'password', label: 'Security', icon: Lock },
-      { key: 'education', label: 'Level', icon: GraduationCap }
+      { key: 'education', label: 'Level', icon: GraduationCap },
+      { key: 'grade', label: 'Grade', icon: BookOpen }
     ];
 
     return (
@@ -324,6 +390,12 @@ const SignUpOverlay: React.FC = () => {
           })}
         </div>
     );
+  };
+
+  // Get available grades based on selected education level
+  const getAvailableGrades = () => {
+    if (!formData.educationLevel) return [];
+    return gradeGroups[formData.educationLevel as keyof typeof gradeGroups] || [];
   };
 
   return (
@@ -523,7 +595,7 @@ const SignUpOverlay: React.FC = () => {
                 <div className="education-header">
                   <GraduationCap size={48} className="education-icon" />
                   <h3>What's your education level?</h3>
-                  <p>Select your current class to get personalized content</p>
+                  <p>Select your current level to continue</p>
                 </div>
 
                 <div className="education-grid">
@@ -561,16 +633,47 @@ const SignUpOverlay: React.FC = () => {
                 {errors.educationLevel && (
                     <span className="error-message center">{errors.educationLevel}</span>
                 )}
+              </div>
+          )}
 
-                <div className="education-features">
-                  <div className="feature-item">
-                    <Award size={16} color="#8B5CF6" />
-                    <span>Curriculum aligned content</span>
-                  </div>
-                  <div className="feature-item">
-                    <BookOpen size={16} color="#8B5CF6" />
-                    <span>Personalized learning path</span>
-                  </div>
+          {/* Grade Selection Step */}
+          {currentStep === 'grade' && formData.educationLevel && (
+              <div className="step-content">
+                <div className="grade-header">
+                  <BookOpen size={48} className="grade-icon" />
+                  <h3>Select Your Grade</h3>
+                  <p>Choose your current grade for {educationLevels.find(l => l.id === formData.educationLevel)?.label}</p>
+                </div>
+
+                <div className="grade-grid">
+                  {getAvailableGrades().map((grade) => {
+                    const isSelected = formData.grade === grade.id;
+
+                    return (
+                        <button
+                            key={grade.id}
+                            className={`grade-card ${isSelected ? 'selected' : ''}`}
+                            onClick={() => handleGradeSelect(grade.id as Grade)}
+                        >
+                          <div className="grade-number">{grade.label}</div>
+                          <p className="grade-description">{grade.description}</p>
+                          {isSelected && (
+                              <div className="grade-selected">
+                                <CheckCircle size={20} color="#7C3AED" />
+                              </div>
+                          )}
+                          <ChevronRight size={16} className="grade-arrow" />
+                        </button>
+                    );
+                  })}
+                </div>
+                {errors.grade && (
+                    <span className="error-message center">{errors.grade}</span>
+                )}
+
+                <div className="grade-info">
+                  <Award size={16} color="#8B5CF6" />
+                  <span>Content will be tailored to your specific grade</span>
                 </div>
               </div>
           )}
@@ -592,7 +695,10 @@ const SignUpOverlay: React.FC = () => {
                   <span>Creating Account...</span>
               ) : (
                   <>
-                    <span>{currentStep === 'education' ? 'Create Account' : 'Continue'}</span>
+                <span>
+                  {currentStep === 'grade' ? 'Start Learning' :
+                      currentStep === 'education' ? 'Select Grade' : 'Continue'}
+                </span>
                     <ArrowRight size={18} />
                   </>
               )}

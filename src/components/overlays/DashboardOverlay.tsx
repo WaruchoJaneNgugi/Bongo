@@ -15,7 +15,6 @@ const DashboardOverlay: React.FC = () => {
     // const userSubjects = subjects.filter(
     //   (s) => s.level === user?.educationLevel
     // );
-    //
     // const totalQuizzes = results.length;
     // const avgScore =
     //   results.length > 0

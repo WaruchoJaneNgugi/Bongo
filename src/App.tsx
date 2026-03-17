@@ -1,4 +1,3 @@
-// App.tsx
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/globals.css';
@@ -7,13 +6,17 @@ import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
 import SignUpOverlay from './components/overlays/SignUpOverlay';
 import LoginOverlay from './components/overlays/LoginOverlay';
-// import DashboardOverlay from './components/overlays/DashboardOverlay';
-// import SubjectsOverlay from './components/overlays/SubjectsOverlay';
-// import QuizOverlay from './components/overlays/QuizOverlay';
-// import ResultsOverlay from './components/overlays/ResultsOverlay';
-import ContactPage from "./components/ContactPage.tsx";
-import LevelLayout from "./components/overlays/LevelLayout.tsx";
-import AboutPage from "./components/AboutPage.tsx";
+import ContactPage from "./components/ContactPage";
+import AboutPage from "./components/AboutPage";
+import LowerPrimaryDashboard from './components/level/LowerPrimaryDashboard';
+import MiddleSchoolDashboard from './components/level/MiddleSchoolDashboard';
+import SeniorSchoolDashboard from './components/level/SeniorSchoolDashboard';
+
+// Protected Route Component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { isLoggedIn } = useStore();
+    return isLoggedIn ? <>{children}</> : <Navigate to="/" />;
+};
 
 const AppContent: React.FC = () => {
     const { overlay, user } = useStore();
@@ -30,19 +33,54 @@ const AppContent: React.FC = () => {
 
                 {/* Protected level routes - only accessible if logged in */}
                 <Route
+                    path="/level/lower-primary"
+                    element={
+                        <ProtectedRoute>
+                            <LowerPrimaryDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/level/middle-school"
+                    element={
+                        <ProtectedRoute>
+                            <MiddleSchoolDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/level/senior-school"
+                    element={
+                        <ProtectedRoute>
+                            <SeniorSchoolDashboard />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Redirect /level to appropriate dashboard based on user's level */}
+                <Route
                     path="/level"
-                    element={user ? <LevelLayout /> : <Navigate to="/" />}
-                >
-                    <Route path="lower-primary" element={<div>Lower Primary Content (Coming Soon)</div>} />
-                    <Route path="middle-school" element={<div>Middle School Content (Coming Soon)</div>} />
-                    <Route path="senior-school" element={<div>Senior School Content (Coming Soon)</div>} />
-                </Route>
+                    element={
+                        <ProtectedRoute>
+                            {user?.educationLevel === 'lower_primary' && <Navigate to="/level/lower-primary" />}
+                            {user?.educationLevel === 'middle_school' && <Navigate to="/level/middle-school" />}
+                            {user?.educationLevel === 'senior_school' && <Navigate to="/level/senior-school" />}
+                            <Navigate to="/" />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Subject routes (to be implemented) */}
+                <Route path="/subject/:subjectId" element={
+                    <ProtectedRoute>
+                        <div>Subject Content Coming Soon</div>
+                    </ProtectedRoute>
+                } />
             </Routes>
 
-            {/* Overlays remain the same */}
+            {/* Overlays */}
             {overlay === 'signup' && <SignUpOverlay />}
             {overlay === 'login' && <LoginOverlay />}
-
         </div>
     );
 };
