@@ -57,7 +57,7 @@ const gradeGroups = {
 };
 
 const SignUpOverlay: React.FC = () => {
-  const { setOverlay, login } = useStore();
+  const { setOverlay, login ,registerUser} = useStore();
   const [currentStep, setCurrentStep] = useState<Step>('account');
   const [formData, setFormData] = useState<FormData>({
     username: '',
@@ -252,6 +252,16 @@ const SignUpOverlay: React.FC = () => {
         if (Object.keys(validationErrors).length === 0) {
           // Final submission
           setIsLoading(true);
+          const newUser = {
+            username: formData.username,
+            phone: formData.phone,
+            educationLevel: formData.educationLevel as EducationLevel,
+            grade: formData.grade as Grade,
+            password: formData.password // In real app, this would be hashed
+          };
+
+// Register the user in the store
+          registerUser(newUser);
 
           // Simulate API call
           setTimeout(() => {

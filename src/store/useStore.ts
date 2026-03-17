@@ -16,12 +16,14 @@ export interface User {
     username: string;
     phone: string;
     educationLevel: EducationLevel;
-    grade: Grade;  // Add grade to user
+    grade: Grade;
+    password?: string; // Added for demo - in real app, never store plain passwords
 }
 
 interface AppState {
     overlay: Overlay;
     user: User | null;
+    users: User[]; // Store all registered users
     isLoggedIn: boolean;
     currentSubjectId: string | null;
     currentTopicId: string | null;
@@ -29,6 +31,7 @@ interface AppState {
     setOverlay: (overlay: Overlay) => void;
     login: (user: User) => void;
     logout: () => void;
+    registerUser: (user: User) => void; // New function to register users
     setCurrentSubject: (id: string) => void;
     setCurrentTopic: (id: string) => void;
 }
@@ -38,6 +41,7 @@ export const useStore = create<AppState>()(
         (set) => ({
             overlay: null,
             user: null,
+            users: [], // Initialize empty users array
             isLoggedIn: false,
             currentSubjectId: null,
             currentTopicId: null,
@@ -55,6 +59,11 @@ export const useStore = create<AppState>()(
                     currentTopicId: null,
                 }),
 
+            registerUser: (newUser) =>
+                set((state) => ({
+                    users: [...state.users, newUser]
+                })),
+
             setCurrentSubject: (id) => set({ currentSubjectId: id }),
 
             setCurrentTopic: (id) => set({ currentTopicId: id }),
@@ -63,6 +72,7 @@ export const useStore = create<AppState>()(
             name: 'bongo-quiz-storage',
             partialize: (state) => ({
                 user: state.user,
+                users: state.users,
                 isLoggedIn: state.isLoggedIn,
             }),
         }

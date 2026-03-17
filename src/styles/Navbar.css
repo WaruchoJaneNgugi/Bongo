@@ -559,7 +559,7 @@
         display: flex;
         justify-content: space-around;
         align-items: center;
-        padding: 0.5rem 0.25rem;
+        padding: 0.5rem 0;
         box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         z-index: 1000;
         border-top-left-radius: 30px;
@@ -626,7 +626,7 @@
 /* Small phones */
 @media (max-width: 480px) {
     .bottom-nav {
-        height: 70px;
+        /*height: 70px;*/
         padding: 0.4rem 0.2rem;
         border-top-left-radius: 25px;
         border-top-right-radius: 25px;
@@ -647,7 +647,7 @@
     }
 
     .btn-outline, .btn-primary {
-        padding: 0.5rem 1rem;
+        padding: 0.4rem 0.4rem;
         font-size: 0.85rem;
     }
 
@@ -667,9 +667,9 @@
         font-size: 0.6rem;
     }
 
-    .bottom-nav {
-        height: 65px;
-    }
+    /*.bottom-nav {*/
+    /*    height: 65px;*/
+    /*}*/
 
     body {
         padding-bottom: 75px;

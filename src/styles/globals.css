@@ -462,6 +462,11 @@ body {
     max-width: 560px;
     padding: 32px 28px;
 }
+.dashboard-main-container{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
 
 .dash-header {
     display: flex;

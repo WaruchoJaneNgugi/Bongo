@@ -9,7 +9,7 @@ import DashboardOverlay from "./overlays/DashboardOverlay.tsx";
 const LoggedInHero: React.FC = () => {
 
     return (
-        <section className="hero hero--loggedin">
+        <section className="hero--loggedin">
             <DashboardOverlay/>
 
         </section>

@@ -100,7 +100,7 @@ const Navbar: React.FC = () => {
                                 onClick={() => navigate('/dashboard')}
                                 aria-label="Go to dashboard"
                             >
-                                <span className="greeting-emoji">👋</span>
+                                {/*<span className="greeting-emoji">👋</span>*/}
                                 <span className="greeting-name">{firstName}</span>
                             </div>
                         ) : (
