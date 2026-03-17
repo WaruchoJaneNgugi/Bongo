@@ -1,0 +1,99 @@
+/* ── LOGGED-IN HERO ADDITIONS ── */
+
+/* Subtle tinted background for the logged-in hero */
+/*.hero--loggedin {*/
+/*  background: linear-gradient(*/
+/*    135deg,*/
+/*    var(--purple-ultra-pale, #f5f3ff) 0%,*/
+/*    #ffffff 100%*/
+/*  );*/
+/*}*/
+
+/* "Welcome back" badge above the name */
+.hero-greeting-badge {
+  display: inline-block;
+  padding: 4px 14px;
+  background: var(--purple-pale, #ede9fe);
+  color: var(--purple-primary, #5b21b6);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
+}
+
+/* Slightly smaller heading when showing user name */
+.hero-title--user {
+  font-size: clamp(1.8rem, 4.5vw, 2.6rem);
+  line-height: 1.2;
+}
+
+/* Accent colour for "Ready to revise?" */
+.hero-title-accent {
+  color: var(--purple-primary, #5b21b6);
+}
+
+/* Education level pill */
+.hero-level-row {
+  margin: 10px 0 6px;
+}
+
+.hero-level-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 14px;
+  background: var(--purple-primary, #5b21b6);
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+/* Motivational quote */
+.hero-quote {
+  font-size: 0.88rem;
+  color: var(--text-light, #6b7280);
+  font-style: italic;
+  font-weight: 600;
+  margin: 12px 0 16px;
+  max-width: 380px;
+  line-height: 1.5;
+}
+
+/* Stats row */
+.hero-stats-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.hero-stat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  background: #fff;
+  border: 1.5px solid var(--border, #e5e7eb);
+  border-radius: 12px;
+  min-width: 72px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.hero-stat-num {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-dark, #111827);
+  line-height: 1.1;
+}
+
+.hero-stat-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-light, #6b7280);
+  text-align: center;
+  margin-top: 2px;
+  white-space: nowrap;
+}
