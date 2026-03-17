@@ -5,11 +5,7 @@ import type { EducationLevel } from '../data/quizData';
 export type Overlay =
     | null
     | 'signup'
-    | 'login'
-    | 'dashboard'
-    | 'subjects'
-    | 'quiz'
-    | 'results';
+    | 'login';
 
 export interface User {
     username: string;

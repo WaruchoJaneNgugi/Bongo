@@ -8,7 +8,7 @@ import LandingPage from './components/LandingPage';
 import SignUpOverlay from './components/overlays/SignUpOverlay';
 import LoginOverlay from './components/overlays/LoginOverlay';
 // import DashboardOverlay from './components/overlays/DashboardOverlay';
-import SubjectsOverlay from './components/overlays/SubjectsOverlay';
+// import SubjectsOverlay from './components/overlays/SubjectsOverlay';
 // import QuizOverlay from './components/overlays/QuizOverlay';
 // import ResultsOverlay from './components/overlays/ResultsOverlay';
 import ContactPage from "./components/ContactPage.tsx";
@@ -27,7 +27,6 @@ const AppContent: React.FC = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
-                <Route path="/subjects" element={<SubjectsOverlay />} />
 
                 {/* Protected level routes - only accessible if logged in */}
                 <Route
@@ -43,10 +42,7 @@ const AppContent: React.FC = () => {
             {/* Overlays remain the same */}
             {overlay === 'signup' && <SignUpOverlay />}
             {overlay === 'login' && <LoginOverlay />}
-            {/*{overlay === 'dashboard' && <DashboardOverlay />}*/}
-            {/*{overlay === 'subjects' && <SubjectsOverlay />}*/}
-            {/*{overlay === 'quiz' && <QuizOverlay />}*/}
-            {/*{overlay === 'results' && <ResultsOverlay />}*/}
+
         </div>
     );
 };
