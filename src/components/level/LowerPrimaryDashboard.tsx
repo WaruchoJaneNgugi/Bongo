@@ -14,7 +14,7 @@ import {
     Star,
     TrendingUp
 } from 'lucide-react';
-import '../../styles/LevelDashboard.css';
+import '../../styles/Level.css';
 
 const LowerPrimaryDashboard: React.FC = () => {
     const { user } = useStore();
@@ -29,14 +29,14 @@ const LowerPrimaryDashboard: React.FC = () => {
         { id: 'music', name: 'Music', icon: Music, color: '#EF4444', progress: 15 }
     ];
 
-    const getGradeLabel = (grade: string) => {
-        const gradeMap: Record<string, string> = {
-            grade1: 'Grade 1',
-            grade2: 'Grade 2',
-            grade3: 'Grade 3'
-        };
-        return gradeMap[grade] || grade;
-    };
+    // const getGradeLabel = (grade: string) => {
+    //     const gradeMap: Record<string, string> = {
+    //         grade1: 'Grade 1',
+    //         grade2: 'Grade 2',
+    //         grade3: 'Grade 3'
+    //     };
+    //     return gradeMap[grade] || grade;
+    // };
 
     return (
         <div className="level-dashboard">
@@ -46,7 +46,8 @@ const LowerPrimaryDashboard: React.FC = () => {
                     <h1>Welcome back, {user?.username}! 👋</h1>
                     <p className="grade-info">
                         <Award size={20} />
-                        {getGradeLabel(user?.grade || '')} • Lower Primary
+                        {/*{getGradeLabel(user?.grade || '')} */}
+                        • Lower Primary
                     </p>
                 </div>
                 <div className="stats-cards">

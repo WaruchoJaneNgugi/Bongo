@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import {
     Home,
-    Info,
+    // Info,
     Phone,
     BookOpen,
     BarChart3,
@@ -64,12 +64,12 @@ const Navbar: React.FC = () => {
         { path: '/', icon: Home, label: 'Home' },
         // { path: '/dashboard', icon: BarChart3, label: 'Stats' },
         { path: '/level/lower-primary', icon: BookOpen, label: 'Learn' },
-        { path: '/about', icon: Info, label: 'About' },
+        // { path: '/about', icon: Info, label: 'About' },
         { path: '/contact', icon: Phone, label: 'Contact' }
     ] : [
-        { path: '/', icon: Home, label: 'Home' },
-        { path: '/about', icon: Info, label: 'About' },
-        { path: '/contact', icon: Phone, label: 'Contact' }
+        // { path: '/', icon: Home, label: 'Home' },
+        // { path: '/about', icon: Info, label: 'About' },
+        // { path: '/contact', icon: Phone, label: 'Contact' }
     ];
 
     // Mobile Navigation
@@ -162,16 +162,17 @@ const Navbar: React.FC = () => {
                                 <div onClick={() => { navigate('/'); setIsMenuOpen(false); }}>
                                     <Home size={22} /> Home
                                 </div>
-                                <div onClick={() => { navigate('/about'); setIsMenuOpen(false); }}>
-                                    <Info size={22} /> About
-                                </div>
+                                {/*<div onClick={() => { navigate('/about'); setIsMenuOpen(false); }}>*/}
+                                {/*    <Info size={22} /> About*/}
+                                {/*</div>*/}
                                 <div onClick={() => { navigate('/contact'); setIsMenuOpen(false); }}>
                                     <Phone size={22} /> Contact
                                 </div>
 
+
                                 {isLoggedIn && (
                                     <>
-                                        <div className="menu-divider"></div>
+                                        {/*<div className="menu-divider-1"></div>*/}
                                         <div onClick={() => { navigate('/dashboard'); setIsMenuOpen(false); }}>
                                             <BarChart3 size={22} /> Dashboard
                                         </div>
@@ -187,7 +188,7 @@ const Navbar: React.FC = () => {
                                         <div onClick={() => { navigate('/achievements'); setIsMenuOpen(false); }}>
                                             <Trophy size={22} /> Achievements
                                         </div>
-                                        <div className="menu-divider"></div>
+                                        {/*<div className="menu-divider-1"></div>*/}
                                         <div onClick={() => { navigate('/help'); setIsMenuOpen(false); }}>
                                             <HelpCircle size={22} /> Help
                                         </div>
@@ -220,7 +221,9 @@ const Navbar: React.FC = () => {
                 )}
 
                 {/* Bottom Navigation - For all users */}
-                <nav className="bottom-nav">
+                {isLoggedIn && (
+
+                    <nav className="bottom-nav">
                     {bottomNavItems.map((item) => (
                         <Link
                             key={item.path}
@@ -234,6 +237,7 @@ const Navbar: React.FC = () => {
                         </Link>
                     ))}
                 </nav>
+                    )}
             </>
         );
     }
@@ -248,14 +252,14 @@ const Navbar: React.FC = () => {
                 </button>
 
                 <div className="nav-links">
-                    <Link
-                        to="/about"
-                        className={`nav-link ${isActive('/about') ? 'active' : ''}`}
-                        aria-label="About page"
-                    >
-                        <Info size={20} />
-                        About
-                    </Link>
+                    {/*<Link*/}
+                    {/*    to="/about"*/}
+                    {/*    className={`nav-link ${isActive('/about') ? 'active' : ''}`}*/}
+                    {/*    aria-label="About page"*/}
+                    {/*>*/}
+                    {/*    <Info size={20} />*/}
+                    {/*    About*/}
+                    {/*</Link>*/}
                     <Link
                         to="/contact"
                         className={`nav-link ${isActive('/contact') ? 'active' : ''}`}

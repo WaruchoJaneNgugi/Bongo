@@ -1,218 +1,235 @@
 import React from 'react';
-import { useStore } from '../../store/useStore';
-import heroImg from '/hero.png';
+// import { useStore } from '../store/useStore';
+import { useNavigate } from 'react-router-dom';
+import {
+    BookOpen,
+    // BarChart3,
+    // TrendingUp,
+    Clock,
+    Target,
+    ChevronRight,
+    // Award,
+    Zap,
+    CheckCircle,
+    ArrowLeft
+} from 'lucide-react';
+import '../../styles/dashboard.css';
 
-const levelLabel: Record<string, string> = {
-    lower_primary: 'Lower Primary',
-    middle_school: 'Middle School',
-    senior_school: 'Senior School',
-};
+// Mock data - in a real app, this would come from your store/API
+const mockSubjectPerformance = [
+    { id: 'math', subject: 'Mathematics', score: 85, progress: 75, color: '#10B981', icon: BookOpen, quizzes: 24, timeSpent: '8.5 hrs', lastActive: '2 hours ago' },
+    { id: 'english', subject: 'English', score: 78, progress: 70, color: '#3B82F6', icon: BookOpen, quizzes: 18, timeSpent: '6.2 hrs', lastActive: 'Yesterday' },
+    { id: 'kiswahili', subject: 'Kiswahili', score: 82, progress: 65, color: '#8B5CF6', icon: BookOpen, quizzes: 15, timeSpent: '5.0 hrs', lastActive: '2 days ago' },
+    { id: 'science', subject: 'Science', score: 71, progress: 60, color: '#F59E0B', icon: BookOpen, quizzes: 12, timeSpent: '4.3 hrs', lastActive: '3 days ago' },
+    { id: 'social', subject: 'Social Studies', score: 88, progress: 80, color: '#EC4899', icon: BookOpen, quizzes: 20, timeSpent: '7.0 hrs', lastActive: '1 day ago' },
+    { id: 'cre', subject: 'CRE', score: 92, progress: 85, color: '#14B8A6', icon: BookOpen, quizzes: 16, timeSpent: '5.5 hrs', lastActive: '5 hours ago' }
+];
 
-const gradeLabel: Record<string, string> = {
-    grade1: 'Grade 1',
-    grade2: 'Grade 2',
-    grade3: 'Grade 3',
-    grade4: 'Grade 4',
-    grade5: 'Grade 5',
-    grade6: 'Grade 6',
-    grade7: 'Grade 7',
-    grade8: 'Grade 8',
-    grade9: 'Grade 9',
-    grade10: 'Grade 10',
-    grade11: 'Grade 11',
-    grade12: 'Grade 12',
-};
+const DashboardPage: React.FC = () => {
+    // const { user } = useStore();
+    const navigate = useNavigate();
 
-const DashboardOverlay: React.FC = () => {
-    const { user } = useStore();
-
-    const getGradeDescription = (grade: string) => {
-        const descriptions: Record<string, string> = {
-            grade1: 'Beginning your learning journey',
-            grade2: 'Building strong foundations',
-            grade3: 'Developing key skills',
-            grade4: 'Upper primary start',
-            grade5: 'Intermediate level',
-            grade6: 'KCPE preparation',
-            grade7: 'Junior secondary',
-            grade8: 'Junior secondary',
-            grade9: 'Junior secondary',
-            grade10: 'Senior school start',
-            grade11: 'Advanced learning',
-            grade12: 'KCSE preparation',
-        };
-        return descriptions[grade] || 'Continue your learning journey';
-    };
-
-    const getNextMilestone = (grade: string) => {
-        const milestones: Record<string, string> = {
-            grade1: 'Next: Grade 2',
-            grade2: 'Next: Grade 3',
-            grade3: 'Next: Middle School',
-            grade4: 'Next: Grade 5',
-            grade5: 'Next: Grade 6',
-            grade6: 'Next: Grade 7',
-            grade7: 'Next: Grade 8',
-            grade8: 'Next: Grade 9',
-            grade9: 'Next: Senior School',
-            grade10: 'Next: Grade 11',
-            grade11: 'Next: Grade 12',
-            grade12: 'KCSE Ready!',
-        };
-        return milestones[grade] || 'Keep up the great work!';
-    };
-
-    const getLevelColor = (level: string) => {
-        const colors: Record<string, string> = {
-            lower_primary: '#10B981',
-            middle_school: '#3B82F6',
-            senior_school: '#8B5CF6',
-        };
-        return colors[level] || '#7C3AED';
-    };
-
-    if (!user) return null;
-
-    const levelColor = getLevelColor(user.educationLevel);
-    const userGrade = gradeLabel[user.grade] || user.grade;
-    const gradeDescription = getGradeDescription(user.grade);
-    const nextMilestone = getNextMilestone(user.grade);
+    // Calculate overall stats
+    const totalSubjects = mockSubjectPerformance.length;
+    const averageScore = Math.round(
+        mockSubjectPerformance.reduce((acc, curr) => acc + curr.score, 0) / totalSubjects
+    );
+    const totalQuizzes = mockSubjectPerformance.reduce((acc, curr) => acc + curr.quizzes, 0);
+    const totalTimeSpent = '36.5 hrs';
+    const streak = 15;
 
     return (
-        <div className="dashboard-main-container">
-            <div className="dash-header">
-                <div className="dash-header-left">
-                    <div className="dash-welcome">
-                        Welcome back, {user.username}
-                    </div>
-                    <div className="dash-greeting">
-                        Ready to continue your learning journey?
-                    </div>
-
-                    {/* Grade and Level Information */}
-                    <div className="dash-grade-info">
-                        <div className="dash-level-container">
-                            <div
-                                className="dash-level-badge"
-                                style={{ backgroundColor: `${levelColor}20`, color: levelColor }}
-                            >
-                                {levelLabel[user.educationLevel]}
-                            </div>
-                            <div
-                                className="dash-grade-badge"
-                                style={{ backgroundColor: levelColor }}
-                            >
-                                {userGrade}
-                            </div>
-                        </div>
-
-                        <p className="dash-grade-description">
-                            {gradeDescription}
-                        </p>
-
-                        <div className="dash-progress-indicator">
-                            <div className="dash-milestone">
-                                <span className="milestone-label">Current Milestone:</span>
-                                <span className="milestone-value">{nextMilestone}</span>
-                            </div>
-
-                            <div className="dash-progress-bar">
-                                <div
-                                    className="dash-progress-fill"
-                                    style={{
-                                        width: user.educationLevel === 'lower_primary'
-                                            ? `${(parseInt(user.grade.replace('grade', '')) / 3) * 100}%`
-                                            : user.educationLevel === 'middle_school'
-                                                ? `${((parseInt(user.grade.replace('grade', '')) - 3) / 6) * 100}%`
-                                                : `${((parseInt(user.grade.replace('grade', '')) - 9) / 3) * 100}%`,
-                                        backgroundColor: levelColor
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="hero-right">
-                    <img
-                        src={heroImg}
-                        alt="Students studying"
-                        className="hero-img"
-                    />
+        <div className="dashboard-page">
+            <div className="dashboard-header">
+                <button className="back-button" onClick={() => navigate('/')}>
+                    <ArrowLeft size={20} />
+                    Back to Home
+                </button>
+                <div className="header-content">
+                    <h1>Your Learning Dashboard</h1>
+                    <p>Track your progress across all subjects</p>
                 </div>
             </div>
 
-            {/* Quick Actions */}
-            {/*<div className="dash-quick-actions">*/}
-            {/*    <h3 className="dash-section-title">Quick Actions</h3>*/}
-            {/*    <div className="quick-actions-grid">*/}
-            {/*        <div className="quick-action-card">*/}
-            {/*            <div className="quick-action-icon" style={{ background: `${levelColor}20` }}>*/}
-            {/*                📚*/}
-            {/*            </div>*/}
-            {/*            <div className="quick-action-content">*/}
-            {/*                <h4>Continue Learning</h4>*/}
-            {/*                <p>Pick up where you left off</p>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
+            {/* Overall Stats */}
+            <div className="dashboard-stats-grid">
+                <div className="dashboard-stat-card">
+                    <div className="stat-icon" style={{ background: 'var(--primary-50)' }}>
+                        <Target size={24} style={{ color: 'var(--primary-600)' }} />
+                    </div>
+                    <div className="stat-details">
+                        <span className="stat-value">{averageScore}%</span>
+                        <span className="stat-label">Average Score</span>
+                    </div>
+                </div>
 
-            {/*        <div className="quick-action-card">*/}
-            {/*            <div className="quick-action-icon" style={{ background: `${levelColor}20` }}>*/}
-            {/*                📝*/}
-            {/*            </div>*/}
-            {/*            <div className="quick-action-content">*/}
-            {/*                <h4>Take a Quiz</h4>*/}
-            {/*                <p>Test your knowledge</p>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
+                <div className="dashboard-stat-card">
+                    <div className="stat-icon" style={{ background: 'var(--success-50)' }}>
+                        <CheckCircle size={24} style={{ color: 'var(--success-600)' }} />
+                    </div>
+                    <div className="stat-details">
+                        <span className="stat-value">{totalQuizzes}</span>
+                        <span className="stat-label">Quizzes Taken</span>
+                    </div>
+                </div>
 
-            {/*        <div className="quick-action-card">*/}
-            {/*            <div className="quick-action-icon" style={{ background: `${levelColor}20` }}>*/}
-            {/*                📊*/}
-            {/*            </div>*/}
-            {/*            <div className="quick-action-content">*/}
-            {/*                <h4>View Progress</h4>*/}
-            {/*                <p>See your improvement</p>*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+                <div className="dashboard-stat-card">
+                    <div className="stat-icon" style={{ background: 'var(--warning-50)' }}>
+                        <Clock size={24} style={{ color: 'var(--warning-600)' }} />
+                    </div>
+                    <div className="stat-details">
+                        <span className="stat-value">{totalTimeSpent}</span>
+                        <span className="stat-label">Total Time</span>
+                    </div>
+                </div>
 
-            {/* Subject Recommendations */}
-            {/*<div className="dash-recommendations">*/}
-            {/*    <h3 className="dash-section-title">Recommended for {userGrade}</h3>*/}
-            {/*    <div className="recommendations-list">*/}
-            {/*        <div className="recommendation-item">*/}
-            {/*            <span className="rec-subject">Mathematics</span>*/}
-            {/*            <span className="rec-topic">Numbers & Operations</span>*/}
-            {/*            <button className="rec-btn">Start</button>*/}
-            {/*        </div>*/}
-            {/*        <div className="recommendation-item">*/}
-            {/*            <span className="rec-subject">English</span>*/}
-            {/*            <span className="rec-topic">Reading Comprehension</span>*/}
-            {/*            <button className="rec-btn">Start</button>*/}
-            {/*        </div>*/}
-            {/*        <div className="recommendation-item">*/}
-            {/*            <span className="rec-subject">Kiswahili</span>*/}
-            {/*            <span className="rec-topic">Msamiati</span>*/}
-            {/*            <button className="rec-btn">Start</button>*/}
-            {/*        </div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
+                <div className="dashboard-stat-card">
+                    <div className="stat-icon" style={{ background: 'var(--purple-50)' }}>
+                        <Zap size={24} style={{ color: 'var(--purple-600)' }} />
+                    </div>
+                    <div className="stat-details">
+                        <span className="stat-value">{streak} days</span>
+                        <span className="stat-label">Current Streak</span>
+                    </div>
+                </div>
+            </div>
 
-            {/* Weekly Goal */}
-            {/*<div className="dash-weekly-goal">*/}
-            {/*    <div className="goal-header">*/}
-            {/*        <h4>Weekly Goal</h4>*/}
-            {/*        <span className="goal-progress">3/5 completed</span>*/}
-            {/*    </div>*/}
-            {/*    <div className="goal-progress-bar">*/}
-            {/*        <div className="goal-progress-fill" style={{ width: '60%', backgroundColor: levelColor }} />*/}
-            {/*    </div>*/}
-            {/*    <p className="goal-message">Complete 2 more quizzes to reach your goal!</p>*/}
-            {/*</div>*/}
+            {/* Subject Progress Section */}
+            <div className="dashboard-subjects-section">
+                <h2>Subject Progress</h2>
+                <p className="section-subtitle">Detailed performance breakdown by subject</p>
+
+                <div className="dashboard-subjects-grid">
+                    {mockSubjectPerformance.map((subject) => {
+                        const Icon = subject.icon;
+                        return (
+                            <div
+                                key={subject.id}
+                                className="dashboard-subject-card"
+                                onClick={() => navigate(`/subject/${subject.id}`)}
+                            >
+                                <div className="subject-card-header">
+                                    <div
+                                        className="subject-icon-large"
+                                        style={{ background: `${subject.color}20` }}
+                                    >
+                                        <Icon size={32} color={subject.color} />
+                                    </div>
+                                    <div className="subject-title-section">
+                                        <h3>{subject.subject}</h3>
+                                        <div className="subject-score-large" style={{ background: subject.color }}>
+                                            {subject.score}%
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="subject-progress-detailed">
+                                    <div className="progress-row">
+                                        <span>Overall Progress</span>
+                                        <span className="progress-percent">{subject.progress}%</span>
+                                    </div>
+                                    <div className="progress-track">
+                                        <div
+                                            className="progress-fill"
+                                            style={{
+                                                width: `${subject.progress}%`,
+                                                background: subject.color
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="subject-metrics">
+                                    <div className="metric">
+                                        <span className="metric-label">Quizzes</span>
+                                        <span className="metric-value">{subject.quizzes}</span>
+                                    </div>
+                                    <div className="metric">
+                                        <span className="metric-label">Time Spent</span>
+                                        <span className="metric-value">{subject.timeSpent}</span>
+                                    </div>
+                                    <div className="metric">
+                                        <span className="metric-label">Last Active</span>
+                                        <span className="metric-value">{subject.lastActive}</span>
+                                    </div>
+                                </div>
+
+                                <button
+                                    className="view-subject-btn"
+                                    style={{ color: subject.color }}
+                                >
+                                    View Details
+                                    <ChevronRight size={18} />
+                                </button>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            {/* Performance Chart Section */}
+            <div className="dashboard-chart-section">
+                <h2>Weekly Performance Trend</h2>
+                <div className="chart-container">
+                    <div className="chart-bars">
+                        {[70, 85, 60, 95, 75, 80, 65].map((height, index) => (
+                            <div key={index} className="chart-bar-wrapper">
+                                <div
+                                    className="chart-bar"
+                                    style={{
+                                        height: `${height}%`,
+                                        background: 'linear-gradient(to top, var(--primary-600), var(--primary-400))'
+                                    }}
+                                />
+                                <span className="chart-label">
+                                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'][index]}
+                                </span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Recommendations Section */}
+            <div className="dashboard-recommendations">
+                <h2>Recommended for You</h2>
+                <div className="recommendations-grid">
+                    <div className="recommendation-card">
+                        <div className="rec-icon" style={{ background: '#10B98120' }}>
+                            <BookOpen size={24} color="#10B981" />
+                        </div>
+                        <div className="rec-content">
+                            <h4>Algebra Fundamentals</h4>
+                            <p>Mathematics • 5 quizzes remaining</p>
+                        </div>
+                        <button className="rec-btn">Start</button>
+                    </div>
+
+                    <div className="recommendation-card">
+                        <div className="rec-icon" style={{ background: '#3B82F620' }}>
+                            <BookOpen size={24} color="#3B82F6" />
+                        </div>
+                        <div className="rec-content">
+                            <h4>Reading Comprehension</h4>
+                            <p>English • 3 quizzes remaining</p>
+                        </div>
+                        <button className="rec-btn">Start</button>
+                    </div>
+
+                    <div className="recommendation-card">
+                        <div className="rec-icon" style={{ background: '#8B5CF620' }}>
+                            <BookOpen size={24} color="#8B5CF6" />
+                        </div>
+                        <div className="rec-content">
+                            <h4>Ngeli za Kiswahili</h4>
+                            <p>Kiswahili • 4 quizzes remaining</p>
+                        </div>
+                        <button className="rec-btn">Start</button>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
 
-export default DashboardOverlay;
+export default DashboardPage;

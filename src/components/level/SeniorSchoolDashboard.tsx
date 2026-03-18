@@ -17,7 +17,7 @@ import {
     Brain,
     BookMarked
 } from 'lucide-react';
-import '../../styles/LevelDashboard.css';
+import '../../styles/Level.css';
 
 const SeniorSchoolDashboard: React.FC = () => {
     const { user } = useStore();
@@ -34,14 +34,14 @@ const SeniorSchoolDashboard: React.FC = () => {
         { id: 'geography', name: 'Geography', icon: Globe, color: '#F97316', progress: 40 }
     ];
 
-    const getGradeLabel = (grade: string) => {
-        const gradeMap: Record<string, string> = {
-            grade10: 'Grade 10',
-            grade11: 'Grade 11',
-            grade12: 'Grade 12'
-        };
-        return gradeMap[grade] || grade;
-    };
+    // const getGradeLabel = (grade: string) => {
+    //     const gradeMap: Record<string, string> = {
+    //         grade10: 'Grade 10',
+    //         grade11: 'Grade 11',
+    //         grade12: 'Grade 12'
+    //     };
+    //     return gradeMap[grade] || grade;
+    // };
 
     return (
         <div className="level-dashboard">
@@ -51,7 +51,8 @@ const SeniorSchoolDashboard: React.FC = () => {
                     <h1>Welcome back, {user?.username}! 👋</h1>
                     <p className="grade-info">
                         <GraduationCap size={20} />
-                        {getGradeLabel(user?.grade || '')} • Senior School
+                        {/*{getGradeLabel(user?.grade || '')} */}
+                        • Senior School
                     </p>
                 </div>
                 <div className="stats-cards">

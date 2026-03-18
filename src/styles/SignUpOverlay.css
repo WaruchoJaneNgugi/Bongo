@@ -1,4 +1,109 @@
 /* components/overlays/SignUpOverlay.css */
+/* ─── OVERLAY BACKDROP ─────────────────────────── */
+.overlay-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(30, 27, 75, 0.55);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.overlay-card {
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    padding: 40px 36px;
+    width: 100%;
+    max-width: 480px;
+    /*max-height: 90vh;*/
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.25s ease;
+    box-shadow: var(--shadow-lg);
+}
+
+:root {
+    --purple-primary: #a02edd;
+    --purple-dark: #4C1D95;
+    --purple-medium: #7C3AED;
+    --purple-light: #8B5CF6;
+    --purple-pale: #EDE9FE;
+    --purple-ultra-pale: #F5F3FF;
+    --white: #FFFFFF;
+    --text-dark: #1E1B4B;
+    --text-mid: #4B5563;
+    --text-light: #6B7280;
+    --border: #E5E7EB;
+    --shadow: 0 4px 24px rgba(91, 33, 182, 0.12);
+    --shadow-lg: 0 8px 40px rgba(91, 33, 182, 0.18);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --radius-lg: 24px;
+}
+
+/* components/overlays/SignUpOverlay.css */
+/* Logo */
+.overlay-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.overlay-logo .logo-text {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.overlay-logo .logo-text span {
+    color: var(--primary-600);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-400));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.logo-sparkle {
+    color: var(--warning-500);
+    animation: sparkle 2s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+/* Titles */
+.overlay-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
+    letter-spacing: -0.02em;
+}
+
+.overlay-subtitle {
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-bottom: var(--space-6);
+}
 
 .signup-overlay {
     max-width: 520px;
@@ -640,3 +745,263 @@
         display: none;
     }
 }
+
+/**/
+
+
+
+
+/* Close Button */
+.overlay-close {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-4);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+    font-size: 1.25rem;
+}
+
+.overlay-close:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+
+/* Logo */
+.overlay-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
+}
+
+.overlay-logo .logo-text {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+/*.overlay-logo .logo-text span {*/
+/*    color: var(--primary-600);*/
+/*    background: linear-gradient(135deg, var(--primary-600), var(--primary-400));*/
+/*    -webkit-background-clip: text;*/
+/*    -webkit-text-fill-color: transparent;*/
+/*    background-clip: text;*/
+/*}*/
+
+/*.logo-sparkle {*/
+/*    color: var(--warning-500);*/
+/*    animation: sparkle 2s infinite;*/
+/*}*/
+
+/*@keyframes sparkle {*/
+/*    0%, 100% { opacity: 1; transform: scale(1); }*/
+/*    50% { opacity: 0.7; transform: scale(1.1); }*/
+/*}*/
+
+/*!* Titles *!*/
+/*.overlay-title {*/
+/*    font-size: 1.5rem;*/
+/*    font-weight: 800;*/
+/*    text-align: center;*/
+/*    color: var(--text-primary);*/
+/*    margin-bottom: var(--space-2);*/
+/*    letter-spacing: -0.02em;*/
+/*}*/
+
+/*.overlay-subtitle {*/
+/*    font-size: 0.875rem;*/
+/*    color: var(--text-tertiary);*/
+/*    text-align: center;*/
+/*    margin-bottom: var(--space-6);*/
+/*}*/
+
+/*!* Form Elements *!*/
+/*.form-group {*/
+/*    margin-bottom: var(--space-4);*/
+/*    position: relative;*/
+/*}*/
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-2);
+}
+
+.form-label svg {
+    color: var(--primary-600);
+}
+
+.form-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    background: var(--bg-primary);
+    transition: all 0.2s ease;
+}
+
+.form-input::placeholder {
+    color: var(--text-disabled);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 4px var(--primary-100);
+}
+
+.form-input.error {
+    border-color: var(--error-500);
+}
+
+.form-input.error:focus {
+    box-shadow: 0 0 0 4px var(--error-100);
+}
+
+/* Input Hint */
+.input-hint {
+    display: block;
+    margin-top: var(--space-2);
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
+/* Error Message */
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    background: var(--error-50);
+    border: 1px solid var(--error-200);
+    border-radius: var(--radius-lg);
+    color: var(--error-700);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: var(--space-4);
+}
+
+.error-message.show {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+/* Submit Button */
+.form-submit {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-6);
+}
+
+.form-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-purple-md);
+}
+
+.form-submit:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.form-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.form-submit.loading {
+    cursor: wait;
+}
+
+/* Form Footer */
+.form-footer {
+    text-align: center;
+    margin-top: var(--space-6);
+    font-size: 0.875rem;
+    color: var(--text-tertiary);
+}
+
+.form-link {
+    color: var(--primary-600);
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-size: inherit;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.form-link:hover {
+    color: var(--primary-700);
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .overlay-card {
+        max-height: 100vh;
+        border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+        margin-top: auto;
+    }
+
+    .overlay-backdrop {
+        padding: 0;
+        align-items: flex-end;
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .overlay-close {
+        top: var(--space-3);
+        right: var(--space-3);
+    }
+
+    .overlay-title {
+        font-size: 1.25rem;
+    }
+}
+/**/

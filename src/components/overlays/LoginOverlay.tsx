@@ -95,7 +95,7 @@ const LoginOverlay: React.FC = () => {
                     <span className="logo-text">Bongo<span>Quiz</span></span>
                 </div>
 
-                <h2 className="overlay-title">Welcome Back! 👋</h2>
+                <h2 className="overlay-title">Welcome Back! 👋🏾</h2>
                 <p className="overlay-subtitle">Continue your learning journey</p>
 
                 {error && (

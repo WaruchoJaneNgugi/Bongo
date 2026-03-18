@@ -7,12 +7,12 @@ import LandingPage from './components/LandingPage';
 import SignUpOverlay from './components/overlays/SignUpOverlay';
 import LoginOverlay from './components/overlays/LoginOverlay';
 import ContactPage from "./components/ContactPage";
-import AboutPage from "./components/AboutPage";
 import LowerPrimaryDashboard from './components/level/LowerPrimaryDashboard';
 import MiddleSchoolDashboard from './components/level/MiddleSchoolDashboard';
 import SeniorSchoolDashboard from './components/level/SeniorSchoolDashboard';
+import AboutPage from "./components/AboutPage.tsx";
+import DashboardOverlay from "./components/overlays/DashboardOverlay.tsx";
 
-// Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isLoggedIn } = useStore();
     return isLoggedIn ? <>{children}</> : <Navigate to="/" />;
@@ -30,7 +30,10 @@ const AppContent: React.FC = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
-
+                <Route path="/dashboard" element={<DashboardOverlay />} />
+                {/*settings*/}
+                {/*achievements*/}
+                {/*help*/}
                 {/* Protected level routes - only accessible if logged in */}
                 <Route
                     path="/level/lower-primary"

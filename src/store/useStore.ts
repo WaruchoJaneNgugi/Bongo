@@ -1,25 +1,25 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-
 export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
-export type Grade =
-    | 'grade1' | 'grade2' | 'grade3'
-    | 'grade4' | 'grade5' | 'grade6' | 'grade7' | 'grade8' | 'grade9'
-    | 'grade10' | 'grade11' | 'grade12';
+// export type Grade =
+//     | 'grade1' | 'grade2' | 'grade3'
+//     | 'grade4' | 'grade5' | 'grade6' | 'grade7' | 'grade8' | 'grade9'
+//     | 'grade10' | 'grade11' | 'grade12';
 
-export type Overlay =
-    | null
-    | 'signup'
-    | 'login';
+
 
 export interface User {
     username: string;
     phone: string;
     educationLevel: EducationLevel;
-    grade: Grade;
-    password?: string; // Added for demo - in real app, never store plain passwords
+    // grade: Grade;
+    password?: string;
 }
 
+export type Overlay =
+    | null
+    | 'signup'
+    | 'login';
 interface AppState {
     overlay: Overlay;
     user: User | null;
