@@ -1,6 +1,7 @@
 import React from 'react';
 import {useStore} from '../store/useStore';
 import heroImg from '../assets/hero-bg.png';
+import heroImgG from '/hero.png';
 import {
     ArrowRight,
     BookOpen,
@@ -218,7 +219,7 @@ const GuestHero: React.FC = () => {
                             </div>
                         </div>
                         <div className="hero-image">
-                            <img src={heroImg} alt="Students studying with BongoQuiz"/>
+                            <img src={heroImgG} alt="Students studying with BongoQuiz"/>
                         </div>
                     </div>
                 </div>
