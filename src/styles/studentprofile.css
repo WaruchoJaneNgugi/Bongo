@@ -22,7 +22,7 @@
 
 .sp-hero-bg {
     position: absolute; inset: 0;
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%);
+    background: linear-gradient(135deg, #37068a 0%, #8e2eea 50%, #4d3267 100%);
     z-index: 0;
 }
 .sp-hero-bg::before, .sp-hero-bg::after {
