@@ -1,0 +1,5 @@
+body{
+    overflow-y: scroll; /* Keeps scroll functionality */
+    scrollbar-width: none; /* Hides scrollbar in Firefox */
+    -ms-overflow-style: none;
+}

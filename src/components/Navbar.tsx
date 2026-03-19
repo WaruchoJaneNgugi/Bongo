@@ -158,10 +158,6 @@ const Navbar: React.FC = () => {
                                 <div onClick={() => { navigate('/'); setIsMenuOpen(false); }}>
                                     <Home size={22} /> Home
                                 </div>
-
-
-
-
                                 {isLoggedIn && (
                                     <>
                                         <div onClick={() => { navigate('/level/lower-primary'); setIsMenuOpen(false); }}>

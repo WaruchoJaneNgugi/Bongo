@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import { useStore, type EducationLevel } from '../../store/useStore';
 import {
   User,
@@ -260,6 +260,78 @@ const SignUpOverlay: React.FC = () => {
       setFormData({ ...formData, otp: '' });
     }
   };
+  // Add this with your other state
+// Add this with your other state - fix the type
+  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
+// Fix the handler types
+  const handleOtpChange = (index: number, value: string) => {
+    // Only allow digits
+    if (value && !/^\d+$/.test(value)) return;
+
+    const newOtp = formData.otp ? formData.otp.split('') : Array(6).fill('');
+    newOtp[index] = value;
+
+    // Update form data
+    handleChange({
+      target: {
+        name: 'otp',
+        value: newOtp.join('')
+      }
+    } as React.ChangeEvent<HTMLInputElement>);
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+// Fix the key down handler
+  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Backspace') {
+      if (!formData.otp?.[index] && index > 0) {
+        // If current input is empty, focus previous
+        otpInputRefs.current[index - 1]?.focus();
+      }
+    } else if (e.key === 'ArrowLeft' && index > 0) {
+      e.preventDefault();
+      otpInputRefs.current[index - 1]?.focus();
+    } else if (e.key === 'ArrowRight' && index < 5) {
+      e.preventDefault();
+      otpInputRefs.current[index + 1]?.focus();
+    }
+  };
+
+// Fix the paste handler
+  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text');
+    const pastedDigits = pastedData.replace(/\D/g, '').slice(0, 6);
+
+    if (pastedDigits.length) {
+      // Update form data
+      handleChange({
+        target: {
+          name: 'otp',
+          value: pastedDigits
+        }
+      } as React.ChangeEvent<HTMLInputElement>);
+
+      // Fill inputs with pasted digits
+      pastedDigits.split('').forEach((digit, index) => {
+        if (otpInputRefs.current[index]) {
+          otpInputRefs.current[index]!.value = digit;
+        }
+      });
+
+      // Focus next empty input or last input
+      if (pastedDigits.length < 6) {
+        otpInputRefs.current[pastedDigits.length]?.focus();
+      } else {
+        otpInputRefs.current[5]?.focus();
+      }
+    }
+  };
 
   const getPasswordStrength = (password: string) => {
     if (!password) return { score: 0, label: 'Enter password', color: '#9CA3AF' };
@@ -343,7 +415,9 @@ const SignUpOverlay: React.FC = () => {
 
   return (
       <div className="overlay-backdrop" onClick={() => setOverlay(null)}>
-        <div className="overlay-card signup-overlay" onClick={(e) => e.stopPropagation()}>
+        <div className="overlay-container">
+
+        <div className="overlay-card " onClick={(e) => e.stopPropagation()}>
           <button className="overlay-close" onClick={() => setOverlay(null)}>✕</button>
 
           <div className="overlay-logo">
@@ -410,15 +484,26 @@ const SignUpOverlay: React.FC = () => {
 
                 <div className="form-group">
                   <div className="form-label">Enter OTP Code</div>
-                  <input
-                      className={`form-input otp-input ${errors.otp ? 'error' : ''}`}
-                      name="otp"
-                      type="text"
-                      maxLength={6}
-                      placeholder="000000"
-                      value={formData.otp}
-                      onChange={handleChange}
-                  />
+                  <div className="otp-inputs-container">
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                        <input
+                            key={index}
+                            className={`otp-digit-input ${errors.otp ? 'error' : ''}`}
+                            type="text"
+                            maxLength={1}
+                            value={formData.otp[index] || ''}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
+                            onPaste={handleOtpPaste}
+                            ref={(el) => {
+                              if (el && !otpInputRefs.current[index]) {
+                                otpInputRefs.current[index] = el;
+                              }
+                            }}
+                            autoFocus={index === 0}
+                        />
+                    ))}
+                  </div>
                   {errors.otp && <span className="error-message">{errors.otp}</span>}
                 </div>
 
@@ -616,6 +701,8 @@ const SignUpOverlay: React.FC = () => {
             </button>
           </p>
         </div>
+        </div>
+
       </div>
   );
 };

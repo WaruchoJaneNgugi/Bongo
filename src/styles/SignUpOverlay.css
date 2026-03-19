@@ -1,17 +1,45 @@
 /* components/overlays/SignUpOverlay.css */
 /* ─── OVERLAY BACKDROP ─────────────────────────── */
+/*.overlay-backdrop {*/
+/*    position: fixed;*/
+/*    inset: 0;*/
+/*    background: rgba(30, 27, 75, 0.55);*/
+/*    backdrop-filter: blur(4px);*/
+/*    z-index: 2000;*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: center;*/
+/*    animation: fadeIn 0.2s ease;*/
+/*    !* Prevent scroll on the backdrop itself *!*/
+/*    !*overflow: hidden;*!*/
+/*    !* Prevent touch events from passing through *!*/
+/*    !*touch-action: none;*!*/
+/*}*/
+
 .overlay-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(30, 27, 75, 0.55);
-    backdrop-filter: blur(4px);
+    /*background: rgba(54, 3, 65, 0.49);*/
+    /*backdrop-filter: blur(4px);*/
     z-index: 2000;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    animation: fadeIn 0.2s ease;
+    overflow-y: scroll; /* Keeps scroll functionality */
+    scrollbar-width: none; /* Hides scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hides scrollbar in IE/Edge */
+}
+
+.overlay-container{
     display: flex;
     align-items: center;
     justify-content: center;
-    animation: fadeIn 0.2s ease;
-}
+    background: white;
+    height: 100vh;
+    width: 100%;
 
+}
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -28,7 +56,7 @@
     width: 100%;
     max-width: 480px;
     /*max-height: 90vh;*/
-    overflow-y: auto;
+    /*overflow-y: auto;*/
     position: relative;
     animation: slideUp 0.25s ease;
     box-shadow: var(--shadow-lg);
@@ -191,7 +219,7 @@
 
 /* Form Groups */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     position: relative;
 }
 
@@ -260,7 +288,7 @@
 /* OTP Step */
 .otp-header {
     text-align: center;
-    margin-bottom: 24px;
+    /*margin-bottom: 24px;*/
 }
 
 .otp-icon {
@@ -290,7 +318,7 @@
 
 .otp-timer {
     text-align: center;
-    margin: 16px 0;
+    /*margin: 16px 0;*/
     font-size: 0.85rem;
     color: #6B7280;
 }
@@ -974,9 +1002,9 @@
 /* Responsive */
 @media (max-width: 480px) {
     .overlay-card {
-        max-height: 100vh;
+        /*max-height: 100vh;*/
         border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
-        margin-top: auto;
+        /*margin-top: auto;*/
     }
 
     .overlay-backdrop {
@@ -1005,3 +1033,41 @@
     }
 }
 /**/
+.otp-inputs-container {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.otp-digit-input {
+    width: 48px;
+    height: 56px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+}
+
+.otp-digit-input:focus {
+    outline: none;
+    border-color: #7C3AED;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.1);
+}
+
+.otp-digit-input.error {
+    border-color: #ef4444;
+}
+
+/* Remove spinner buttons from number input */
+.otp-digit-input::-webkit-outer-spin-button,
+.otp-digit-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.otp-digit-input[type=text] {
+    -moz-appearance: textfield;
+}

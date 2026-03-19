@@ -88,80 +88,82 @@ const LoginOverlay: React.FC = () => {
 
     return (
         <div className="overlay-backdrop" onClick={() => setOverlay(null)}>
-            <div className="overlay-card login-overlay" onClick={(e) => e.stopPropagation()}>
-                <button className="overlay-close" onClick={() => setOverlay(null)}>✕</button>
+            <div className="overlay-container">
+                <div className="overlay-card login-overlay" onClick={(e) => e.stopPropagation()}>
+                    <button className="overlay-close" onClick={() => setOverlay(null)}>✕</button>
 
-                <div className="overlay-logo">
-                    <span className="logo-text">Bongo<span>Quiz</span></span>
-                </div>
-
-                <h2 className="overlay-title">Welcome Back! 👋🏾</h2>
-                <p className="overlay-subtitle">Continue your learning journey</p>
-
-                {error && (
-                    <div className="error-message show">
-                        <Shield size={16}/>
-                        <span>{error}</span>
+                    <div className="overlay-logo">
+                        <span className="logo-text">Bongo<span>Quiz</span></span>
                     </div>
-                )}
 
-                <div className="form-group">
-                    <div className="form-label">
-                        <Phone size={18}/>
-                        <span>Phone Number</span>
-                    </div>
-                    <input
-                        className={`form-input ${error && !form.phone ? 'error' : ''}`}
-                        name="phone"
-                        type="tel"
-                        placeholder="0712 345 678"
-                        value={form.phone}
-                        onChange={handleChange}
-                        onKeyPress={handleKeyPress}
-                        disabled={isLoading}
-                    />
-                    <small className="input-hint">Enter Kenyan phone number (e.g., 0712345678)</small>
-                </div>
+                    <h2 className="overlay-title">Welcome Back! 👋🏾</h2>
+                    <p className="overlay-subtitle">Continue your learning journey</p>
 
-                <div className="form-group">
-                    <div className="form-label">
-                        <Lock size={18}/>
-                        <span>Password</span>
-                    </div>
-                    <input
-                        className={`form-input ${error && !form.password ? 'error' : ''}`}
-                        name="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        value={form.password}
-                        onChange={handleChange}
-                        onKeyPress={handleKeyPress}
-                        disabled={isLoading}
-                    />
-                </div>
-
-                <button
-                    className={`form-submit ${isLoading ? 'loading' : ''}`}
-                    onClick={handleSubmit}
-                    disabled={isLoading}
-                >
-                    {isLoading ? (
-                        <span>Logging in...</span>
-                    ) : (
-                        <>
-                            <span>Log In</span>
-                            <ArrowRight size={20}/>
-                        </>
+                    {error && (
+                        <div className="error-message show">
+                            <Shield size={16}/>
+                            <span>{error}</span>
+                        </div>
                     )}
-                </button>
 
-                <div className="form-footer">
-                    <p>
-                        Don't have an account?{' '}
-                        <button className="form-link" onClick={() => setOverlay('signup')}>
-                            Sign Up Free
-                        </button>
-                    </p>
+                    <div className="form-group">
+                        <div className="form-label">
+                            <Phone size={18}/>
+                            <span>Phone Number</span>
+                        </div>
+                        <input
+                            className={`form-input ${error && !form.phone ? 'error' : ''}`}
+                            name="phone"
+                            type="tel"
+                            placeholder="0712 345 678"
+                            value={form.phone}
+                            onChange={handleChange}
+                            onKeyPress={handleKeyPress}
+                            disabled={isLoading}
+                        />
+                        <small className="input-hint">Enter Kenyan phone number (e.g., 0712345678)</small>
+                    </div>
+
+                    <div className="form-group">
+                        <div className="form-label">
+                            <Lock size={18}/>
+                            <span>Password</span>
+                        </div>
+                        <input
+                            className={`form-input ${error && !form.password ? 'error' : ''}`}
+                            name="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            value={form.password}
+                            onChange={handleChange}
+                            onKeyPress={handleKeyPress}
+                            disabled={isLoading}
+                        />
+                    </div>
+
+                    <button
+                        className={`form-submit ${isLoading ? 'loading' : ''}`}
+                        onClick={handleSubmit}
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <span>Logging in...</span>
+                        ) : (
+                            <>
+                                <span>Log In</span>
+                                <ArrowRight size={20}/>
+                            </>
+                        )}
+                    </button>
+
+                    <div className="form-footer">
+                        <p>
+                            Don't have an account?{' '}
+                            <button className="form-link" onClick={() => setOverlay('signup')}>
+                                Sign Up Free
+                            </button>
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
