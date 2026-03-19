@@ -247,7 +247,7 @@ const Navbar: React.FC = () => {
 
                     <Link
                         to="/"
-                        className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
+                        className={`nav-link ${isActive('/') ? 'active' : ''}`}
                         aria-label="Contact page"
                     >
                         <Home size={20} />

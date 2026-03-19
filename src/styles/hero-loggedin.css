@@ -1129,7 +1129,12 @@
 .lih-rec-reward strong {
     color: var(--text-primary, #111827);
 }
+@media (max-width: 640px) {
+    .lih-banner {
+        height: 330px;
+    }
 
+}
 /* ── Responsive: wider screens ───────────────────────────── */
 @media (min-width: 640px) {
     .lih-root {
