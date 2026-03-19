@@ -763,7 +763,7 @@
 /* Illustrated banner */
 .lih-banner {
     position: relative;
-    height: 400px;
+    height: 430px;
     /*background: linear-gradient(135deg, #a855f7 0%, #7c3aed 50%, #6d28d9 100%);*/
     overflow: hidden;
 }

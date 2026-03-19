@@ -244,21 +244,14 @@ const Navbar: React.FC = () => {
                 </button>
 
                 <div className="nav-links">
-                    {/*<Link*/}
-                    {/*    to="/about"*/}
-                    {/*    className={`nav-link ${isActive('/about') ? 'active' : ''}`}*/}
-                    {/*    aria-label="About page"*/}
-                    {/*>*/}
-                    {/*    <Info size={20} />*/}
-                    {/*    About*/}
-                    {/*</Link>*/}
+
                     <Link
-                        to="/contact"
+                        to="/"
                         className={`nav-link ${isActive('/contact') ? 'active' : ''}`}
                         aria-label="Contact page"
                     >
-                        <Phone size={20} />
-                        Contact
+                        <Home size={20} />
+                        Home
                     </Link>
                 </div>
             </div>
