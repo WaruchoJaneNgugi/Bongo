@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════════════════════════
+   not-found.css  —  BongoQuiz 404 Page
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Root ────────────────────────────────────────────────── */
+.nf-root {
+    min-height: 100vh;
+    background: linear-gradient(160deg, #f5f3ff 0%, #faf5ff 55%, #ede9fe 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Floating background emojis ──────────────────────────── */
+@keyframes nf-float {
+    0%, 100% { transform: translateY(0)   rotate(0deg);   opacity: 0.18; }
+    50%       { transform: translateY(-28px) rotate(12deg); opacity: 0.32; }
+}
+
+.nf-float-emoji {
+    position: absolute;
+    top: 10%;
+    pointer-events: none;
+    animation: nf-float linear infinite;
+    user-select: none;
+    z-index: 0;
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+.nf-card {
+    position: relative;
+    z-index: 1;
+    background: #fff;
+    border-radius: 28px;
+    border: 1px solid #ede9fe;
+    box-shadow: 0 12px 48px rgba(124, 58, 237, 0.12);
+    padding: 2.5rem 2rem;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+/* ── 404 Number ──────────────────────────────────────────── */
+@keyframes nf-bounce {
+    0%, 100% { transform: translateY(0); }
+    40%       { transform: translateY(-10px); }
+    60%       { transform: translateY(-5px); }
+}
+
+.nf-hero-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    line-height: 1;
+}
+
+.nf-four {
+    font-size: 6rem;
+    font-weight: 900;
+    letter-spacing: -4px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: nf-bounce 2.4s ease-in-out infinite;
+}
+
+.nf-four-left  { animation-delay: 0s;    }
+.nf-four-right { animation-delay: 0.15s; }
+
+.nf-zero {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ede9fe, #f5f3ff);
+    border: 4px solid #c4b5fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: nf-bounce 2.4s ease-in-out infinite;
+    animation-delay: 0.08s;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.15);
+}
+
+.nf-zero-inner { font-size: 2.5rem; line-height: 1; }
+
+/* ── Badge ───────────────────────────────────────────────── */
+.nf-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #faf5ff;
+    color: #7c3aed;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+/* ── Text ────────────────────────────────────────────────── */
+.nf-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e1b4b;
+    margin: 0;
+    letter-spacing: -0.3px;
+}
+
+.nf-subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
+    line-height: 1.65;
+    margin: 0;
+}
+
+.nf-path {
+    background: #f3f0ff;
+    color: #7c3aed;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.85rem;
+}
+
+/* ── Countdown ───────────────────────────────────────────── */
+.nf-countdown-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: #faf5ff;
+    border: 1.5px solid #ede9fe;
+    border-radius: 14px;
+    padding: 0.75rem 1.1rem;
+    width: 100%;
+    justify-content: center;
+}
+
+.nf-countdown-ring {
+    position: relative;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: conic-gradient(#7c3aed calc(var(--pct)), #e9d5ff 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.8s linear;
+}
+
+/* inner white circle */
+.nf-countdown-ring::after {
+    content: '';
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    background: #faf5ff;
+    border-radius: 50%;
+}
+
+.nf-countdown-num {
+    position: relative;
+    z-index: 1;
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: #7c3aed;
+}
+
+.nf-countdown-label {
+    font-size: 0.82rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+/* ── Action buttons ──────────────────────────────────────── */
+.nf-actions {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.nf-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    border: none;
+    min-width: 120px;
+}
+
+.nf-btn:hover  { transform: translateY(-2px); }
+.nf-btn:active { transform: scale(0.97); }
+
+.nf-btn-primary {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+}
+
+.nf-btn-primary:hover { box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4); }
+
+.nf-btn-outline {
+    background: #fff;
+    color: #7c3aed;
+    border: 2px solid #c4b5fd;
+}
+
+.nf-btn-outline:hover { background: #faf5ff; }
+
+/* ── Quick links ─────────────────────────────────────────── */
+.nf-quick-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding-top: 0.25rem;
+    border-top: 1px solid #f3f0ff;
+    width: 100%;
+    justify-content: center;
+}
+
+.nf-quick-label {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
+    width: 100%;
+    text-align: center;
+}
+
+.nf-quick-btn {
+    background: #f5f3ff;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 999px;
+    padding: 0.35rem 0.9rem;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6b7280;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s, border-color 0.18s;
+}
+
+.nf-quick-btn:hover {
+    background: #ede9fe;
+    color: #7c3aed;
+    border-color: #a78bfa;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .nf-card { padding: 2rem 1.25rem; }
+    .nf-four { font-size: 4.5rem; }
+    .nf-zero { width: 70px; height: 70px; }
+    .nf-zero-inner { font-size: 2rem; }
+    .nf-actions { flex-direction: column; }
+    .nf-btn { width: 100%; }
+}

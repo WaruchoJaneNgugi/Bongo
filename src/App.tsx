@@ -11,8 +11,9 @@ import LowerPrimaryDashboard from './components/level/LowerPrimaryDashboard';
 import MiddleSchoolDashboard from './components/level/MiddleSchoolDashboard';
 import SeniorSchoolDashboard from './components/level/SeniorSchoolDashboard';
 import AboutPage from "./components/AboutPage.tsx";
-// import DashboardOverlay from "./components/overlays/DashboardOverlay.tsx";
 import StudentProfile from "./components/StudentProfile.tsx";
+import NotFound from "./components/404/NotFound.tsx";
+
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isLoggedIn } = useStore();
@@ -28,15 +29,12 @@ const AppContent: React.FC = () => {
 
             <Routes>
                 {/* Public routes */}
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/contact" element={<ContactPage />} />
+                <Route path="/"        element={<LandingPage />}    />
+                <Route path="/about"   element={<AboutPage />}      />
+                <Route path="/contact" element={<ContactPage />}    />
                 <Route path="/profile" element={<StudentProfile />} />
-                {/*<Route path="/dashboard" element={<DashboardOverlay />} />*/}
-                {/*settings*/}
-                {/*achievements*/}
-                {/*help*/}
-                {/* Protected level routes - only accessible if logged in */}
+
+                {/* Protected level routes */}
                 <Route
                     path="/level/lower-primary"
                     element={
@@ -62,7 +60,7 @@ const AppContent: React.FC = () => {
                     }
                 />
 
-                {/* Redirect /level to appropriate dashboard based on user's level */}
+                {/* Redirect /level to the appropriate dashboard */}
                 <Route
                     path="/level"
                     element={
@@ -75,27 +73,21 @@ const AppContent: React.FC = () => {
                     }
                 />
 
-                {/* Subject routes (to be implemented) */}
-                {/*<Route path="/subject/:subjectId" element={*/}
-                {/*    <ProtectedRoute>*/}
-                {/*        <div>Subject Content Coming Soon</div>*/}
-                {/*    </ProtectedRoute>*/}
-                {/*} />*/}
+                {/* 404 – catches every unmatched path */}
+                <Route path="*" element={<NotFound />} />
             </Routes>
 
             {/* Overlays */}
             {overlay === 'signup' && <SignUpOverlay />}
-            {overlay === 'login' && <LoginOverlay />}
+            {overlay === 'login'  && <LoginOverlay  />}
         </div>
     );
 };
 
-const App: React.FC = () => {
-    return (
-        <BrowserRouter>
-            <AppContent />
-        </BrowserRouter>
-    );
-};
+const App: React.FC = () => (
+    <BrowserRouter>
+        <AppContent />
+    </BrowserRouter>
+);
 
 export default App;
