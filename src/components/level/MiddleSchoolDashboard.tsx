@@ -30,18 +30,6 @@ const MiddleSchoolDashboard: React.FC = () => {
         { id: 'history', name: 'History', icon: History, color: '#EF4444', progress: 25 }
     ];
 
-    // const getGradeLabel = (grade: string) => {
-    //     const gradeMap: Record<string, string> = {
-    //         grade4: 'Grade 4',
-    //         grade5: 'Grade 5',
-    //         grade6: 'Grade 6',
-    //         grade7: 'Grade 7',
-    //         grade8: 'Grade 8',
-    //         grade9: 'Grade 9'
-    //     };
-    //     return gradeMap[grade] || grade;
-    // };
-
     return (
         <div className="level-dashboard">
             {/* Welcome Section */}

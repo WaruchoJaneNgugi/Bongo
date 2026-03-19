@@ -62,9 +62,7 @@ const Navbar: React.FC = () => {
     // Mobile Bottom Navigation Items
     const bottomNavItems = isLoggedIn ? [
         { path: '/', icon: Home, label: 'Home' },
-        // { path: '/dashboard', icon: BarChart3, label: 'Stats' },
         { path: '/level/lower-primary', icon: BookOpen, label: 'Learn' },
-        // { path: '/about', icon: Info, label: 'About' },
         { path: '/contact', icon: Phone, label: 'Contact' }
     ] : [
         // { path: '/', icon: Home, label: 'Home' },
@@ -100,7 +98,6 @@ const Navbar: React.FC = () => {
                                 onClick={() => navigate('/dashboard')}
                                 aria-label="Go to dashboard"
                             >
-                                {/*<span className="greeting-emoji">👋</span>*/}
                                 <span className="greeting-name">{firstName}</span>
                             </div>
                         ) : (
@@ -113,7 +110,6 @@ const Navbar: React.FC = () => {
                                     }}
                                     aria-label="Log in"
                                 >
-                                    {/*<LogIn size={18} />*/}
                                     <span>Log In</span>
                                 </button>
                                 <button
@@ -124,7 +120,6 @@ const Navbar: React.FC = () => {
                                     }}
                                     aria-label="Sign up"
                                 >
-                                    {/*<UserPlus size={18} />*/}
                                     <span>Sign Up</span>
                                 </button>
                             </>
@@ -132,7 +127,6 @@ const Navbar: React.FC = () => {
                     </div>
                 </nav>
 
-                {/* Mobile Menu Overlay - Now from LEFT */}
                 {isMenuOpen && (
                     <div className="mobile-menu-overlay" onClick={() => setIsMenuOpen(false)}>
                         <div className="mobile-menu" onClick={e => e.stopPropagation()}>
@@ -162,9 +156,7 @@ const Navbar: React.FC = () => {
                                 <div onClick={() => { navigate('/'); setIsMenuOpen(false); }}>
                                     <Home size={22} /> Home
                                 </div>
-                                {/*<div onClick={() => { navigate('/about'); setIsMenuOpen(false); }}>*/}
-                                {/*    <Info size={22} /> About*/}
-                                {/*</div>*/}
+
                                 <div onClick={() => { navigate('/contact'); setIsMenuOpen(false); }}>
                                     <Phone size={22} /> Contact
                                 </div>

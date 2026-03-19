@@ -1,0 +1,375 @@
+/* ═══════════════════════════════════════════════════════════
+   footer.css  —  BongoQuiz Footer (Light Theme)
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Root ────────────────────────────────────────────────── */
+.ft-root {
+    background: linear-gradient(160deg, #f5f3ff 0%, #faf5ff 50%, #ede9fe 100%);
+    color: #374151;
+    position: relative;
+    border-top: 1px solid #e9d5ff;
+}
+
+/* ── Wave divider ────────────────────────────────────────── */
+.ft-wave {
+    color: rgba(201, 0, 245, 0.3);
+    line-height: 0;
+    overflow: hidden;
+}
+
+.ft-wave svg {
+    display: block;
+    width: 100%;
+    height: 60px;
+}
+
+/* ── Body ────────────────────────────────────────────────── */
+.ft-body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 2rem;
+}
+
+/* ── Grid ────────────────────────────────────────────────── */
+.ft-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1.4fr 1.4fr;
+    gap: 2.5rem 2rem;
+    padding-bottom: 2.5rem;
+    border-bottom: 1px solid #ddd6fe;
+}
+
+/* ── Column shared ───────────────────────────────────────── */
+.ft-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.ft-col-title {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #7c3aed;
+    margin: 0 0 1rem;
+}
+
+/* ── Brand ───────────────────────────────────────────────── */
+.ft-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    width: fit-content;
+}
+
+.ft-logo-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+    flex-shrink: 0;
+}
+
+.ft-logo span {
+    font-size: 1.3rem;
+    color: #1e1b4b;
+    letter-spacing: -0.3px;
+}
+
+.ft-logo strong {
+    font-weight: 800;
+    background: linear-gradient(90deg, #7c3aed, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.ft-tagline {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+}
+
+/* ── Social buttons ──────────────────────────────────────── */
+.ft-social-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ft-social-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #fff;
+    border: 1.5px solid #ddd6fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+    transition: background 0.2s, color 0.2s, transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    text-decoration: none;
+}
+
+.ft-social-btn:hover {
+    background: var(--social-color, #7c3aed);
+    color: #fff;
+    border-color: transparent;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--social-color, #7c3aed) 40%, transparent);
+}
+
+/* ── Quick links ─────────────────────────────────────────── */
+.ft-link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.ft-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.35rem 0;
+    transition: color 0.2s, gap 0.2s;
+    text-align: left;
+}
+
+.ft-nav-link svg {
+    opacity: 0;
+    transition: opacity 0.2s, transform 0.2s;
+    transform: translate(-4px, 4px);
+    color: #7c3aed;
+}
+
+.ft-nav-link:hover {
+    color: #7c3aed;
+    gap: 8px;
+}
+
+.ft-nav-link:hover svg {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+
+/* ── Contact ─────────────────────────────────────────────── */
+.ft-contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.ft-contact-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    transition: color 0.2s;
+}
+
+a.ft-contact-item:hover {
+    color: #7c3aed;
+}
+
+a.ft-contact-item:hover .ft-contact-icon {
+    background: #ede9fe;
+    border-color: #c4b5fd;
+}
+
+.ft-contact-static {
+    cursor: default;
+}
+
+.ft-contact-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: #fff;
+    border: 1.5px solid #ddd6fe;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7c3aed;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.ft-contact-item > span:last-child {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.ft-contact-item strong {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #7c3aed;
+    line-height: 1;
+}
+
+.ft-contact-item > span:last-child > span {
+    font-size: 0.85rem;
+    color: #4b5563;
+    line-height: 1.4;
+}
+
+.ft-contact-sub {
+    font-size: 0.75rem !important;
+    color: #9ca3af !important;
+}
+
+/* ── Newsletter ──────────────────────────────────────────── */
+.ft-newsletter-desc {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.ft-newsletter-form {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border: 1.5px solid #ddd6fe;
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-bottom: 0.5rem;
+}
+
+.ft-newsletter-form:focus-within {
+    border-color: #7c3aed;
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+}
+
+.ft-newsletter-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.85rem;
+    color: #111827;
+    min-width: 0;
+}
+
+.ft-newsletter-input::placeholder {
+    color: #9ca3af;
+}
+
+.ft-newsletter-btn {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    border: none;
+    padding: 0 1rem;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+    flex-shrink: 0;
+}
+
+.ft-newsletter-btn:hover {
+    opacity: 0.85;
+}
+
+.ft-newsletter-note {
+    font-size: 0.72rem;
+    color: #9ca3af;
+}
+
+/* ── Bottom bar ──────────────────────────────────────────── */
+.ft-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+}
+
+.ft-copy {
+    font-size: 0.8rem;
+    color: #9ca3af;
+}
+
+.ft-legal-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ft-legal-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    font-size: 0.8rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.ft-legal-btn:hover {
+    color: #7c3aed;
+}
+
+.ft-legal-sep {
+    color: #d1d5db;
+    font-size: 0.8rem;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+    .ft-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+
+    .ft-brand-col {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 640px) {
+    .ft-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .ft-brand-col {
+        grid-column: unset;
+    }
+
+    .ft-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ft-wave svg {
+        height: 40px;
+    }
+}
