@@ -11,7 +11,8 @@ import LowerPrimaryDashboard from './components/level/LowerPrimaryDashboard';
 import MiddleSchoolDashboard from './components/level/MiddleSchoolDashboard';
 import SeniorSchoolDashboard from './components/level/SeniorSchoolDashboard';
 import AboutPage from "./components/AboutPage.tsx";
-import DashboardOverlay from "./components/overlays/DashboardOverlay.tsx";
+// import DashboardOverlay from "./components/overlays/DashboardOverlay.tsx";
+import StudentProfile from "./components/StudentProfile.tsx";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isLoggedIn } = useStore();
@@ -30,7 +31,8 @@ const AppContent: React.FC = () => {
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/contact" element={<ContactPage />} />
-                <Route path="/dashboard" element={<DashboardOverlay />} />
+                <Route path="/profile" element={<StudentProfile />} />
+                {/*<Route path="/dashboard" element={<DashboardOverlay />} />*/}
                 {/*settings*/}
                 {/*achievements*/}
                 {/*help*/}

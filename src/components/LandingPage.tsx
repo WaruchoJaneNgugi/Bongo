@@ -23,9 +23,9 @@ const LAST_QUIZ = {name: 'Science Quiz', progress: 65};
 const CONTINUE_CARDS = [
     {id: 1, subject: 'Math', progress: 65, color: '#7C3AED', emoji: '🧮', isNew: false},
     {id: 2, subject: 'CRE', progress: 40, color: '#EA580C', emoji: '✝️', isNew: false},
-    {id: 3, subject: 'Science', progress: 5, color: '#059669', emoji: '🔬', isNew: true},
-    {id: 4, subject: 'Kiswahili', progress: 5, color: '#D97706', emoji: '🗣️', isNew: true},
-    {id: 5, subject: 'Social Studies', progress: 5, color: '#7C3AED', emoji: '🌍', isNew: true},
+    {id: 3, subject: 'Science', progress: 20, color: '#059669', emoji: '🔬', isNew: true},
+    {id: 4, subject: 'Kiswahili', progress: 35, color: '#D97706', emoji: '🗣️', isNew: true},
+    {id: 5, subject: 'Social Studies', progress: 50, color: '#7C3AED', emoji: '🌍', isNew: true},
 ];
 
 const RECOMMENDED = [

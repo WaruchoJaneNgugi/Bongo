@@ -6,7 +6,7 @@ import {
     // Info,
     Phone,
     BookOpen,
-    BarChart3,
+    // BarChart3,
     // LogIn,
     // UserPlus,
     User,
@@ -14,12 +14,12 @@ import {
     X,
     GraduationCap,
     LogOut,
-    Sparkles,
-    Trophy,
-    Settings,
-    HelpCircle,
+    // Sparkles,
+    // Trophy,
+    // Settings,
+    // HelpCircle,
     Award,
-    BookMarked
+    BookMarked, ChevronDown
 } from 'lucide-react';
 import '../styles/Navbar.css';
 
@@ -56,14 +56,15 @@ const Navbar: React.FC = () => {
     };
 
     // Get user's first name for greeting
-    const firstName = user?.username?.split(' ')[0] || 'Student';
+    // const firstName = user?.username?.split(' ')[0] || 'Student';
     const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
 
     // Mobile Bottom Navigation Items
     const bottomNavItems = isLoggedIn ? [
         { path: '/', icon: Home, label: 'Home' },
         { path: '/level/lower-primary', icon: BookOpen, label: 'Learn' },
-        { path: '/contact', icon: Phone, label: 'Contact' }
+        // { path: '/contact', icon: Phone, label: 'Contact' }
+        { path: '/profile', icon: User, label: 'Profile' }
     ] : [
         // { path: '/', icon: Home, label: 'Home' },
         // { path: '/about', icon: Info, label: 'About' },
@@ -95,10 +96,10 @@ const Navbar: React.FC = () => {
                         {isLoggedIn ? (
                             <div
                                 className="user-greeting"
-                                onClick={() => navigate('/dashboard')}
+                                onClick={() => navigate('/')}
                                 aria-label="Go to dashboard"
                             >
-                                <span className="greeting-name">{firstName}</span>
+                                <span className="greeting-name">{userInitial}</span>
                             </div>
                         ) : (
                             <>
@@ -144,7 +145,7 @@ const Navbar: React.FC = () => {
                                         {userInitial}
                                     </div>
                                     <div className="menu-user-info">
-                                        <h4>{user?.username}</h4>
+                                        {/*<h4>{user?.username}</h4>*/}
                                         <span className="menu-level">
                                             <Award size={12} /> {user?.educationLevel || 'Beginner'}
                                         </span>
@@ -157,17 +158,18 @@ const Navbar: React.FC = () => {
                                     <Home size={22} /> Home
                                 </div>
 
-                                <div onClick={() => { navigate('/contact'); setIsMenuOpen(false); }}>
-                                    <Phone size={22} /> Contact
+                                <div onClick={() => {
+                                    if (isLoggedIn) {
+                                        navigate('/profile');
+                                        setIsMenuOpen(false);
+                                    }
+                                }}>
+                                    <Phone size={22} /> Profile
                                 </div>
 
 
                                 {isLoggedIn && (
                                     <>
-                                        {/*<div className="menu-divider-1"></div>*/}
-                                        <div onClick={() => { navigate('/dashboard'); setIsMenuOpen(false); }}>
-                                            <BarChart3 size={22} /> Dashboard
-                                        </div>
                                         <div onClick={() => { navigate('/level/lower-primary'); setIsMenuOpen(false); }}>
                                             <BookOpen size={22} /> My Level
                                         </div>
@@ -176,16 +178,6 @@ const Navbar: React.FC = () => {
                                         </div>
                                         <div onClick={() => { navigate('/profile'); setIsMenuOpen(false); }}>
                                             <User size={22} /> Profile
-                                        </div>
-                                        <div onClick={() => { navigate('/achievements'); setIsMenuOpen(false); }}>
-                                            <Trophy size={22} /> Achievements
-                                        </div>
-                                        {/*<div className="menu-divider-1"></div>*/}
-                                        <div onClick={() => { navigate('/help'); setIsMenuOpen(false); }}>
-                                            <HelpCircle size={22} /> Help
-                                        </div>
-                                        <div onClick={() => { navigate('/settings'); setIsMenuOpen(false); }}>
-                                            <Settings size={22} /> Settings
                                         </div>
                                         <div className="logout-menu-item" onClick={handleLogout}>
                                             <LogOut size={22} /> Log Out
@@ -259,23 +251,7 @@ const Navbar: React.FC = () => {
             <div className="nav-right">
                 {isLoggedIn ? (
                     <>
-                        <Link
-                            to="/level/lower-primary"
-                            className={`nav-link ${location.pathname.includes('/level') ? 'active' : ''}`}
-                            aria-label="My learning level"
-                        >
-                            <BookOpen size={20} />
-                            My Level
-                        </Link>
 
-                        <Link
-                            to="/dashboard"
-                            className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}
-                            aria-label="Dashboard"
-                        >
-                            <BarChart3 size={20} />
-                            Dashboard
-                        </Link>
 
                         <div className="user-menu">
                             <button
@@ -286,23 +262,43 @@ const Navbar: React.FC = () => {
                                 <div className="user-avatar">
                                     {userInitial}
                                 </div>
-                                <span className="user-name">{firstName}</span>
-                                <Sparkles size={16} className="sparkle-icon" />
+                                {/*<span className="user-name">{firstName}</span>*/}
+                                <ChevronDown size={16} />
                             </button>
 
                             <div className="user-dropdown">
                                 <div className="dropdown-header">
                                     <p className="user-email">{user?.username}</p>
                                 </div>
+
                                 <Link to="/profile" className="dropdown-item">
                                     <User size={18} /> Profile
                                 </Link>
-                                <Link to="/achievements" className="dropdown-item">
-                                    <Trophy size={18} /> Achievements
-                                </Link>
-                                <Link to="/settings" className="dropdown-item">
-                                    <Settings size={18} /> Settings
-                                </Link>
+                                {/*<Link to="/achievements" className="dropdown-item">*/}
+                                {/*    <Trophy size={18} /> Achievements*/}
+                                {/*</Link>*/}
+                                {/*<Link to="/settings" className="dropdown-item">*/}
+                                {/*    <Settings size={18} /> Settings*/}
+                                {/*</Link>*/}
+                                {/*<Link*/}
+                                {/*    to="/level/lower-primary"*/}
+                                {/*    className="dropdown-item"*/}
+                                {/*    // className={`nav-link ${location.pathname.includes('/level') ? 'active' : ''}`}*/}
+                                {/*    aria-label="My learning level"*/}
+                                {/*>*/}
+                                {/*    <BookOpen size={20} />*/}
+                                {/*    My Level*/}
+                                {/*</Link>*/}
+
+                                {/*<Link*/}
+                                {/*    to="/dashboard"*/}
+                                {/*    className="dropdown-item"*/}
+                                {/*    // className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}*/}
+                                {/*    aria-label="Dashboard"*/}
+                                {/*>*/}
+                                {/*    <BarChart3 size={20} />*/}
+                                {/*    Dashboard*/}
+                                {/*</Link>*/}
                                 <div className="dropdown-divider"></div>
                                 <button className="dropdown-item logout" onClick={handleLogout}>
                                     <LogOut size={18} /> Log Out
