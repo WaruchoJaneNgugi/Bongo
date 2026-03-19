@@ -5,9 +5,8 @@ import {
     TrendingUp, TrendingDown, Minus, Award,
     Flame, Star, BookOpen, Target, Zap,
     ChevronRight, BarChart2, Clock, CheckCircle2,
-    AlertCircle, Upload, Trophy, Layers,
+    AlertCircle, Upload, Trophy,
     Settings, Bell, Moon, Shield,
-    ChevronUp, Gift, Sparkles
 } from 'lucide-react';
 import '../styles/studentprofile.css';
 
@@ -69,25 +68,25 @@ const ACHIEVEMENTS = [
 
 /* ─── Level / XP data ──────────────────────────────────────── */
 const CURRENT_LEVEL   = 3;
-const CURRENT_XP      = 1200;
-const NEXT_LEVEL_XP   = 1500;
-const XP_PROGRESS_PCT = Math.round((CURRENT_XP / NEXT_LEVEL_XP) * 100);
+// const CURRENT_XP      = 1200;
+// const NEXT_LEVEL_XP   = 1500;
+// const XP_PROGRESS_PCT = Math.round((CURRENT_XP / NEXT_LEVEL_XP) * 100);
 
-const LEVEL_MILESTONES = [
-    { level: 1, title: 'Beginner',    xpRequired: 0,    reward: '🎒 Starter Pack',     unlocked: true  },
-    { level: 2, title: 'Explorer',    xpRequired: 500,  reward: '🗺️ Explorer Badge',   unlocked: true  },
-    { level: 3, title: 'Scholar',     xpRequired: 1000, reward: '📘 Scholar Crest',    unlocked: true  },
-    { level: 4, title: 'Achiever',    xpRequired: 1500, reward: '🏅 Achiever Medal',   unlocked: false },
-    { level: 5, title: 'Champion',    xpRequired: 2500, reward: '🏆 Champion Trophy',  unlocked: false },
-    { level: 6, title: 'Legend',      xpRequired: 4000, reward: '👑 Legend Crown',     unlocked: false },
-];
-
-const LEVEL_PERKS = [
-    { perk: 'Access to hard-mode quizzes',    available: true  },
-    { perk: 'Custom profile badge',           available: true  },
-    { perk: 'Priority leaderboard listing',   available: false },
-    { perk: 'Bonus XP on weekly challenges',  available: false },
-];
+// const LEVEL_MILESTONES = [
+//     { level: 1, title: 'Beginner',    xpRequired: 0,    reward: '🎒 Starter Pack',     unlocked: true  },
+//     { level: 2, title: 'Explorer',    xpRequired: 500,  reward: '🗺️ Explorer Badge',   unlocked: true  },
+//     { level: 3, title: 'Scholar',     xpRequired: 1000, reward: '📘 Scholar Crest',    unlocked: true  },
+//     { level: 4, title: 'Achiever',    xpRequired: 1500, reward: '🏅 Achiever Medal',   unlocked: false },
+//     { level: 5, title: 'Champion',    xpRequired: 2500, reward: '🏆 Champion Trophy',  unlocked: false },
+//     { level: 6, title: 'Legend',      xpRequired: 4000, reward: '👑 Legend Crown',     unlocked: false },
+// ];
+//
+// const LEVEL_PERKS = [
+//     { perk: 'Access to hard-mode quizzes',    available: true  },
+//     { perk: 'Custom profile badge',           available: true  },
+//     { perk: 'Priority leaderboard listing',   available: false },
+//     { perk: 'Bonus XP on weekly challenges',  available: false },
+// ];
 
 /* ─── Helpers ──────────────────────────────────────────────── */
 const TrendIcon = ({ trend }: { trend: string }) => {
@@ -96,12 +95,12 @@ const TrendIcon = ({ trend }: { trend: string }) => {
     return <Minus size={14} className="sp-trend-same" />;
 };
 
-type TabId = 'analytics' | 'achievements' | 'level' | 'account' | 'settings';
+type TabId = 'analytics' | 'achievements' |'account' | 'settings';
 
 const TABS: { id: TabId; icon: React.ElementType; label: string }[] = [
     { id: 'analytics',    icon: BarChart2, label: 'Analytics'        },
     { id: 'achievements', icon: Trophy,    label: 'Achievements'     },
-    { id: 'level',        icon: Layers,    label: 'My Level'         },
+    // { id: 'level',        icon: Layers,    label: 'My Level'         },
     { id: 'account',      icon: User,      label: 'Account Settings' },
     { id: 'settings',     icon: Settings,  label: 'Settings'         },
 ];
@@ -356,104 +355,6 @@ const StudentProfile: React.FC = () => {
                                 <span className={`sp-ach-pts ${earned ? 'sp-ach-pts-earned' : ''}`}>+{pts} pts</span>
                             </div>
                         ))}
-                    </div>
-                </div>
-            )}
-
-            {/* ══════════════════════════════════════════════════
-                MY LEVEL TAB
-            ══════════════════════════════════════════════════ */}
-            {activeTab === 'level' && (
-                <div className="sp-content sp-fade-in">
-
-                    {/* Current level hero card */}
-                    <div className="sp-level-hero-card">
-                        <div className="sp-level-badge-big">
-                            <Sparkles size={18} />
-                            <span>Level {CURRENT_LEVEL}</span>
-                        </div>
-                        <h2 className="sp-level-title-big">Scholar</h2>
-                        <p className="sp-level-subtitle">{CURRENT_XP} / {NEXT_LEVEL_XP} XP to Level {CURRENT_LEVEL + 1}</p>
-
-                        <div className="sp-level-xp-bar-wrap">
-                            <div className="sp-level-xp-track">
-                                <div className="sp-level-xp-fill" style={{ width: `${XP_PROGRESS_PCT}%` }}>
-                                    <span className="sp-level-xp-glow" />
-                                </div>
-                            </div>
-                            <span className="sp-level-xp-pct">{XP_PROGRESS_PCT}%</span>
-                        </div>
-
-                        <p className="sp-level-xp-note">
-                            <Zap size={13} /> {NEXT_LEVEL_XP - CURRENT_XP} XP needed to unlock <strong>Achiever</strong>
-                        </p>
-                    </div>
-
-                    {/* Milestone roadmap */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Layers size={16} /> Level Roadmap</h3></div>
-                        <div className="sp-milestones">
-                            {LEVEL_MILESTONES.map((m, i) => (
-                                <div key={m.level} className={`sp-milestone ${m.unlocked ? 'sp-ms-unlocked' : 'sp-ms-locked'} ${m.level === CURRENT_LEVEL ? 'sp-ms-current' : ''}`}>
-                                    <div className="sp-ms-left">
-                                        <div className="sp-ms-dot">
-                                            {m.unlocked ? <Check size={13} /> : <span>{m.level}</span>}
-                                        </div>
-                                        {i < LEVEL_MILESTONES.length - 1 && <div className="sp-ms-line" />}
-                                    </div>
-                                    <div className="sp-ms-body">
-                                        <div className="sp-ms-top">
-                                            <span className="sp-ms-name">
-                                                {m.level === CURRENT_LEVEL && <span className="sp-ms-you">YOU</span>}
-                                                Lv {m.level} — {m.title}
-                                            </span>
-                                            <span className="sp-ms-xp">{m.xpRequired} XP</span>
-                                        </div>
-                                        <div className="sp-ms-reward">
-                                            <Gift size={12} /> {m.reward}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Perks unlocked at this level */}
-                    <div className="sp-card">
-                        <div className="sp-card-header">
-                            <h3><Star size={16} /> Level {CURRENT_LEVEL} Perks</h3>
-                        </div>
-                        <div className="sp-perks-list">
-                            {LEVEL_PERKS.map(({ perk, available }) => (
-                                <div key={perk} className={`sp-perk-row ${available ? '' : 'sp-perk-locked'}`}>
-                                    <span className={`sp-perk-icon ${available ? 'sp-perk-yes' : 'sp-perk-no'}`}>
-                                        {available ? <CheckCircle2 size={16} /> : <Lock size={16} />}
-                                    </span>
-                                    <span className="sp-perk-label">{perk}</span>
-                                    {!available && <span className="sp-perk-unlock-badge">Next level</span>}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* How to earn XP */}
-                    <div className="sp-card sp-xp-tips-card">
-                        <div className="sp-card-header"><h3><ChevronUp size={16} /> How to Earn XP</h3></div>
-                        <div className="sp-xp-tips">
-                            {[
-                                { action: 'Complete a quiz',         xp: '+20 XP', emoji: '📝' },
-                                { action: 'Score above 80%',         xp: '+30 XP', emoji: '🎯' },
-                                { action: 'Daily login',             xp: '+10 XP', emoji: '📅' },
-                                { action: 'Maintain a streak',       xp: '+15 XP', emoji: '🔥' },
-                                { action: 'Unlock an achievement',   xp: '+50 XP', emoji: '🏆' },
-                            ].map(({ action, xp, emoji }) => (
-                                <div key={action} className="sp-xp-tip-row">
-                                    <span className="sp-xp-tip-emoji">{emoji}</span>
-                                    <span className="sp-xp-tip-label">{action}</span>
-                                    <span className="sp-xp-tip-xp">{xp}</span>
-                                </div>
-                            ))}
-                        </div>
                     </div>
                 </div>
             )}

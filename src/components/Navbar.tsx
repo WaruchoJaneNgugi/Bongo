@@ -4,7 +4,7 @@ import { useStore } from '../store/useStore';
 import {
     Home,
     // Info,
-    Phone,
+    // Phone,
     BookOpen,
     // BarChart3,
     // LogIn,
@@ -19,7 +19,8 @@ import {
     // Settings,
     // HelpCircle,
     Award,
-    BookMarked, ChevronDown
+    // BookMarked,
+    ChevronDown
 } from 'lucide-react';
 import '../styles/Navbar.css';
 
@@ -158,14 +159,7 @@ const Navbar: React.FC = () => {
                                     <Home size={22} /> Home
                                 </div>
 
-                                <div onClick={() => {
-                                    if (isLoggedIn) {
-                                        navigate('/profile');
-                                        setIsMenuOpen(false);
-                                    }
-                                }}>
-                                    <Phone size={22} /> Profile
-                                </div>
+
 
 
                                 {isLoggedIn && (
@@ -173,12 +167,12 @@ const Navbar: React.FC = () => {
                                         <div onClick={() => { navigate('/level/lower-primary'); setIsMenuOpen(false); }}>
                                             <BookOpen size={22} /> My Level
                                         </div>
-                                        <div onClick={() => { navigate('/subjects'); setIsMenuOpen(false); }}>
-                                            <BookMarked size={22} /> Subjects
-                                        </div>
-                                        <div onClick={() => { navigate('/profile'); setIsMenuOpen(false); }}>
-                                            <User size={22} /> Profile
-                                        </div>
+                                        {/*<div onClick={() => { navigate('/subjects'); setIsMenuOpen(false); }}>*/}
+                                        {/*    <BookMarked size={22} /> Subjects*/}
+                                        {/*</div>*/}
+                                        {/*<div onClick={() => { navigate('/profile'); setIsMenuOpen(false); }}>*/}
+                                        {/*    <User size={22} /> Profile*/}
+                                        {/*</div>*/}
                                         <div className="logout-menu-item" onClick={handleLogout}>
                                             <LogOut size={22} /> Log Out
                                         </div>

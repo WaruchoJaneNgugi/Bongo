@@ -76,11 +76,11 @@ const AppContent: React.FC = () => {
                 />
 
                 {/* Subject routes (to be implemented) */}
-                <Route path="/subject/:subjectId" element={
-                    <ProtectedRoute>
-                        <div>Subject Content Coming Soon</div>
-                    </ProtectedRoute>
-                } />
+                {/*<Route path="/subject/:subjectId" element={*/}
+                {/*    <ProtectedRoute>*/}
+                {/*        <div>Subject Content Coming Soon</div>*/}
+                {/*    </ProtectedRoute>*/}
+                {/*} />*/}
             </Routes>
 
             {/* Overlays */}
