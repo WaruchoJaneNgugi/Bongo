@@ -19,7 +19,7 @@ import React from 'react';
 //     // Award,
 //     // Users
 // } from 'lucide-react';
-import '../styles/contact.css';
+// import '../styles/contact.css';
 import '../styles/about.css';
 import heroImg from '/hero.png';
 import {useStore} from "../store/useStore.ts";
