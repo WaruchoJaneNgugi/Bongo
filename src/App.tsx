@@ -24,7 +24,7 @@ const AppContent: React.FC = () => {
     const { overlay, user } = useStore();
 
     return (
-        <div>
+        <div className="main-body-container">
             <Navbar />
 
             <Routes>

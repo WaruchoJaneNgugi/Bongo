@@ -14,6 +14,7 @@ import {
     X,
     GraduationCap,
     LogOut,
+    Gamepad2,
     // Sparkles,
     // Trophy,
     // Settings,
@@ -64,7 +65,7 @@ const Navbar: React.FC = () => {
     const bottomNavItems = isLoggedIn ? [
         { path: '/', icon: Home, label: 'Home' },
         { path: '/level/lower-primary', icon: BookOpen, label: 'Learn' },
-        // { path: '/contact', icon: Phone, label: 'Contact' }
+        { path: '/games', icon: Gamepad2, label: 'Games' },
         { path: '/profile', icon: User, label: 'Profile' }
     ] : [
         // { path: '/', icon: Home, label: 'Home' },
@@ -234,6 +235,14 @@ const Navbar: React.FC = () => {
                     >
                         <Home size={20} />
                         Home
+                    </Link>
+                    <Link
+                        to="/games"
+                        className={`nav-link ${isActive('/games') ? 'active' : ''}`}
+                        aria-label="Contact page"
+                    >
+                        <Gamepad2 size={20} />
+                        Games
                     </Link>
                 </div>
             </div>

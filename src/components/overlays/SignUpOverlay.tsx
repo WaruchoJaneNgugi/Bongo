@@ -156,11 +156,14 @@ const SignUpOverlay: React.FC = () => {
 
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
-    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-      newErrors.password = 'Password must contain uppercase, lowercase and number';
     }
+    else if (formData.password.length < 4) {
+      newErrors.password = 'Password must be at least 4 characters';
+    }
+
+    // else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
+    //   newErrors.password = 'Password must contain uppercase, lowercase and number';
+    // }
 
     if (!formData.confirmPassword) {
       newErrors.confirmPassword = 'Please confirm your password';
@@ -333,27 +336,27 @@ const SignUpOverlay: React.FC = () => {
     }
   };
 
-  const getPasswordStrength = (password: string) => {
-    if (!password) return { score: 0, label: 'Enter password', color: '#9CA3AF' };
+  // const getPasswordStrength = (password: string) => {
+  //   if (!password) return { score: 0, label: 'Enter password', color: '#9CA3AF' };
+  //
+  //   let score = 0;
+  //   if (password.length >= 8) score += 1;
+  //   if (/(?=.*[a-z])/.test(password)) score += 1;
+  //   if (/(?=.*[A-Z])/.test(password)) score += 1;
+  //   if (/(?=.*\d)/.test(password)) score += 1;
+  //
+  //   const strengths = [
+  //     { score: 0, label: 'Weak', color: '#EF4444' },
+  //     { score: 1, label: 'Fair', color: '#F59E0B' },
+  //     { score: 2, label: 'Good', color: '#3B82F6' },
+  //     { score: 3, label: 'Strong', color: '#10B981' },
+  //     { score: 4, label: 'Very Strong', color: '#10B981' }
+  //   ];
+  //
+  //   return strengths[score] || strengths[0];
+  // };
 
-    let score = 0;
-    if (password.length >= 8) score += 1;
-    if (/(?=.*[a-z])/.test(password)) score += 1;
-    if (/(?=.*[A-Z])/.test(password)) score += 1;
-    if (/(?=.*\d)/.test(password)) score += 1;
-
-    const strengths = [
-      { score: 0, label: 'Weak', color: '#EF4444' },
-      { score: 1, label: 'Fair', color: '#F59E0B' },
-      { score: 2, label: 'Good', color: '#3B82F6' },
-      { score: 3, label: 'Strong', color: '#10B981' },
-      { score: 4, label: 'Very Strong', color: '#10B981' }
-    ];
-
-    return strengths[score] || strengths[0];
-  };
-
-  const strength = getPasswordStrength(formData.password);
+  // const strength = getPasswordStrength(formData.password);
 
   const educationLevels = [
     {
@@ -551,24 +554,24 @@ const SignUpOverlay: React.FC = () => {
                   </div>
                   {errors.password && <span className="error-message">{errors.password}</span>}
 
-                  {formData.password && (
-                      <div className="password-strength">
-                        <div className="strength-bars">
-                          {[1, 2, 3, 4].map((bar) => (
-                              <div
-                                  key={bar}
-                                  className="strength-bar"
-                                  style={{
-                                    backgroundColor: bar <= strength.score ? strength.color : '#E5E7EB'
-                                  }}
-                              />
-                          ))}
-                        </div>
-                        <span className="strength-label" style={{ color: strength.color }}>
-                    {strength.label}
-                  </span>
-                      </div>
-                  )}
+                  {/*{formData.password && (*/}
+                  {/*    <div className="password-strength">*/}
+                  {/*      <div className="strength-bars">*/}
+                  {/*        {[1, 2, 3, 4].map((bar) => (*/}
+                  {/*            <div*/}
+                  {/*                key={bar}*/}
+                  {/*                className="strength-bar"*/}
+                  {/*                style={{*/}
+                  {/*                  backgroundColor: bar <= strength.score ? strength.color : '#E5E7EB'*/}
+                  {/*                }}*/}
+                  {/*            />*/}
+                  {/*        ))}*/}
+                  {/*      </div>*/}
+                  {/*      <span className="strength-label" style={{ color: strength.color }}>*/}
+                  {/*  {strength.label}*/}
+                  {/*</span>*/}
+                  {/*    </div>*/}
+                  {/*)}*/}
                 </div>
 
                 <div className="form-group">
@@ -599,15 +602,15 @@ const SignUpOverlay: React.FC = () => {
                 <div className="password-requirements">
                   <p>Password must contain:</p>
                   <ul>
-                    <li className={formData.password.length >= 8 ? 'met' : ''}>
-                      <CheckCircle size={12} /> At least 8 characters
+                    <li className={formData.password.length >= 4 ? 'met' : ''}>
+                      <CheckCircle size={12} /> At least 4 characters
                     </li>
-                    <li className={/(?=.*[a-z])/.test(formData.password) ? 'met' : ''}>
-                      <CheckCircle size={12} /> One lowercase letter
-                    </li>
-                    <li className={/(?=.*[A-Z])/.test(formData.password) ? 'met' : ''}>
-                      <CheckCircle size={12} /> One uppercase letter
-                    </li>
+                    {/*<li className={/(?=.*[a-z])/.test(formData.password) ? 'met' : ''}>*/}
+                    {/*  <CheckCircle size={12} /> One lowercase letter*/}
+                    {/*</li>*/}
+                    {/*<li className={/(?=.*[A-Z])/.test(formData.password) ? 'met' : ''}>*/}
+                    {/*  <CheckCircle size={12} /> One uppercase letter*/}
+                    {/*</li>*/}
                     <li className={/(?=.*\d)/.test(formData.password) ? 'met' : ''}>
                       <CheckCircle size={12} /> One number
                     </li>
