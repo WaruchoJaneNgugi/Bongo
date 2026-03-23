@@ -1,325 +1,213 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import {
-    Home,
-    // Info,
-    // Phone,
-    BookOpen,
-    // BarChart3,
-    // LogIn,
-    // UserPlus,
-    User,
-    Menu,
-    X,
-    GraduationCap,
-    LogOut,
-    Gamepad2,
-    // Sparkles,
-    // Trophy,
-    // Settings,
-    // HelpCircle,
-    Award,
-    // BookMarked,
-    ChevronDown
+  Home, Gamepad2, User, LogOut, Menu, X,
+  GraduationCap, ChevronDown, BookOpen, Trophy,
 } from 'lucide-react';
-import '../styles/Navbar.css';
+import '../styles/navbar.css';
 
 const Navbar: React.FC = () => {
-    const { isLoggedIn, user, setOverlay, logout } = useStore();
-    const navigate = useNavigate();
-    const location = useLocation();
-    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isLoggedIn, user, setOverlay, logout } = useStore();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth <= 768);
-        };
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 12);
+    window.addEventListener('scroll', handler);
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+  // Close menu on route change
+  useEffect(() => { setMenuOpen(false); setDropdownOpen(false); }, [location]);
 
-    const handleLogoClick = () => {
-        setOverlay(null);
-        navigate('/');
-        setIsMenuOpen(false);
-    };
+  const isMobile = window.innerWidth <= 768;
+  const isActive = (p: string) => location.pathname === p || location.pathname.startsWith(p + '/');
 
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-        setIsMenuOpen(false);
-    };
+  const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
+  const userAvatar = user?.avatar || (user?.type === 'parent' ? '👩' : '🧒');
 
-    const isActive = (path: string) => {
-        return location.pathname === path;
-    };
+  const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };
 
-    // Get user's first name for greeting
-    // const firstName = user?.username?.split(' ')[0] || 'Student';
-    const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
+  const levelRoute = user?.type === 'student'
+    ? { lower_primary: '/level/lower-primary', middle_school: '/level/middle-school', senior_school: '/level/senior-school' }[user.educationLevel]
+    : '/';
 
-    // Mobile Bottom Navigation Items
-    const bottomNavItems = isLoggedIn ? [
-        { path: '/', icon: Home, label: 'Home' },
-        { path: '/level/lower-primary', icon: BookOpen, label: 'Learn' },
-        { path: '/games', icon: Gamepad2, label: 'Games' },
-        { path: '/profile', icon: User, label: 'Profile' }
-    ] : [
-        // { path: '/', icon: Home, label: 'Home' },
-        // { path: '/about', icon: Info, label: 'About' },
-        // { path: '/contact', icon: Phone, label: 'Contact' }
-    ];
+  /* ── Bottom nav items (logged in) ──────────────────────── */
+  const bottomItems = [
+    { path: '/',       icon: Home,      label: 'Home' },
+    { path: levelRoute || '/level', icon: BookOpen, label: 'Learn' },
+    { path: '/games',  icon: Gamepad2,  label: 'Games' },
+    { path: '/profile',icon: User,      label: 'Profile' },
+  ];
 
-    // Mobile Navigation
-    if (isMobile) {
-        return (
-            <>
-                {/* Top Bar for Mobile */}
-                <nav className="navbar mobile-top-bar">
-                    <div className="mobile-left">
-                        <div
-                            className="btn-icon menu-toggle"
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            aria-label="Toggle menu"
-                        >
-                            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
-                        </div>
+  return (
+    <>
+      {/* ── Top Navbar ──────────────────────────────────── */}
+      <nav className={`nb-root ${scrolled ? 'nb-scrolled' : ''}`}>
+        <div className="nb-inner">
+          {/* Left: logo + hamburger on mobile */}
+          <div className="nb-left">
+            {/* Hamburger — mobile only */}
+            <button className="nb-hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">
+              {menuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
 
-                        <div className="mobile-logo" onClick={handleLogoClick}>
-                            <GraduationCap size={28} color="#7C3AED" />
-                            <span>Bongo<span>Quiz</span></span>
-                        </div>
-                    </div>
+            <button className="nb-logo" onClick={() => { navigate('/'); setMenuOpen(false); }}>
+              <GraduationCap size={28} color="#7c3aed" />
+              <span>Bongo<strong>Quiz</strong></span>
+            </button>
 
-                    <div className="mobile-top-actions">
-                        {isLoggedIn ? (
-                            <div
-                                className="user-greeting"
-                                onClick={() => navigate('/')}
-                                aria-label="Go to dashboard"
-                            >
-                                <span className="greeting-name">{userInitial}</span>
-                            </div>
-                        ) : (
-                            <>
-                                <button
-                                    className="btn-outline"
-                                    onClick={() => {
-                                        setOverlay('login');
-                                        setIsMenuOpen(false);
-                                    }}
-                                    aria-label="Log in"
-                                >
-                                    <span>Log In</span>
-                                </button>
-                                <button
-                                    className="btn-primary"
-                                    onClick={() => {
-                                        setOverlay('signup');
-                                        setIsMenuOpen(false);
-                                    }}
-                                    aria-label="Sign up"
-                                >
-                                    <span>Sign Up</span>
-                                </button>
-                            </>
-                        )}
-                    </div>
-                </nav>
+            {/* Desktop nav links */}
+            <div className="nb-links">
+              <Link to="/" className={`nb-link ${isActive('/') && location.pathname === '/' ? 'active' : ''}`}>
+                <Home size={17} /> Home
+              </Link>
+              <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>
+                <Gamepad2 size={17} /> Games
+              </Link>
+              {isLoggedIn && (
+                <Link to={levelRoute || '/level'} className={`nb-link ${isActive('/level') ? 'active' : ''}`}>
+                  <BookOpen size={17} /> Learn
+                </Link>
+              )}
+            </div>
+          </div>
 
-                {isMenuOpen && (
-                    <div className="mobile-menu-overlay" onClick={() => setIsMenuOpen(false)}>
-                        <div className="mobile-menu" onClick={e => e.stopPropagation()}>
-                            <div className="mobile-menu-header">
-                                <GraduationCap size={36} color="#7C3AED" />
-                                <h3>Menu</h3>
-                                <button className="close-menu" onClick={() => setIsMenuOpen(false)} aria-label="Close menu">
-                                    <X size={22} />
-                                </button>
-                            </div>
-
-                            {isLoggedIn && (
-                                <div className="menu-user-profile">
-                                    <div className="menu-avatar">
-                                        {userInitial}
-                                    </div>
-                                    <div className="menu-user-info">
-                                        {/*<h4>{user?.username}</h4>*/}
-                                        <span className="menu-level">
-                                            <Award size={12} /> {user?.educationLevel || 'Beginner'}
-                                        </span>
-                                    </div>
-                                </div>
-                            )}
-
-                            <div className="mobile-menu-items">
-                                <div onClick={() => { navigate('/'); setIsMenuOpen(false); }}>
-                                    <Home size={22} /> Home
-                                </div>
-                                {isLoggedIn && (
-                                    <>
-                                        <div onClick={() => { navigate('/level/lower-primary'); setIsMenuOpen(false); }}>
-                                            <BookOpen size={22} /> My Level
-                                        </div>
-                                        {/*<div onClick={() => { navigate('/subjects'); setIsMenuOpen(false); }}>*/}
-                                        {/*    <BookMarked size={22} /> Subjects*/}
-                                        {/*</div>*/}
-                                        {/*<div onClick={() => { navigate('/profile'); setIsMenuOpen(false); }}>*/}
-                                        {/*    <User size={22} /> Profile*/}
-                                        {/*</div>*/}
-                                        <div className="logout-menu-item" onClick={handleLogout}>
-                                            <LogOut size={22} /> Log Out
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-
-                            {!isLoggedIn && (
-                                <div className="menu-footer">
-                                    <p>New to BongoQuiz? 🎓</p>
-                                    <button
-                                        className="btn-primary"
-                                        onClick={() => {
-                                            setOverlay('signup');
-                                            setIsMenuOpen(false);
-                                        }}
-                                    >
-                                        Create Free Account
-                                    </button>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                )}
-
-                {/* Bottom Navigation - For all users */}
-                {isLoggedIn && (
-
-                    <nav className="bottom-nav">
-                    {bottomNavItems.map((item) => (
-                        <Link
-                            key={item.path}
-                            to={item.path}
-                            className={`bottom-nav-item ${isActive(item.path) ||
-                            (item.path.includes('level') && location.pathname.includes('level')) ? 'active' : ''}`}
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            <item.icon size={24} />
-                            <span className="bottom-nav-label">{item.label}</span>
-                        </Link>
-                    ))}
-                </nav>
-                    )}
-            </>
-        );
-    }
-
-    // Desktop Navigation
-    return (
-        <nav className="navbar desktop-nav">
-            <div className="nav-left">
-                <button className="navbar-logo" onClick={handleLogoClick} aria-label="Go to home">
-                    <GraduationCap size={36} color="#7C3AED" />
-                    <span>Bongo<span>Quiz</span></span>
+          {/* Right: auth / user menu */}
+          <div className="nb-right">
+            {isLoggedIn ? (
+              <div className="nb-user-wrap">
+                <button
+                  className="nb-user-btn"
+                  onClick={() => setDropdownOpen(v => !v)}
+                >
+                  <span className="nb-user-avatar">{userAvatar}</span>
+                  <span className="nb-user-name nb-desktop-only">{user?.username}</span>
+                  <ChevronDown size={15} className={`nb-chevron ${dropdownOpen ? 'open' : ''}`} />
                 </button>
 
-                <div className="nav-links">
-
-                    <Link
-                        to="/"
-                        className={`nav-link ${isActive('/') ? 'active' : ''}`}
-                        aria-label="Contact page"
-                    >
-                        <Home size={20} />
-                        Home
-                    </Link>
-                    <Link
-                        to="/games"
-                        className={`nav-link ${isActive('/games') ? 'active' : ''}`}
-                        aria-label="Contact page"
-                    >
-                        <Gamepad2 size={20} />
-                        Games
-                    </Link>
-                </div>
-            </div>
-
-            <div className="nav-right">
-                {isLoggedIn ? (
-                    <>
-
-
-                        <div className="user-menu">
-                            <button
-                                className="user-menu-btn"
-                                onClick={() => navigate('/dashboard')}
-                                aria-label="User menu"
-                            >
-                                <div className="user-avatar">
-                                    {userInitial}
-                                </div>
-                                {/*<span className="user-name">{firstName}</span>*/}
-                                <ChevronDown size={16} />
-                            </button>
-
-                            <div className="user-dropdown">
-                                <div className="dropdown-header">
-                                    <p className="user-email">{user?.username}</p>
-                                </div>
-
-                                <Link to="/profile" className="dropdown-item">
-                                    <User size={18} /> Profile
-                                </Link>
-                                {/*<Link to="/achievements" className="dropdown-item">*/}
-                                {/*    <Trophy size={18} /> Achievements*/}
-                                {/*</Link>*/}
-                                {/*<Link to="/settings" className="dropdown-item">*/}
-                                {/*    <Settings size={18} /> Settings*/}
-                                {/*</Link>*/}
-                                {/*<Link*/}
-                                {/*    to="/level/lower-primary"*/}
-                                {/*    className="dropdown-item"*/}
-                                {/*    // className={`nav-link ${location.pathname.includes('/level') ? 'active' : ''}`}*/}
-                                {/*    aria-label="My learning level"*/}
-                                {/*>*/}
-                                {/*    <BookOpen size={20} />*/}
-                                {/*    My Level*/}
-                                {/*</Link>*/}
-
-                                {/*<Link*/}
-                                {/*    to="/dashboard"*/}
-                                {/*    className="dropdown-item"*/}
-                                {/*    // className={`nav-link ${isActive('/dashboard') ? 'active' : ''}`}*/}
-                                {/*    aria-label="Dashboard"*/}
-                                {/*>*/}
-                                {/*    <BarChart3 size={20} />*/}
-                                {/*    Dashboard*/}
-                                {/*</Link>*/}
-                                <div className="dropdown-divider"></div>
-                                <button className="dropdown-item logout" onClick={handleLogout}>
-                                    <LogOut size={18} /> Log Out
-                                </button>
-                            </div>
+                {dropdownOpen && (
+                  <>
+                    <div className="nb-dropdown-overlay" onClick={() => setDropdownOpen(false)} />
+                    <div className="nb-dropdown">
+                      <div className="nb-dropdown-header">
+                        <span className="nb-dd-avatar">{userAvatar}</span>
+                        <div>
+                          <p className="nb-dd-name">{user?.username}</p>
+                          <p className="nb-dd-role">{user?.type === 'parent' ? '👨‍👩‍👧 Parent' : '🎓 Student'}</p>
                         </div>
-                    </>
-                ) : (
-                    <>
-                        <button className="btn-outline" onClick={() => setOverlay('login')} aria-label="Log in">
-                            {/*<LogIn size={20} />*/}
-                            <span>Log In</span>
-                        </button>
-                        <button className="btn-primary" onClick={() => setOverlay('signup')} aria-label="Sign up">
-                            {/*<UserPlus size={20} />*/}
-                            <span>Sign Up</span>
-                        </button>
-                    </>
+                      </div>
+                      <div className="nb-dropdown-divider" />
+                      <Link to="/profile" className="nb-dd-item" onClick={() => setDropdownOpen(false)}>
+                        <User size={16} /> Profile
+                      </Link>
+                      <Link to="/dashboard" className="nb-dd-item" onClick={() => setDropdownOpen(false)}>
+                        <Trophy size={16} /> Dashboard
+                      </Link>
+                      <div className="nb-dropdown-divider" />
+                      <button className="nb-dd-item nb-dd-logout" onClick={handleLogout}>
+                        <LogOut size={16} /> Log Out
+                      </button>
+                    </div>
+                  </>
                 )}
+              </div>
+            ) : (
+              <div className="nb-auth-btns">
+                <button className="nb-btn-outline" onClick={() => setOverlay('login')}>Log In</button>
+                <button className="nb-btn-primary" onClick={() => setOverlay('signup')}>Sign Up</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </nav>
+
+      {/* ── Mobile drawer menu ────────────────────────────── */}
+      {menuOpen && (
+        <>
+          <div className="nb-drawer-overlay" onClick={() => setMenuOpen(false)} />
+          <div className="nb-drawer">
+            <div className="nb-drawer-header">
+              <GraduationCap size={32} color="#7c3aed" />
+              <span>BongoQuiz</span>
+              <button className="nb-drawer-close" onClick={() => setMenuOpen(false)}><X size={20} /></button>
             </div>
+
+            {isLoggedIn && (
+              <div className="nb-drawer-profile">
+                <span className="nb-drawer-avatar">{userAvatar}</span>
+                <div>
+                  <p className="nb-drawer-name">{user?.username}</p>
+                  <p className="nb-drawer-role">{user?.type === 'parent' ? '👨‍👩‍👧 Parent' : '🎓 Student'}</p>
+                </div>
+              </div>
+            )}
+
+            <nav className="nb-drawer-nav">
+              <Link to="/" className={`nb-drawer-item ${location.pathname === '/' ? 'active' : ''}`}>
+                <Home size={20} /> Home
+              </Link>
+              <Link to="/games" className={`nb-drawer-item ${isActive('/games') ? 'active' : ''}`}>
+                <Gamepad2 size={20} /> Games
+              </Link>
+              {isLoggedIn && (
+                <>
+                  <Link to={levelRoute || '/level'} className={`nb-drawer-item ${isActive('/level') ? 'active' : ''}`}>
+                    <BookOpen size={20} /> My Level
+                  </Link>
+                  <Link to="/profile" className={`nb-drawer-item ${isActive('/profile') ? 'active' : ''}`}>
+                    <User size={20} /> Profile
+                  </Link>
+                  <Link to="/dashboard" className={`nb-drawer-item ${isActive('/dashboard') ? 'active' : ''}`}>
+                    <Trophy size={20} /> Dashboard
+                  </Link>
+                  <button className="nb-drawer-item nb-drawer-logout" onClick={handleLogout}>
+                    <LogOut size={20} /> Log Out
+                  </button>
+                </>
+              )}
+            </nav>
+
+            {!isLoggedIn && (
+              <div className="nb-drawer-footer">
+                <button className="nb-btn-primary full" onClick={() => { setOverlay('signup'); setMenuOpen(false); }}>
+                  🎮 Create Free Account
+                </button>
+                <button className="nb-btn-outline full" onClick={() => { setOverlay('login'); setMenuOpen(false); }}>
+                  Log In
+                </button>
+              </div>
+            )}
+          </div>
+        </>
+      )}
+
+      {/* ── Bottom tab bar (mobile, logged in) ───────────── */}
+      {isLoggedIn && (
+        <nav className="nb-bottom-bar">
+          {bottomItems.map(item => (
+            <Link
+              key={item.path}
+              to={item.path}
+              className={`nb-bottom-item ${
+                item.path === '/'
+                  ? location.pathname === '/'
+                  : location.pathname.startsWith(item.path)
+                ? 'active' : ''
+              }`}
+            >
+              <item.icon size={22} />
+              <span>{item.label}</span>
+            </Link>
+          ))}
         </nav>
-    );
+      )}
+    </>
+  );
 };
 
 export default Navbar;

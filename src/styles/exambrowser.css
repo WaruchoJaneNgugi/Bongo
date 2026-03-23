@@ -11,7 +11,6 @@
     padding: 0.75rem 0 1.5rem;
     border-top: 1px solid #ede9fe;
     border-bottom: 1px solid #ede9fe;
-    /* prevent any child from blowing out the viewport */
     width: 100%;
     max-width: 100vw;
     overflow-x: hidden;
@@ -24,7 +23,6 @@
     gap: 0.5rem;
     width: 100%;
     background: rgba(30, 27, 75, 0.05);
-
     min-width: 0; /* critical: prevents flex children from overflowing */
 }
 
@@ -97,17 +95,36 @@
     background: rgba(30, 27, 75, 0.05);
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
+    /* Optional: show thin scrollbar (remove if you prefer hidden) */
+    scrollbar-width: thin;
+    scrollbar-color: #c084fc #e9e4ff;
+    /* Optional: snap scrolling */
+    scroll-snap-type: x mandatory;
 }
 
 .eb-card-track::-webkit-scrollbar {
-    display: none; /* Chrome / Safari */
+    height: 6px;
+}
+.eb-card-track::-webkit-scrollbar-track {
+    background: #e9e4ff;
+    border-radius: 10px;
+}
+.eb-card-track::-webkit-scrollbar-thumb {
+    background: #c084fc;
+    border-radius: 10px;
 }
 
 /* When "Show all" is toggled: wrap instead of scroll */
 .eb-card-track--expanded {
     flex-wrap: wrap;
     overflow-x: hidden;
+    /* reset scrollbar when wrapping */
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+    scroll-snap-type: none;
+}
+.eb-card-track--expanded::-webkit-scrollbar {
+    height: auto;
 }
 
 /* ── Individual exam card ────────────────────────────────── */
@@ -121,6 +138,8 @@
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
+    /* Snap alignment */
+    scroll-snap-align: start;
 }
 
 /* Pixel-border inset */
@@ -164,8 +183,6 @@
     display: block;
     border: 1px solid rgba(139, 0, 139, 0.13);
     border-radius: 14px;
-
-
     transition: filter 0.3s ease;
 }
 
@@ -302,7 +319,7 @@
     }
 
     .eb-card-track {
-        padding:  1.5rem 0.5rem;
+        padding: 1.5rem 0.5rem;
         gap: 0.75rem;
     }
 }

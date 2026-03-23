@@ -1,547 +1,585 @@
 import React, { useState, useRef } from 'react';
-import { useStore } from '../store/useStore';
+import { useStore, type EducationLevel, type StudentUser } from '../store/useStore';
+import { useNavigate } from 'react-router-dom';
 import {
-    Camera, Check, Lock, User, Eye, EyeOff,
-    TrendingUp, TrendingDown, Minus, Award,
-    Flame, Star, BookOpen, Target, Zap,
-    ChevronRight, BarChart2, Clock, CheckCircle2,
-    AlertCircle, Upload, Trophy,
-    Settings, Bell, Moon, Shield,
+  User, Trophy, BarChart3, Settings, Zap, Flame,
+  Star, CheckCircle, Shield, Plus, X, Users,
+  BookOpen, ChevronRight, Pencil, Trash2,
 } from 'lucide-react';
-import '../styles/studentprofile.css';
+import '../styles/profile.css';
 
-/* ─── Avatar options ───────────────────────────────────────── */
-const AVATAR_ICONS = [
-    { id: 'owl',    emoji: '🦉', label: 'Owl'    },
-    { id: 'lion',   emoji: '🦁', label: 'Lion'   },
-    { id: 'rocket', emoji: '🚀', label: 'Rocket' },
-    { id: 'star',   emoji: '⭐', label: 'Star'   },
-    { id: 'fire',   emoji: '🔥', label: 'Fire'   },
-    { id: 'dino',   emoji: '🦕', label: 'Dino'   },
-    { id: 'robot',  emoji: '🤖', label: 'Robot'  },
-    { id: 'ninja',  emoji: '🥷', label: 'Ninja'  },
-    { id: 'wizard', emoji: '🧙', label: 'Wizard' },
-    { id: 'alien',  emoji: '👾', label: 'Alien'  },
-    { id: 'fox',    emoji: '🦊', label: 'Fox'    },
-    { id: 'panda',  emoji: '🐼', label: 'Panda'  },
+/* ─── Shared ─────────────────────────────────────────────── */
+const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji: string; color: string }[] = [
+  { id: 'lower_primary', label: 'Lower Primary', grades: 'Grade 1–3',  emoji: '🧒', color: '#10b981' },
+  { id: 'middle_school', label: 'Middle School', grades: 'Grade 4–9',  emoji: '🧠', color: '#3b82f6' },
+  { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12',emoji: '🎓', color: '#a855f7' },
 ];
 
-/* ─── Analytics data ───────────────────────────────────────── */
-const STATS = [
-    { label: 'Quizzes Done',  value: 142,   icon: BookOpen, color: '#7c3aed', trend: 'up',   trendVal: '+12 this week'    },
-    { label: 'Avg Score',     value: '78%',  icon: Target,   color: '#0891b2', trend: 'up',   trendVal: '+5% vs last week' },
-    { label: 'Day Streak',    value: 5,      icon: Flame,    color: '#ea580c', trend: 'same', trendVal: 'Keep it up!'      },
-    { label: 'Points Earned', value: '1.2K', icon: Star,     color: '#d97706', trend: 'up',   trendVal: '+200 this week'   },
-];
+const AVATARS = ['🧒','👦','👧','🧑','👨','👩','🦸','🧙','🎓','🤓','😎','🌟','🦁','🐯','🦊','🐼'];
+const WEEK_SCORES = [72, 85, 68, 92, 78, 88, 76];
 
-const SUBJECT_SCORES = [
-    { subject: 'Mathematics', score: 82, sessions: 38, emoji: '🧮', color: '#7c3aed' },
-    { subject: 'Science',     score: 74, sessions: 27, emoji: '🧪', color: '#0891b2' },
-    { subject: 'English',     score: 91, sessions: 33, emoji: '📖', color: '#059669' },
-    { subject: 'Geography',   score: 65, sessions: 19, emoji: '🌍', color: '#d97706' },
-    { subject: 'Bible',       score: 88, sessions: 25, emoji: '✝️',  color: '#dc2626' },
-];
-
-const WEEKLY_ACTIVITY = [65, 80, 45, 90, 72, 58, 85];
-const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-
-const RECENT_ACTIVITY = [
-    { title: 'Math Quiz – Fractions',    score: 90, time: '2h ago',    pass: true  },
-    { title: 'Science – Photosynthesis', score: 62, time: 'Yesterday', pass: false },
-    { title: 'English Grammar Test',     score: 88, time: '2d ago',    pass: true  },
-    { title: 'Geography – East Africa',  score: 71, time: '3d ago',    pass: true  },
-];
-
-/* ─── Achievements data ────────────────────────────────────── */
 const ACHIEVEMENTS = [
-    { id: 1,  title: 'First Quiz',        desc: 'Complete your very first quiz',             emoji: '🎉', earned: true,  pts: 50  },
-    { id: 2,  title: 'Hot Streak',         desc: 'Maintain a 5-day study streak',             emoji: '🔥', earned: true,  pts: 100 },
-    { id: 3,  title: 'Perfect Score',      desc: 'Score 100% on any quiz',                    emoji: '💯', earned: true,  pts: 200 },
-    { id: 4,  title: 'Subject Master',     desc: 'Complete all quizzes in one subject',       emoji: '🏆', earned: true,  pts: 300 },
-    { id: 5,  title: 'Speed Runner',       desc: 'Finish a quiz in under 2 minutes',          emoji: '⚡', earned: true,  pts: 150 },
-    { id: 6,  title: 'Night Owl',          desc: 'Study after 9 PM',                          emoji: '🦉', earned: false, pts: 75  },
-    { id: 7,  title: 'Century Club',       desc: 'Complete 100 quizzes',                      emoji: '💪', earned: false, pts: 500 },
-    { id: 8,  title: 'Top of the Class',   desc: 'Reach the top 10% on the leaderboard',      emoji: '👑', earned: false, pts: 400 },
-    { id: 9,  title: 'Knowledge Seeker',   desc: 'Study all 5 subjects in a single week',     emoji: '📚', earned: false, pts: 250 },
-    { id: 10, title: 'Comeback Kid',       desc: 'Improve a subject score by 20% or more',   emoji: '🚀', earned: false, pts: 200 },
+  { emoji: '🔥', title: 'First Streak',   desc: '7 days in a row',       pts: 50,  earned: true  },
+  { emoji: '🏆', title: 'Quiz Master',    desc: 'Score 100% on 5 quizzes',pts: 200, earned: true  },
+  { emoji: '🧮', title: 'Math Wizard',    desc: 'Complete all math topics',pts: 150, earned: false },
+  { emoji: '⚡', title: 'Speed Demon',    desc: 'Finish a quiz < 2 min',   pts: 100, earned: true  },
+  { emoji: '📚', title: 'Bookworm',       desc: 'Read 50 lessons',         pts: 120, earned: false },
+  { emoji: '🌟', title: 'Top Performer',  desc: 'Rank #1 for a week',      pts: 300, earned: false },
 ];
 
-/* ─── Level / XP data ──────────────────────────────────────── */
-const CURRENT_LEVEL   = 3;
-// const CURRENT_XP      = 1200;
-// const NEXT_LEVEL_XP   = 1500;
-// const XP_PROGRESS_PCT = Math.round((CURRENT_XP / NEXT_LEVEL_XP) * 100);
+/* ─── PIN input ──────────────────────────────────────────── */
+const PinInput: React.FC<{
+  value: string; onChange: (v: string) => void;
+  hasError?: boolean; label?: string;
+}> = ({ value, onChange, hasError, label }) => {
+  const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
+                useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  const digits = value.padEnd(4, '').split('').slice(0, 4);
 
-// const LEVEL_MILESTONES = [
-//     { level: 1, title: 'Beginner',    xpRequired: 0,    reward: '🎒 Starter Pack',     unlocked: true  },
-//     { level: 2, title: 'Explorer',    xpRequired: 500,  reward: '🗺️ Explorer Badge',   unlocked: true  },
-//     { level: 3, title: 'Scholar',     xpRequired: 1000, reward: '📘 Scholar Crest',    unlocked: true  },
-//     { level: 4, title: 'Achiever',    xpRequired: 1500, reward: '🏅 Achiever Medal',   unlocked: false },
-//     { level: 5, title: 'Champion',    xpRequired: 2500, reward: '🏆 Champion Trophy',  unlocked: false },
-//     { level: 6, title: 'Legend',      xpRequired: 4000, reward: '👑 Legend Crown',     unlocked: false },
-// ];
-//
-// const LEVEL_PERKS = [
-//     { perk: 'Access to hard-mode quizzes',    available: true  },
-//     { perk: 'Custom profile badge',           available: true  },
-//     { perk: 'Priority leaderboard listing',   available: false },
-//     { perk: 'Bonus XP on weekly challenges',  available: false },
-// ];
+  const handleInput = (i: number, char: string) => {
+    if (!/^\d?$/.test(char)) return;
+    const d = [...digits]; d[i] = char;
+    onChange(d.join('').replace(/\s/g, ''));
+    if (char && i < 3) refs[i + 1].current?.focus();
+  };
+  const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !digits[i] && i > 0) refs[i - 1].current?.focus();
+  };
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    onChange(text);
+    refs[Math.min(text.length, 3)].current?.focus();
+    e.preventDefault();
+  };
 
-/* ─── Helpers ──────────────────────────────────────────────── */
-const TrendIcon = ({ trend }: { trend: string }) => {
-    if (trend === 'up')   return <TrendingUp  size={14} className="sp-trend-up"   />;
-    if (trend === 'down') return <TrendingDown size={14} className="sp-trend-down" />;
-    return <Minus size={14} className="sp-trend-same" />;
+  return (
+    <div className="pr-form-group">
+      {label && <label className="pr-label">{label}</label>}
+      <div className="ov-pin-row" style={{ justifyContent: 'flex-start' }}>
+        {[0,1,2,3].map(i => (
+          <input
+            key={i}
+            ref={refs[i]}
+            type="password"
+            inputMode="numeric"
+            maxLength={1}
+            value={digits[i] || ''}
+            onChange={e => handleInput(i, e.target.value)}
+            onKeyDown={e => handleKeyDown(i, e)}
+            onPaste={handlePaste}
+            className={`ov-pin-box ${hasError ? 'error' : ''} ${digits[i] ? 'filled' : ''}`}
+            autoComplete="off"
+          />
+        ))}
+      </div>
+    </div>
+  );
 };
 
-type TabId = 'analytics' | 'achievements' |'account' | 'settings';
+/* ─── Add / Edit Student Modal ───────────────────────────── */
+const StudentModal: React.FC<{
+  parentPhone: string;
+  existingStudent?: StudentUser;
+  studentCount: number;
+  onClose: () => void;
+}> = ({ parentPhone, existingStudent, studentCount, onClose }) => {
+  const { addStudentToParent, removeStudentFromParent, user } = useStore();
+  const parent = user?.type === 'parent' ? user : null;
 
-const TABS: { id: TabId; icon: React.ElementType; label: string }[] = [
-    { id: 'analytics',    icon: BarChart2, label: 'Analytics'        },
-    { id: 'achievements', icon: Trophy,    label: 'Achievements'     },
-    // { id: 'level',        icon: Layers,    label: 'My Level'         },
-    { id: 'account',      icon: User,      label: 'Account Settings' },
-    { id: 'settings',     icon: Settings,  label: 'Settings'         },
-];
+  const isEdit = !!existingStudent;
+  const [name,   setName]   = useState(existingStudent?.username ?? '');
+  const [level,  setLevel]  = useState<EducationLevel>(existingStudent?.educationLevel ?? 'middle_school');
+  const [avatar, setAvatar] = useState(existingStudent?.avatar ?? '🧒');
+  const [pin,    setPin]    = useState(existingStudent?.pin ?? '');
+  const [error,  setError]  = useState('');
 
-/* ═══════════════════════════════════════════════════════════ */
-const StudentProfile: React.FC = () => {
-    const { user } = useStore();
+  const handleSave = () => {
+    setError('');
+    if (!name.trim())    { setError('Enter the student\'s name'); return; }
+    if (pin.length !== 4){ setError('Set a 4-digit PIN for the student'); return; }
 
-    /* Avatar */
-    const [selectedAvatar, setSelectedAvatar] = useState('owl');
-    const [customImage, setCustomImage]       = useState<string | null>(null);
-    const [avatarSaved, setAvatarSaved]       = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    if (isEdit && existingStudent) {
+      // For edit: remove old, add updated
+      removeStudentFromParent(parentPhone, existingStudent.phone);
+      addStudentToParent(parentPhone, { ...existingStudent, username: name.trim(), educationLevel: level, avatar, pin });
+    } else {
+      // New student: phone = parentPhone-N (next slot)
+      const idx = (parent?.students.length ?? studentCount) + 1;
+      const studentPhone = `${parentPhone}-${idx}`;
+      const newStudent: StudentUser = {
+        type: 'student',
+        username: name.trim(),
+        phone: studentPhone,
+        pin,
+        educationLevel: level,
+        parentPhone,
+        avatar,
+        xp: 0, level: 1, streak: 0, points: 0,
+      };
+      addStudentToParent(parentPhone, newStudent);
+    }
+    onClose();
+  };
 
-    /* Account */
-    const [username, setUsername]           = useState(user?.username ?? 'Student');
-    const [usernameSaved, setUsernameSaved] = useState(false);
-    const [currentPw, setCurrentPw]         = useState('');
-    const [newPw, setNewPw]                 = useState('');
-    const [confirmPw, setConfirmPw]         = useState('');
-    const [showCurrent, setShowCurrent]     = useState(false);
-    const [showNew, setShowNew]             = useState(false);
-    const [showConfirm, setShowConfirm]     = useState(false);
-    const [pwSaved, setPwSaved]             = useState(false);
-    const [pwError, setPwError]             = useState('');
-
-    /* Settings toggles */
-    const [notifs, setNotifs]         = useState(true);
-    const [sound, setSound]           = useState(true);
-    const [darkMode, setDarkMode]     = useState(false);
-    const [language, setLanguage]     = useState('English');
-    const [privacy, setPrivacy]       = useState('Friends');
-
-    /* Active tab */
-    const [activeTab, setActiveTab] = useState<TabId>('analytics');
-
-    /* Achievements filter */
-    const [achFilter, setAchFilter] = useState<'all' | 'earned' | 'locked'>('all');
-
-    /* Handlers */
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = () => setCustomImage(reader.result as string);
-        reader.readAsDataURL(file);
-        setSelectedAvatar('custom');
-    };
-    const saveAvatar   = () => { setAvatarSaved(true);   setTimeout(() => setAvatarSaved(false),   2000); };
-    const saveUsername = () => { setUsernameSaved(true); setTimeout(() => setUsernameSaved(false), 2000); };
-    const savePassword = () => {
-        setPwError('');
-        if (!currentPw)         return setPwError('Enter your current password.');
-        if (newPw.length < 6)   return setPwError('Password must be at least 6 characters.');
-        if (newPw !== confirmPw) return setPwError('Passwords do not match.');
-        setPwSaved(true);
-        setCurrentPw(''); setNewPw(''); setConfirmPw('');
-        setTimeout(() => setPwSaved(false), 2000);
-    };
-
-    const currentAvatar  = AVATAR_ICONS.find(a => a.id === selectedAvatar);
-    const overallScore   = Math.round(SUBJECT_SCORES.reduce((s, x) => s + x.score, 0) / SUBJECT_SCORES.length);
-    const filteredAch    = ACHIEVEMENTS.filter(a =>
-        achFilter === 'all' ? true : achFilter === 'earned' ? a.earned : !a.earned
-    );
-
-    return (
-        <div className="sp-root">
-
-            {/* ── HERO ─────────────────────────────────────────── */}
-            <section className="sp-hero">
-                <div className="sp-hero-bg" />
-                <div className="sp-hero-inner">
-                    <div className="sp-avatar-wrap">
-                        <div className="sp-avatar-ring">
-                            {customImage && selectedAvatar === 'custom'
-                                ? <img src={customImage} alt="Profile" className="sp-avatar-photo" />
-                                : <span className="sp-avatar-emoji">{currentAvatar?.emoji ?? '🦉'}</span>
-                            }
-                        </div>
-                        <button className="sp-avatar-edit-btn" onClick={() => fileInputRef.current?.click()} aria-label="Change avatar">
-                            <Camera size={14} />
-                        </button>
-                        <input ref={fileInputRef} type="file" accept="image/*" className="sp-hidden-input" onChange={handleFileChange} />
-                    </div>
-
-                    <div className="sp-hero-info">
-                        <h1 className="sp-hero-name">{username}</h1>
-                        <div className="sp-hero-badges">
-                            <span className="sp-badge sp-badge-level"><Zap size={12} /> Level {CURRENT_LEVEL}</span>
-                            <span className="sp-badge sp-badge-streak"><Flame size={12} /> 5 Day Streak</span>
-                            <span className="sp-badge sp-badge-rank"><Award size={12} /> Top 15%</span>
-                        </div>
-                        <p className="sp-hero-score-label">Overall Performance</p>
-                        <div className="sp-hero-score-bar">
-                            <div className="sp-hero-score-fill" style={{ width: `${overallScore}%` }} />
-                            <span className="sp-hero-score-pct">{overallScore}%</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Scrollable tab bar */}
-                <div className="sp-tabs-wrap">
-                    <div className="sp-tabs">
-                        {TABS.map(({ id, icon: Icon, label }) => (
-                            <button
-                                key={id}
-                                className={`sp-tab ${activeTab === id ? 'sp-tab-active' : ''}`}
-                                onClick={() => setActiveTab(id)}
-                            >
-                                <Icon size={15} /> {label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* ══════════════════════════════════════════════════
-                ANALYTICS TAB
-            ══════════════════════════════════════════════════ */}
-            {activeTab === 'analytics' && (
-                <div className="sp-content sp-fade-in">
-                    <div className="sp-stats-grid">
-                        {STATS.map(({ label, value, icon: Icon, color, trend, trendVal }) => (
-                            <div key={label} className="sp-stat-card">
-                                <div className="sp-stat-icon" style={{ background: `${color}18`, color }}><Icon size={20} /></div>
-                                <div className="sp-stat-body">
-                                    <span className="sp-stat-value">{value}</span>
-                                    <span className="sp-stat-label">{label}</span>
-                                </div>
-                                <div className="sp-stat-trend"><TrendIcon trend={trend} /><span>{trendVal}</span></div>
-                            </div>
-                        ))}
-                    </div>
-
-                    <div className="sp-card">
-                        <div className="sp-card-header">
-                            <h3><Clock size={16} /> Weekly Activity</h3>
-                            <span className="sp-card-sub">Score % per day</span>
-                        </div>
-                        <div className="sp-bar-chart">
-                            {WEEKLY_ACTIVITY.map((val, i) => (
-                                <div key={i} className="sp-bar-col">
-                                    <span className="sp-bar-val">{val}%</span>
-                                    <div className="sp-bar-track">
-                                        <div className="sp-bar-fill" style={{ height: `${val}%` }} />
-                                    </div>
-                                    <span className="sp-bar-day">{DAYS[i]}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Target size={16} /> Subject Performance</h3></div>
-                        <div className="sp-subjects-list">
-                            {SUBJECT_SCORES.map(({ subject, score, sessions, emoji, color }) => (
-                                <div key={subject} className="sp-subject-row">
-                                    <span className="sp-subject-emoji">{emoji}</span>
-                                    <div className="sp-subject-info">
-                                        <div className="sp-subject-top">
-                                            <span className="sp-subject-name">{subject}</span>
-                                            <span className="sp-subject-score" style={{ color }}>{score}%</span>
-                                        </div>
-                                        <div className="sp-subject-bar-track">
-                                            <div className="sp-subject-bar-fill" style={{ width: `${score}%`, background: color }} />
-                                        </div>
-                                        <span className="sp-subject-sessions">{sessions} sessions</span>
-                                    </div>
-                                    <span className="sp-subject-grade" style={{ background: `${color}18`, color }}>
-                                        {score >= 80 ? 'A' : score >= 65 ? 'B' : 'C'}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    <div className="sp-card">
-                        <div className="sp-card-header">
-                            <h3><CheckCircle2 size={16} /> Recent Quizzes</h3>
-                            <button className="sp-link-btn">See All <ChevronRight size={13} /></button>
-                        </div>
-                        <div className="sp-activity-list">
-                            {RECENT_ACTIVITY.map(({ title, score, time, pass }) => (
-                                <div key={title} className="sp-activity-row">
-                                    <div className={`sp-activity-dot ${pass ? 'sp-dot-pass' : 'sp-dot-fail'}`}>
-                                        {pass ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}
-                                    </div>
-                                    <div className="sp-activity-info">
-                                        <span className="sp-activity-title">{title}</span>
-                                        <span className="sp-activity-time">{time}</span>
-                                    </div>
-                                    <span className={`sp-activity-score ${pass ? 'sp-score-pass' : 'sp-score-fail'}`}>{score}%</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* ══════════════════════════════════════════════════
-                ACHIEVEMENTS TAB
-            ══════════════════════════════════════════════════ */}
-            {activeTab === 'achievements' && (
-                <div className="sp-content sp-fade-in">
-
-                    {/* Summary strip */}
-                    <div className="sp-ach-summary">
-                        <div className="sp-ach-sum-item">
-                            <span className="sp-ach-sum-val">{ACHIEVEMENTS.filter(a => a.earned).length}</span>
-                            <span className="sp-ach-sum-lbl">Earned</span>
-                        </div>
-                        <div className="sp-ach-sum-divider" />
-                        <div className="sp-ach-sum-item">
-                            <span className="sp-ach-sum-val">{ACHIEVEMENTS.filter(a => !a.earned).length}</span>
-                            <span className="sp-ach-sum-lbl">Locked</span>
-                        </div>
-                        <div className="sp-ach-sum-divider" />
-                        <div className="sp-ach-sum-item">
-                            <span className="sp-ach-sum-val">
-                                {ACHIEVEMENTS.filter(a => a.earned).reduce((s, a) => s + a.pts, 0)}
-                            </span>
-                            <span className="sp-ach-sum-lbl">Pts Earned</span>
-                        </div>
-                    </div>
-
-                    {/* Filter pills */}
-                    <div className="sp-ach-filters">
-                        {(['all', 'earned', 'locked'] as const).map(f => (
-                            <button
-                                key={f}
-                                className={`sp-ach-filter-btn ${achFilter === f ? 'sp-ach-filter-active' : ''}`}
-                                onClick={() => setAchFilter(f)}
-                            >
-                                {f === 'all' ? 'All' : f === 'earned' ? '✅ Earned' : '🔒 Locked'}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Grid */}
-                    <div className="sp-ach-grid">
-                        {filteredAch.map(({ id, title, desc, emoji, earned, pts }) => (
-                            <div key={id} className={`sp-ach-card ${earned ? 'sp-ach-earned' : 'sp-ach-locked'}`}>
-                                <div className="sp-ach-emoji-wrap">
-                                    <span className="sp-ach-emoji">{emoji}</span>
-                                    {!earned && <div className="sp-ach-lock-overlay">🔒</div>}
-                                </div>
-                                <div className="sp-ach-info">
-                                    <span className="sp-ach-title">{title}</span>
-                                    <span className="sp-ach-desc">{desc}</span>
-                                </div>
-                                <span className={`sp-ach-pts ${earned ? 'sp-ach-pts-earned' : ''}`}>+{pts} pts</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* ══════════════════════════════════════════════════
-                ACCOUNT SETTINGS TAB
-            ══════════════════════════════════════════════════ */}
-            {activeTab === 'account' && (
-                <div className="sp-content sp-fade-in">
-
-                    {/* Avatar picker */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Camera size={16} /> Choose Your Avatar</h3></div>
-                        <div className="sp-avatar-grid">
-                            {AVATAR_ICONS.map(({ id, emoji, label }) => (
-                                <button
-                                    key={id}
-                                    className={`sp-avatar-option ${selectedAvatar === id ? 'sp-avatar-selected' : ''}`}
-                                    onClick={() => { setSelectedAvatar(id); setCustomImage(null); }}
-                                    aria-label={label} title={label}
-                                >
-                                    <span>{emoji}</span>
-                                    {selectedAvatar === id && <span className="sp-avatar-check"><Check size={12} /></span>}
-                                </button>
-                            ))}
-                            <button
-                                className={`sp-avatar-option sp-avatar-upload ${selectedAvatar === 'custom' ? 'sp-avatar-selected' : ''}`}
-                                onClick={() => fileInputRef.current?.click()} title="Upload from device"
-                            >
-                                {customImage ? <img src={customImage} alt="Custom" className="sp-upload-preview" /> : <Upload size={22} />}
-                                {selectedAvatar === 'custom' && <span className="sp-avatar-check"><Check size={12} /></span>}
-                            </button>
-                        </div>
-                        <p className="sp-avatar-hint"><Upload size={13} /> You can also upload a photo from your device</p>
-                        <button className={`sp-save-btn ${avatarSaved ? 'sp-save-btn-success' : ''}`} onClick={saveAvatar}>
-                            {avatarSaved ? <><Check size={16} /> Avatar Saved!</> : 'Save Avatar'}
-                        </button>
-                    </div>
-
-                    {/* Edit username */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><User size={16} /> Edit Username</h3></div>
-                        <div className="sp-field-group">
-                            <label className="sp-label">Username</label>
-                            <div className="sp-input-wrap">
-                                <User size={16} className="sp-input-icon" />
-                                <input type="text" className="sp-input" value={username} onChange={e => setUsername(e.target.value)} placeholder="Your username" />
-                            </div>
-                        </div>
-                        <button className={`sp-save-btn ${usernameSaved ? 'sp-save-btn-success' : ''}`} onClick={saveUsername}>
-                            {usernameSaved ? <><Check size={16} /> Username Saved!</> : 'Save Username'}
-                        </button>
-                    </div>
-
-                    {/* Change password */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Lock size={16} /> Change Password</h3></div>
-                        {pwError && <div className="sp-error-banner"><AlertCircle size={15} /> {pwError}</div>}
-                        {[
-                            { label: 'Current Password', value: currentPw, set: setCurrentPw, show: showCurrent, toggle: () => setShowCurrent(p => !p) },
-                            { label: 'New Password',     value: newPw,     set: setNewPw,     show: showNew,     toggle: () => setShowNew(p => !p)     },
-                            { label: 'Confirm Password', value: confirmPw, set: setConfirmPw, show: showConfirm, toggle: () => setShowConfirm(p => !p) },
-                        ].map(({ label, value, set, show, toggle }) => (
-                            <div className="sp-field-group" key={label}>
-                                <label className="sp-label">{label}</label>
-                                <div className="sp-input-wrap">
-                                    <Lock size={16} className="sp-input-icon" />
-                                    <input type={show ? 'text' : 'password'} className="sp-input" value={value} onChange={e => set(e.target.value)} placeholder="••••••••" />
-                                    <button className="sp-pw-toggle" onClick={toggle} type="button">
-                                        {show ? <EyeOff size={16} /> : <Eye size={16} />}
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                        <p className="sp-pw-hint">Minimum 6 characters.</p>
-                        <button className={`sp-save-btn ${pwSaved ? 'sp-save-btn-success' : ''}`} onClick={savePassword}>
-                            {pwSaved ? <><Check size={16} /> Password Updated!</> : 'Update Password'}
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {/* ══════════════════════════════════════════════════
-                SETTINGS TAB
-            ══════════════════════════════════════════════════ */}
-            {activeTab === 'settings' && (
-                <div className="sp-content sp-fade-in">
-
-                    {/* Notifications */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Bell size={16} /> Notifications</h3></div>
-                        <div className="sp-settings-list">
-                            {[
-                                { label: 'Push Notifications', sub: 'Get reminders to study daily', val: notifs,  set: setNotifs  },
-                                { label: 'Sound Effects',       sub: 'Play sounds during quizzes',  val: sound,   set: setSound   },
-                            ].map(({ label, sub, val, set }) => (
-                                <div key={label} className="sp-setting-row">
-                                    <div className="sp-setting-info">
-                                        <span className="sp-setting-label">{label}</span>
-                                        <span className="sp-setting-sub">{sub}</span>
-                                    </div>
-                                    <button
-                                        className={`sp-toggle ${val ? 'sp-toggle-on' : ''}`}
-                                        onClick={() => set(p => !p)}
-                                        aria-label={label}
-                                    >
-                                        <span className="sp-toggle-thumb" />
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Display */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Moon size={16} /> Display</h3></div>
-                        <div className="sp-settings-list">
-                            <div className="sp-setting-row">
-                                <div className="sp-setting-info">
-                                    <span className="sp-setting-label">Dark Mode</span>
-                                    <span className="sp-setting-sub">Switch to a darker interface</span>
-                                </div>
-                                <button
-                                    className={`sp-toggle ${darkMode ? 'sp-toggle-on' : ''}`}
-                                    onClick={() => setDarkMode(p => !p)}
-                                    aria-label="Dark mode"
-                                >
-                                    <span className="sp-toggle-thumb" />
-                                </button>
-                            </div>
-                            <div className="sp-setting-row">
-                                <div className="sp-setting-info">
-                                    <span className="sp-setting-label">Language</span>
-                                    <span className="sp-setting-sub">Choose your preferred language</span>
-                                </div>
-                                <select
-                                    className="sp-select"
-                                    value={language}
-                                    onChange={e => setLanguage(e.target.value)}
-                                >
-                                    <option>English</option>
-                                    <option>Swahili</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Privacy */}
-                    <div className="sp-card">
-                        <div className="sp-card-header"><h3><Shield size={16} /> Privacy</h3></div>
-                        <div className="sp-settings-list">
-                            <div className="sp-setting-row">
-                                <div className="sp-setting-info">
-                                    <span className="sp-setting-label">Profile Visibility</span>
-                                    <span className="sp-setting-sub">Who can see your profile and scores</span>
-                                </div>
-                                <select className="sp-select" value={privacy} onChange={e => setPrivacy(e.target.value)}>
-                                    <option>Everyone</option>
-                                    <option>Friends</option>
-                                    <option>Only Me</option>
-                                </select>
-                            </div>
-                            <div className="sp-setting-row">
-                                <div className="sp-setting-info">
-                                    <span className="sp-setting-label">Show on Leaderboard</span>
-                                    <span className="sp-setting-sub">Display your rank publicly</span>
-                                </div>
-                                <button className="sp-toggle sp-toggle-on" aria-label="Leaderboard">
-                                    <span className="sp-toggle-thumb" />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Danger zone */}
-                    <div className="sp-card sp-danger-card">
-                        <div className="sp-card-header"><h3><AlertCircle size={16} /> Danger Zone</h3></div>
-                        <p className="sp-danger-desc">These actions are permanent and cannot be undone.</p>
-                        <div className="sp-danger-btns">
-                            <button className="sp-danger-btn sp-danger-outline">Reset Progress</button>
-                            <button className="sp-danger-btn sp-danger-solid">Delete Account</button>
-                        </div>
-                    </div>
-                </div>
-            )}
+  return (
+    <div className="pr-modal-backdrop" onClick={onClose}>
+      <div className="pr-modal" onClick={e => e.stopPropagation()}>
+        <div className="pr-modal-header">
+          <h3>{isEdit ? '✏️ Edit Student' : '➕ Add Student'}</h3>
+          <button className="pr-modal-close" onClick={onClose}><X size={18} /></button>
         </div>
+
+        {error && <div className="pr-error"><Shield size={14} />{error}</div>}
+
+        {/* Avatar */}
+        <div className="pr-form-group">
+          <label className="pr-label">Avatar</label>
+          <div className="pr-avatar-grid-sm">
+            {AVATARS.map(a => (
+              <button
+                key={a}
+                className={`pr-avatar-opt ${avatar === a ? 'selected' : ''}`}
+                onClick={() => setAvatar(a)}
+              >{a}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Name */}
+        <div className="pr-form-group">
+          <label className="pr-label">Student Name</label>
+          <input
+            className="pr-input"
+            placeholder="e.g. Brian Otieno"
+            value={name}
+            onChange={e => { setName(e.target.value); setError(''); }}
+          />
+        </div>
+
+        {/* Level */}
+        <div className="pr-form-group">
+          <label className="pr-label">Education Level</label>
+          <div className="pr-level-grid">
+            {LEVEL_OPTIONS.map(opt => (
+              <button
+                key={opt.id}
+                className={`pr-level-card ${level === opt.id ? 'selected' : ''}`}
+                style={level === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
+                onClick={() => setLevel(opt.id)}
+              >
+                <span>{opt.emoji}</span>
+                <div>
+                  <span className="pr-level-name">{opt.label}</span>
+                  <span className="pr-level-grades">{opt.grades}</span>
+                </div>
+                {level === opt.id && <CheckCircle size={16} color={opt.color} style={{ marginLeft: 'auto' }} />}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* PIN */}
+        <PinInput
+          value={pin}
+          onChange={v => { setPin(v); setError(''); }}
+          hasError={!!error && pin.length < 4}
+          label="🔐 Student PIN (4 digits)"
+        />
+        <p className="pr-hint" style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
+          The student will use this PIN to log in
+        </p>
+
+        <div className="pr-modal-actions">
+          <button className="pr-save-btn" onClick={handleSave}>
+            <CheckCircle size={16} />
+            {isEdit ? 'Save Changes' : 'Add Student'}
+          </button>
+          <button className="pr-cancel-btn" onClick={onClose}>Cancel</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ─── Parent Profile ─────────────────────────────────────── */
+const ParentProfile: React.FC = () => {
+  const { user, updateUser, removeStudentFromParent } = useStore();
+  const parent = user?.type === 'parent' ? user : null;
+  if (!parent) return null;
+
+  const [tab,        setTab]        = useState<'students' | 'account'>('students');
+  const [showModal,  setShowModal]  = useState(false);
+  const [editTarget, setEditTarget] = useState<StudentUser | undefined>(undefined);
+  const [editName,   setEditName]   = useState(parent.username);
+  const [saveMsg,    setSaveMsg]    = useState('');
+  const [error,      setError]      = useState('');
+
+  const openAdd  = ()  => { setEditTarget(undefined); setShowModal(true); };
+  const openEdit = (s: StudentUser) => { setEditTarget(s); setShowModal(true); };
+  const closeModal = () => { setShowModal(false); setEditTarget(undefined); };
+
+  const handleSaveAccount = () => {
+    setError('');
+    if (!editName.trim()) { setError('Name cannot be empty'); return; }
+    updateUser({ username: editName.trim() });
+    setSaveMsg('Saved!');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
+
+  return (
+    <div className="pr-root">
+      {/* Hero */}
+      <div className="pr-hero">
+        <div className="pr-hero-bg" />
+        <div className="pr-hero-inner">
+          <div className="pr-avatar">{parent.avatar || '👩'}</div>
+          <div className="pr-hero-info">
+            <h1 className="pr-name">{parent.username}</h1>
+            <div className="pr-hero-chips">
+              <span className="pr-chip">👨‍👩‍👧 Parent Account</span>
+              <span className="pr-chip">
+                <Users size={13} />
+                {parent.students.length} student{parent.students.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="pr-tabs">
+          {[
+            { id: 'students', label: 'My Students', icon: Users },
+            { id: 'account',  label: 'Account',     icon: Settings },
+          ].map(t => (
+            <button
+              key={t.id}
+              className={`pr-tab ${tab === t.id ? 'active' : ''}`}
+              onClick={() => setTab(t.id as typeof tab)}
+            >
+              <t.icon size={15} />{t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="pr-content">
+
+        {/* ── Students tab ──────────────────────────────────── */}
+        {tab === 'students' && (
+          <>
+            <div className="pr-students-header">
+              <div>
+                <h3>Student Accounts</h3>
+                <p>Manage your children's learning profiles</p>
+              </div>
+              <button className="pr-add-student-btn" onClick={openAdd}>
+                <Plus size={16} /> Add Student
+              </button>
+            </div>
+
+            {parent.students.length === 0 ? (
+              <div className="pr-empty-students">
+                <span className="pr-empty-emoji">👨‍👩‍👧‍👦</span>
+                <h4>No students yet</h4>
+                <p>Add your child's account to track their learning progress.</p>
+                <button className="pr-add-student-btn" onClick={openAdd}>
+                  <Plus size={16} /> Add First Student
+                </button>
+              </div>
+            ) : (
+              <div className="pr-student-cards">
+                {parent.students.map((student, i) => {
+                  const lvl = LEVEL_OPTIONS.find(l => l.id === student.educationLevel)!;
+                  return (
+                    <div key={student.phone} className="pr-student-card">
+                      <div className="pr-sc-left">
+                        <div className="pr-sc-avatar" style={{ background: `${lvl.color}20` }}>
+                          {student.avatar}
+                        </div>
+                        <div className="pr-sc-info">
+                          <span className="pr-sc-name">{student.username}</span>
+                          <span className="pr-sc-level" style={{ color: lvl.color }}>
+                            {lvl.emoji} {lvl.label} · {lvl.grades}
+                          </span>
+                          <span className="pr-sc-phone">
+                            Login: <code>{student.phone}</code>
+                          </span>
+                        </div>
+                      </div>
+                      <div className="pr-sc-stats">
+                        <div className="pr-sc-stat">
+                          <Zap size={13} color="#a855f7" />
+                          <span>{student.xp} XP</span>
+                        </div>
+                        <div className="pr-sc-stat">
+                          <Flame size={13} color="#f97316" />
+                          <span>{student.streak}d</span>
+                        </div>
+                      </div>
+                      <div className="pr-sc-actions">
+                        <button
+                          className="pr-sc-btn pr-sc-btn-edit"
+                          onClick={() => openEdit(student)}
+                          title="Edit"
+                        >
+                          <Pencil size={15} />
+                        </button>
+                        <button
+                          className="pr-sc-btn pr-sc-btn-delete"
+                          onClick={() => {
+                            if (confirm(`Remove ${student.username}?`))
+                              removeStudentFromParent(parent.phone, student.phone);
+                          }}
+                          title="Remove"
+                        >
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            <div className="pr-login-hint">
+              <BookOpen size={15} color="#7c3aed" />
+              <span>
+                Students log in on the <strong>Student</strong> tab using their phone number
+                (e.g. <code>{parent.phone}-1</code>) and their PIN.
+              </span>
+            </div>
+          </>
+        )}
+
+        {/* ── Account tab ───────────────────────────────────── */}
+        {tab === 'account' && (
+          <div className="pr-card">
+            <h3><User size={17} /> Edit Profile</h3>
+
+            {error   && <div className="pr-error"><Shield size={14} />{error}</div>}
+            {saveMsg && <div className="pr-success"><CheckCircle size={14} />{saveMsg}</div>}
+
+            <div className="pr-form-group">
+              <label className="pr-label">Display Name</label>
+              <input
+                className="pr-input"
+                value={editName}
+                onChange={e => setEditName(e.target.value)}
+              />
+            </div>
+
+            <div className="pr-form-group">
+              <label className="pr-label">Phone Number</label>
+              <input className="pr-input" value={parent.phone} disabled style={{ opacity: 0.6 }} />
+              <span className="pr-hint">Phone cannot be changed</span>
+            </div>
+
+            <button className="pr-save-btn" onClick={handleSaveAccount}>
+              <CheckCircle size={16} /> Save Changes
+            </button>
+
+            <div className="pr-danger-zone">
+              <h4>⚠️ Danger Zone</h4>
+              <p>Deleting your account also removes all student accounts under it.</p>
+              <button className="pr-delete-btn">Delete Account</button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <StudentModal
+          parentPhone={parent.phone}
+          existingStudent={editTarget}
+          studentCount={parent.students.length}
+          onClose={closeModal}
+        />
+      )}
+    </div>
+  );
+};
+
+/* ─── Student Profile ────────────────────────────────────── */
+const StudentProfile_Inner: React.FC = () => {
+  const { user, updateUser } = useStore();
+  const student = user?.type === 'student' ? user : null;
+  if (!student) return null;
+
+  const [tab,        setTab]        = useState<'analytics'|'achievements'|'account'>('analytics');
+  const [editName,   setEditName]   = useState(student.username);
+  const [saveMsg,    setSaveMsg]    = useState('');
+  const [error,      setError]      = useState('');
+
+  const xpInLevel  = student.xp % 1000;
+  const xpPercent  = (xpInLevel / 1000) * 100;
+  const earnedAch  = ACHIEVEMENTS.filter(a => a.earned).length;
+
+  const handleSave = () => {
+    setError('');
+    if (!editName.trim()) { setError('Name cannot be empty'); return; }
+    updateUser({ username: editName.trim() });
+    setSaveMsg('Saved!');
+    setTimeout(() => setSaveMsg(''), 2000);
+  };
+
+  return (
+    <div className="pr-root">
+      {/* Hero */}
+      <div className="pr-hero">
+        <div className="pr-hero-bg" />
+        <div className="pr-hero-inner">
+          <div className="pr-avatar">{student.avatar || '🧒'}</div>
+          <div className="pr-hero-info">
+            <h1 className="pr-name">{student.username}</h1>
+            <div className="pr-hero-chips">
+              <span className="pr-chip">🎓 Level {student.level}</span>
+              <span className="pr-chip pr-chip-streak">
+                <Flame size={13} color="#f97316" fill="#f97316" />
+                {student.streak} day streak
+              </span>
+              <span className="pr-chip">
+                <Star size={13} color="#fbbf24" fill="#fbbf24" />
+                {student.points.toLocaleString()} pts
+              </span>
+            </div>
+            <div className="pr-xp-wrap">
+              <div className="pr-xp-label">
+                <Zap size={13} />
+                <span>{xpInLevel} / 1000 XP to Level {student.level + 1}</span>
+              </div>
+              <div className="pr-xp-track">
+                <div className="pr-xp-fill" style={{ width: `${xpPercent}%` }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pr-tabs">
+          {[
+            { id: 'analytics',    label: 'Analytics',   icon: BarChart3 },
+            { id: 'achievements', label: 'Badges',       icon: Trophy },
+            { id: 'account',      label: 'Account',      icon: Settings },
+          ].map(t => (
+            <button
+              key={t.id}
+              className={`pr-tab ${tab === t.id ? 'active' : ''}`}
+              onClick={() => setTab(t.id as typeof tab)}
+            >
+              <t.icon size={15} />{t.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="pr-content">
+        {/* Analytics */}
+        {tab === 'analytics' && (
+          <>
+            <div className="pr-card">
+              <h3><BarChart3 size={17} /> Weekly Performance</h3>
+              <div className="pr-bar-chart">
+                {WEEK_SCORES.map((s, i) => (
+                  <div key={i} className="pr-bar-col">
+                    <span className="pr-bar-val">{s}%</span>
+                    <div className="pr-bar-track">
+                      <div className="pr-bar-fill" style={{ height: `${s}%` }} />
+                    </div>
+                    <span className="pr-bar-day">{['M','T','W','T','F','S','S'][i]}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="pr-stats-2col">
+              {[
+                { icon: <Trophy size={20} color="#f59e0b"/>, bg:'#fffbeb', val:`${earnedAch}/${ACHIEVEMENTS.length}`, lbl:'Badges Earned' },
+                { icon: <Zap    size={20} color="#a855f7"/>, bg:'#f5f3ff', val:`${student.xp} XP`,                    lbl:'Total XP'     },
+                { icon: <Flame  size={20} color="#f97316"/>, bg:'#fff7ed', val:`${student.streak}`,                    lbl:'Day Streak'   },
+                { icon: <Star   size={20} color="#f59e0b"/>, bg:'#fffbeb', val:`${student.points.toLocaleString()}`,   lbl:'Points'       },
+              ].map(s => (
+                <div key={s.lbl} className="pr-stat-card">
+                  <div className="pr-stat-icon" style={{ background: s.bg }}>{s.icon}</div>
+                  <div className="pr-stat-val">{s.val}</div>
+                  <div className="pr-stat-lbl">{s.lbl}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Achievements */}
+        {tab === 'achievements' && (
+          <>
+            <div className="pr-ach-summary">
+              <div className="pr-ach-sum-item"><span className="pr-ach-sum-val">{earnedAch}</span><span className="pr-ach-sum-lbl">Earned</span></div>
+              <div className="pr-ach-sum-div" />
+              <div className="pr-ach-sum-item"><span className="pr-ach-sum-val">{ACHIEVEMENTS.length - earnedAch}</span><span className="pr-ach-sum-lbl">Locked</span></div>
+              <div className="pr-ach-sum-div" />
+              <div className="pr-ach-sum-item"><span className="pr-ach-sum-val">{ACHIEVEMENTS.filter(a=>a.earned).reduce((acc,a)=>acc+a.pts,0)}</span><span className="pr-ach-sum-lbl">XP Earned</span></div>
+            </div>
+            <div className="pr-ach-grid">
+              {ACHIEVEMENTS.map((a, i) => (
+                <div key={i} className={`pr-ach-card ${a.earned ? 'earned' : 'locked'}`}>
+                  <div className="pr-ach-emoji-wrap">
+                    <span className="pr-ach-emoji">{a.emoji}</span>
+                    {!a.earned && <span className="pr-ach-lock">🔒</span>}
+                  </div>
+                  <div className="pr-ach-info">
+                    <span className="pr-ach-title">{a.title}</span>
+                    <span className="pr-ach-desc">{a.desc}</span>
+                  </div>
+                  <span className={`pr-ach-pts ${a.earned ? 'earned' : ''}`}>{a.pts} XP</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Account */}
+        {tab === 'account' && (
+          <div className="pr-card">
+            <h3><User size={17} /> Edit Profile</h3>
+            {error   && <div className="pr-error"><Shield size={14} />{error}</div>}
+            {saveMsg && <div className="pr-success"><CheckCircle size={14} />{saveMsg}</div>}
+            <div className="pr-form-group">
+              <label className="pr-label">Display Name</label>
+              <input className="pr-input" value={editName} onChange={e => setEditName(e.target.value)} />
+            </div>
+            <div className="pr-form-group">
+              <label className="pr-label">Phone Number</label>
+              <input className="pr-input" value={student.phone} disabled style={{ opacity: 0.6 }} />
+              <span className="pr-hint">Phone cannot be changed</span>
+            </div>
+            <button className="pr-save-btn" onClick={handleSave}>
+              <CheckCircle size={16} /> Save Changes
+            </button>
+            <div className="pr-danger-zone">
+              <h4>⚠️ Danger Zone</h4>
+              <p>Once you delete your account, there is no going back.</p>
+              <button className="pr-delete-btn">Delete Account</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ─── Root export ────────────────────────────────────────── */
+const StudentProfile: React.FC = () => {
+  const { isLoggedIn, user } = useStore();
+  const navigate = useNavigate();
+
+  if (!isLoggedIn || !user) {
+    return (
+      <div className="pr-guest">
+        <Shield size={48} color="#a855f7" />
+        <h2>Sign in to view your profile</h2>
+        <button onClick={() => navigate('/')} className="pr-guest-btn">Go Home</button>
+      </div>
     );
+  }
+
+  return user.type === 'parent' ? <ParentProfile /> : <StudentProfile_Inner />;
 };
 
 export default StudentProfile;

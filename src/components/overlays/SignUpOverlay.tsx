@@ -1,712 +1,442 @@
-import React, {useState, useEffect, useRef} from 'react';
-import { useStore, type EducationLevel } from '../../store/useStore';
+import React, { useState, useRef } from 'react';
+import { useStore, type StudentUser, type ParentUser, type EducationLevel } from '../../store/useStore';
+import { useNavigate } from 'react-router-dom';
 import {
-  User,
-  Phone,
-  Lock,
-  CheckCircle,
-  ArrowRight,
-  ArrowLeft,
-  Shield,
-  Smartphone,
-  Key,
-  Eye,
-  EyeOff,
-  GraduationCap,
-  BookOpen,
-  Users,
-  Award,
-  Sparkles
+  Phone, User, ArrowRight, ArrowLeft, CheckCircle,
+  BookOpen, Users, GraduationCap, Shield, Plus, X,
 } from 'lucide-react';
-import '../../styles/SignUpOverlay.css';
-import { useNavigate } from "react-router-dom";
+import '../../styles/overlay.css';
 
-type Step = 'account' | 'otp' | 'password' | 'education';
+type UserMode = 'student' | 'parent';
 
-interface FormData {
-  username: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-  educationLevel: EducationLevel | '';
-  otp: string;
-}
+const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji: string; color: string }[] = [
+  { id: 'lower_primary', label: 'Lower Primary', grades: 'Grade 1–3', emoji: '🧒', color: '#10b981' },
+  { id: 'middle_school', label: 'Middle School', grades: 'Grade 4–9', emoji: '🧠', color: '#3b82f6' },
+  { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓', color: '#a855f7' },
+];
 
-const SignUpOverlay: React.FC = () => {
-  const { setOverlay, login, registerUser } = useStore();
-  const [currentStep, setCurrentStep] = useState<Step>('account');
-  const [formData, setFormData] = useState<FormData>({
-    username: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
-    educationLevel: '',
-    otp: ''
-  });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState('');
-  const [otpTimer, setOtpTimer] = useState(60);
-  const [canResend, setCanResend] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+const AVATARS = ['🧒','👦','👧','🧑','👨','👩','🦸','🧙','🎓','🤓','😎','🌟'];
 
-  // Generate random OTP when step becomes 'otp'
-  useEffect(() => {
-    if (currentStep === 'otp') {
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(otp);
-      console.log('📱 Your OTP is:', otp);
-      // eslint-disable-next-line react-hooks/immutability
-      startOtpTimer();
-    }
-  }, [currentStep]);
+/* ─── PIN Input (4 boxes, like OTP) ──────────────────────── */
+const PinInput: React.FC<{
+  value: string;
+  onChange: (v: string) => void;
+  hasError?: boolean;
+  disabled?: boolean;
+}> = ({ value, onChange, hasError, disabled }) => {
+  const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
+                useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
 
-  // OTP Timer
-  useEffect(() => {
-    // @ts-ignore
-    let interval: NodeJS.Timeout;
-    if (otpTimer > 0 && !canResend) {
-      interval = setInterval(() => {
-        setOtpTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (otpTimer === 0) {
-      setCanResend(true);
-    }
-    return () => clearInterval(interval);
-  }, [otpTimer, canResend]);
+  const digits = value.padEnd(4, '').split('').slice(0, 4);
 
-  const startOtpTimer = () => {
-    setOtpTimer(60);
-    setCanResend(false);
+  const handleInput = (i: number, char: string) => {
+    if (!/^\d?$/.test(char)) return;
+    const newDigits = [...digits];
+    newDigits[i] = char;
+    onChange(newDigits.join('').replace(/\s/g, ''));
+    if (char && i < 3) refs[i + 1].current?.focus();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-    if (errors[e.target.name]) {
-      setErrors({ ...errors, [e.target.name]: '' });
-    }
+  const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !digits[i] && i > 0) refs[i - 1].current?.focus();
   };
 
-  const handleEducationSelect = (level: EducationLevel) => {
-    setFormData({
-      ...formData,
-      educationLevel: level
-    });
-    if (errors.educationLevel) {
-      setErrors({ ...errors, educationLevel: '' });
-    }
-  };
-
-  const validatePhoneNumber = (phone: string) => {
-    const cleaned = phone.replace(/\s/g, '');
-    return /^(\+254|0)[7][0-9]{8}$/.test(cleaned);
-  };
-
-  const formatPhoneNumber = (phone: string) => {
-    const cleaned = phone.replace(/\s/g, '');
-    if (cleaned.length === 10 && cleaned.startsWith('0')) {
-      return cleaned.replace(/^0/, '+254 ');
-    } else if (cleaned.length === 12 && cleaned.startsWith('254')) {
-      return '+' + cleaned.replace(/^254/, '254 ');
-    } else if (cleaned.length === 13 && cleaned.startsWith('+254')) {
-      return cleaned.replace(/^\+254/, '+254 ');
-    }
-    return phone;
-  };
-
-  const validateAccount = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    } else if (formData.username.length > 20) {
-      newErrors.username = 'Username must be less than 20 characters';
-    }
-
-    if (!formData.phone) {
-      newErrors.phone = 'Phone number is required';
-    } else if (!validatePhoneNumber(formData.phone)) {
-      newErrors.phone = 'Enter a valid Kenyan phone number (e.g., 0712345678 or +254712345678)';
-    }
-
-    return newErrors;
-  };
-
-  const validateOtp = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.otp) {
-      newErrors.otp = 'OTP is required';
-    } else if (formData.otp.length !== 6) {
-      newErrors.otp = 'OTP must be 6 digits';
-    } else if (formData.otp !== generatedOtp) {
-      newErrors.otp = 'Invalid OTP code';
-    }
-    return newErrors;
-  };
-
-  const validatePassword = () => {
-    const newErrors: Record<string, string> = {};
-
-    if (!formData.password) {
-      newErrors.password = 'Password is required';
-    }
-    else if (formData.password.length < 4) {
-      newErrors.password = 'Password must be at least 4 characters';
-    }
-
-    // else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(formData.password)) {
-    //   newErrors.password = 'Password must contain uppercase, lowercase and number';
-    // }
-
-    if (!formData.confirmPassword) {
-      newErrors.confirmPassword = 'Please confirm your password';
-    } else if (formData.confirmPassword !== formData.password) {
-      newErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    return newErrors;
-  };
-
-  const validateEducation = () => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.educationLevel) {
-      newErrors.educationLevel = 'Please select your education level';
-    }
-    return newErrors;
-  };
-
-  const handleNext = () => {
-    let validationErrors = {};
-
-    switch (currentStep) {
-      case 'account':
-        validationErrors = validateAccount();
-        break;
-      case 'otp':
-        validationErrors = validateOtp();
-        break;
-      case 'password':
-        validationErrors = validatePassword();
-        break;
-      case 'education':
-        validationErrors = validateEducation();
-        break;
-    }
-
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-
-    const steps: Step[] = ['account', 'otp', 'password', 'education'];
-    const currentIndex = steps.indexOf(currentStep);
-
-    if (currentIndex === steps.length - 1) {
-      // Final submission
-      setIsLoading(true);
-
-      const newUser = {
-        username: formData.username,
-        phone: formData.phone,
-        educationLevel: formData.educationLevel as EducationLevel,
-        password: formData.password
-      };
-
-      registerUser(newUser);
-
-      setTimeout(() => {
-        login({
-          username: formData.username,
-          phone: formData.phone,
-          educationLevel: formData.educationLevel as EducationLevel
-        });
-        setIsLoading(false);
-
-        const levelRoutes = {
-          lower_primary: '/level/lower-primary',
-          middle_school: '/level/middle-school',
-          senior_school: '/level/senior-school'
-        };
-
-        navigate(levelRoutes[formData.educationLevel as EducationLevel]);
-        setOverlay(null); // This will close the overlay
-      }, 1000);
-    } else {
-      // Move to next step
-      setCurrentStep(steps[currentIndex + 1]);
-      setErrors({});
-    }
-  };
-
-  const handleBack = () => {
-    const steps: Step[] = ['account', 'otp', 'password', 'education'];
-    const currentIndex = steps.indexOf(currentStep);
-    if (currentIndex > 0) {
-      setCurrentStep(steps[currentIndex - 1]);
-      setErrors({});
-    }
-  };
-
-  const handleResendOtp = () => {
-    if (canResend) {
-      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(newOtp);
-      console.log('📱 New OTP:', newOtp);
-      startOtpTimer();
-      setFormData({ ...formData, otp: '' });
-    }
-  };
-  // Add this with your other state
-// Add this with your other state - fix the type
-  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-// Fix the handler types
-  const handleOtpChange = (index: number, value: string) => {
-    // Only allow digits
-    if (value && !/^\d+$/.test(value)) return;
-
-    const newOtp = formData.otp ? formData.otp.split('') : Array(6).fill('');
-    newOtp[index] = value;
-
-    // Update form data
-    handleChange({
-      target: {
-        name: 'otp',
-        value: newOtp.join('')
-      }
-    } as React.ChangeEvent<HTMLInputElement>);
-
-    // Auto-focus next input
-    if (value && index < 5) {
-      otpInputRefs.current[index + 1]?.focus();
-    }
-  };
-
-// Fix the key down handler
-  const handleOtpKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace') {
-      if (!formData.otp?.[index] && index > 0) {
-        // If current input is empty, focus previous
-        otpInputRefs.current[index - 1]?.focus();
-      }
-    } else if (e.key === 'ArrowLeft' && index > 0) {
-      e.preventDefault();
-      otpInputRefs.current[index - 1]?.focus();
-    } else if (e.key === 'ArrowRight' && index < 5) {
-      e.preventDefault();
-      otpInputRefs.current[index + 1]?.focus();
-    }
-  };
-
-// Fix the paste handler
-  const handleOtpPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    onChange(text);
+    refs[Math.min(text.length, 3)].current?.focus();
     e.preventDefault();
-    const pastedData = e.clipboardData.getData('text');
-    const pastedDigits = pastedData.replace(/\D/g, '').slice(0, 6);
-
-    if (pastedDigits.length) {
-      // Update form data
-      handleChange({
-        target: {
-          name: 'otp',
-          value: pastedDigits
-        }
-      } as React.ChangeEvent<HTMLInputElement>);
-
-      // Fill inputs with pasted digits
-      pastedDigits.split('').forEach((digit, index) => {
-        if (otpInputRefs.current[index]) {
-          otpInputRefs.current[index]!.value = digit;
-        }
-      });
-
-      // Focus next empty input or last input
-      if (pastedDigits.length < 6) {
-        otpInputRefs.current[pastedDigits.length]?.focus();
-      } else {
-        otpInputRefs.current[5]?.focus();
-      }
-    }
-  };
-
-  // const getPasswordStrength = (password: string) => {
-  //   if (!password) return { score: 0, label: 'Enter password', color: '#9CA3AF' };
-  //
-  //   let score = 0;
-  //   if (password.length >= 8) score += 1;
-  //   if (/(?=.*[a-z])/.test(password)) score += 1;
-  //   if (/(?=.*[A-Z])/.test(password)) score += 1;
-  //   if (/(?=.*\d)/.test(password)) score += 1;
-  //
-  //   const strengths = [
-  //     { score: 0, label: 'Weak', color: '#EF4444' },
-  //     { score: 1, label: 'Fair', color: '#F59E0B' },
-  //     { score: 2, label: 'Good', color: '#3B82F6' },
-  //     { score: 3, label: 'Strong', color: '#10B981' },
-  //     { score: 4, label: 'Very Strong', color: '#10B981' }
-  //   ];
-  //
-  //   return strengths[score] || strengths[0];
-  // };
-
-  // const strength = getPasswordStrength(formData.password);
-
-  const educationLevels = [
-    {
-      id: 'lower_primary',
-      label: 'Lower Primary',
-      grades: 'Grade 1–3',
-      icon: BookOpen,
-      color: '#10B981',
-      description: 'Building strong foundations'
-    },
-    {
-      id: 'middle_school',
-      label: 'Middle School',
-      grades: 'Grade 4–9',
-      icon: Users,
-      color: '#3B82F6',
-      description: 'Expanding knowledge'
-    },
-    {
-      id: 'senior_school',
-      label: 'Senior School',
-      grades: 'Grade 10–12',
-      icon: GraduationCap,
-      color: '#8B5CF6',
-      description: 'Preparing for the future'
-    }
-  ];
-
-  const renderStepIndicator = () => {
-    const steps = [
-      { key: 'account', label: 'Account', icon: User },
-      { key: 'otp', label: 'Verify', icon: Smartphone },
-      { key: 'password', label: 'Security', icon: Lock },
-      { key: 'education', label: 'Level', icon: GraduationCap }
-    ];
-
-    return (
-        <div className="step-indicator">
-          {steps.map((step, index) => {
-            const Icon = step.icon;
-            const isActive = currentStep === step.key;
-            const isCompleted = steps.findIndex(s => s.key === currentStep) > index;
-
-            return (
-                <React.Fragment key={step.key}>
-                  {index > 0 && <div className={`step-connector ${isCompleted ? 'completed' : ''}`} />}
-                  <div className={`step-item ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}`}>
-                    <div className="step-circle">
-                      {isCompleted ? <CheckCircle size={16} /> : <Icon size={16} />}
-                    </div>
-                    <span className="step-label">{step.label}</span>
-                  </div>
-                </React.Fragment>
-            );
-          })}
-        </div>
-    );
   };
 
   return (
-      <div className="overlay-backdrop" onClick={() => setOverlay(null)}>
-        <div className="overlay-container">
+    <div className="ov-pin-row">
+      {[0, 1, 2, 3].map(i => (
+        <input
+          key={i}
+          ref={refs[i]}
+          type="password"
+          inputMode="numeric"
+          maxLength={1}
+          value={digits[i] || ''}
+          onChange={e => handleInput(i, e.target.value)}
+          onKeyDown={e => handleKeyDown(i, e)}
+          onPaste={handlePaste}
+          disabled={disabled}
+          className={`ov-pin-box ${hasError ? 'error' : ''} ${digits[i] ? 'filled' : ''}`}
+          autoComplete="off"
+        />
+      ))}
+    </div>
+  );
+};
 
-        <div className="overlay-card " onClick={(e) => e.stopPropagation()}>
-          <button className="overlay-close" onClick={() => setOverlay(null)}>✕</button>
+/* ─── Main Component ─────────────────────────────────────── */
+const SignUpOverlay: React.FC = () => {
+  const { setOverlay, registerUser, login, allUsers, addStudentToParent } = useStore();
+  const navigate = useNavigate();
 
-          <div className="overlay-logo">
-            <span className="logo-text">Bongo<span>Quiz</span></span>
-            <Sparkles size={20} className="logo-sparkle" />
+  const [mode, setMode] = useState<UserMode>('student');
+  const [step, setStep] = useState(1); // 1=info, 2=otp, 3=level(student)/students(parent)
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  // Form state
+  const [username, setUsername] = useState('');
+  const [phone, setPhone] = useState('');
+  const [pin, setPin] = useState('');
+  const [otp, setOtp] = useState('');
+  const [avatar, setAvatar] = useState('🧒');
+  const [selectedLevel, setSelectedLevel] = useState<EducationLevel | null>(null);
+
+  // Parent-specific: student creation
+  const [parentStudents, setParentStudents] = useState<{ name: string; level: EducationLevel; avatar: string }[]>([]);
+  const [addingStudent, setAddingStudent] = useState(false);
+  const [newStudentName, setNewStudentName] = useState('');
+  const [newStudentLevel, setNewStudentLevel] = useState<EducationLevel>('middle_school');
+
+  const cleanPhone = phone.replace(/\s/g, '');
+
+  const validateStep1 = () => {
+    setError('');
+    if (!username.trim()) { setError('Please enter your name'); return false; }
+    if (!cleanPhone) { setError('Please enter your phone number'); return false; }
+    if (!/^(\+254|0)[7][0-9]{8}$/.test(cleanPhone)) {
+      setError('Enter a valid Kenyan number (e.g. 0712345678)'); return false;
+    }
+    if (pin.length !== 4) { setError('Enter a 4-digit PIN'); return false; }
+    if (allUsers.find(u => u.phone === cleanPhone)) {
+      setError('This phone number is already registered'); return false;
+    }
+    return true;
+  };
+
+  const handleNext1 = () => {
+    if (!validateStep1()) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setStep(2);
+    }, 800);
+  };
+
+  const handleVerifyOtp = () => {
+    if (otp !== '1234') { setError('Invalid OTP. Use 1234 for demo.'); return; }
+    setError('');
+    setStep(3);
+  };
+
+  const handleFinish = () => {
+    setError('');
+    if (mode === 'student') {
+      if (!selectedLevel) { setError('Please select your education level'); return; }
+      const newUser: StudentUser = {
+        type: 'student',
+        username: username.trim(),
+        phone: cleanPhone,
+        pin,
+        educationLevel: selectedLevel,
+        avatar,
+        xp: 0,
+        level: 1,
+        streak: 0,
+        points: 0,
+      };
+      registerUser(newUser);
+      login(newUser);
+      const routes: Record<EducationLevel, string> = {
+        lower_primary: '/level/lower-primary',
+        middle_school: '/level/middle-school',
+        senior_school: '/level/senior-school',
+      };
+      navigate(routes[selectedLevel]);
+    } else {
+      // Parent finish — create parent + any added students
+      const newParent: ParentUser = {
+        type: 'parent',
+        username: username.trim(),
+        phone: cleanPhone,
+        pin,
+        avatar,
+        students: parentStudents.map((s, i) => ({
+          type: 'student',
+          username: s.name,
+          phone: `${cleanPhone}-${i + 1}`,
+          pin: '0000',
+          educationLevel: s.level,
+          parentPhone: cleanPhone,
+          avatar: s.avatar,
+          xp: 0,
+          level: 1,
+          streak: 0,
+          points: 0,
+        })),
+      };
+      registerUser(newParent);
+      login(newParent);
+      navigate('/');
+    }
+    setOverlay(null);
+  };
+
+  const addParentStudent = () => {
+    if (!newStudentName.trim()) return;
+    setParentStudents(prev => [...prev, { name: newStudentName.trim(), level: newStudentLevel, avatar: '🧒' }]);
+    setNewStudentName('');
+    setAddingStudent(false);
+  };
+
+  return (
+    <div className="ov-backdrop" onClick={() => setOverlay(null)}>
+      <div className="ov-container" onClick={e => e.stopPropagation()}>
+        <div className="ov-card">
+          <button className="ov-close" onClick={() => setOverlay(null)}><X size={18} /></button>
+
+          {/* Logo */}
+          <div className="ov-logo">Bongo<span>Quiz</span></div>
+
+          {/* Mode toggle */}
+          {step === 1 && (
+            <div className="ov-mode-toggle">
+              <button
+                className={`ov-mode-btn ${mode === 'student' ? 'active' : ''}`}
+                onClick={() => setMode('student')}
+              >
+                <BookOpen size={16} /> Student
+              </button>
+              <button
+                className={`ov-mode-btn ${mode === 'parent' ? 'active' : ''}`}
+                onClick={() => setMode('parent')}
+              >
+                <Users size={16} /> Parent
+              </button>
+            </div>
+          )}
+
+          {/* Step indicator */}
+          <div className="ov-steps">
+            {[1,2,3].map(n => (
+              <React.Fragment key={n}>
+                <div className={`ov-step-dot ${step === n ? 'current' : step > n ? 'done' : ''}`}>
+                  {step > n ? <CheckCircle size={14} /> : n}
+                </div>
+                {n < 3 && <div className={`ov-step-line ${step > n ? 'done' : ''}`} />}
+              </React.Fragment>
+            ))}
           </div>
 
-          <h2 className="overlay-title">Create Account</h2>
-          <p className="overlay-subtitle">Start your learning journey today! 👋🏿</p>
+          {/* Step 1: Info */}
+          {step === 1 && (
+            <div className="ov-step-body">
+              <h2 className="ov-title">
+                {mode === 'student' ? '👋 Create Account' : '👨‍👩‍👧 Parent Account'}
+              </h2>
+              <p className="ov-sub">
+                {mode === 'student' ? 'Your learning journey starts here' : 'Manage your children\'s learning'}
+              </p>
 
-          {renderStepIndicator()}
+              {error && <div className="ov-error"><Shield size={14} />{error}</div>}
 
-          {/* Account Setup Step */}
-          {currentStep === 'account' && (
-              <div className="step-content">
-                <div className="form-group">
-                  <div className="form-label">
-                    <User size={18} />
-                    <span>Username</span>
-                  </div>
-                  <input
-                      className={`form-input ${errors.username ? 'error' : ''}`}
-                      name="username"
-                      placeholder="e.g., brian_kenya"
-                      value={formData.username}
-                      onChange={handleChange}
-                  />
-                  {errors.username && <span className="error-message">{errors.username}</span>}
-                </div>
-
-                <div className="form-group">
-                  <div className="form-label">
-                    <Phone size={18} />
-                    <span>Phone Number</span>
-                  </div>
-                  <input
-                      className={`form-input ${errors.phone ? 'error' : ''}`}
-                      name="phone"
-                      type="tel"
-                      placeholder="0712 345 678"
-                      value={formData.phone}
-                      onChange={handleChange}
-                  />
-                  <small className="input-hint">We'll send a verification code to this number</small>
-                  {errors.phone && <span className="error-message">{errors.phone}</span>}
-                </div>
-
-                <div className="form-info">
-                  <Shield size={16} />
-                  <span>Your information is secure and encrypted</span>
-                </div>
-              </div>
-          )}
-
-          {/* OTP Verification Step */}
-          {currentStep === 'otp' && (
-              <div className="step-content">
-                <div className="otp-header">
-                  <Smartphone size={48} className="otp-icon" />
-                  <h3>Verify Your Phone</h3>
-                  <p>We've sent a 6-digit code to</p>
-                  <p className="otp-phone">{formatPhoneNumber(formData.phone)}</p>
-                </div>
-
-                <div className="form-group">
-                  <div className="form-label">Enter OTP Code</div>
-                  <div className="otp-inputs-container">
-                    {[0, 1, 2, 3, 4, 5].map((index) => (
-                        <input
-                            key={index}
-                            className={`otp-digit-input ${errors.otp ? 'error' : ''}`}
-                            type="text"
-                            maxLength={1}
-                            value={formData.otp[index] || ''}
-                            onChange={(e) => handleOtpChange(index, e.target.value)}
-                            onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                            onPaste={handleOtpPaste}
-                            ref={(el) => {
-                              if (el && !otpInputRefs.current[index]) {
-                                otpInputRefs.current[index] = el;
-                              }
-                            }}
-                            autoFocus={index === 0}
-                        />
-                    ))}
-                  </div>
-                  {errors.otp && <span className="error-message">{errors.otp}</span>}
-                </div>
-
-                <div className="otp-timer">
-                  {canResend ? (
-                      <button className="resend-btn" onClick={handleResendOtp}>
-                        Resend Code
-                      </button>
-                  ) : (
-                      <span>Resend in {otpTimer}s</span>
-                  )}
-                </div>
-
-                <div className="otp-demo-note">
-                  <Key size={14} />
-                  <span>Demo OTP: <strong>{generatedOtp}</strong></span>
-                </div>
-              </div>
-          )}
-
-          {/* Password Setup Step */}
-          {currentStep === 'password' && (
-              <div className="step-content">
-                <div className="form-group">
-                  <div className="form-label">
-                    <Lock size={18} />
-                    <span>Password</span>
-                  </div>
-                  <div className="password-input-wrapper">
-                    <input
-                        className={`form-input ${errors.password ? 'error' : ''}`}
-                        name="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="Create a strong password"
-                        value={formData.password}
-                        onChange={handleChange}
-                    />
+              {/* Avatar picker */}
+              <div className="ov-form-group">
+                <label className="ov-label">Choose avatar</label>
+                <div className="ov-avatar-row">
+                  {AVATARS.map(a => (
                     <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowPassword(!showPassword)}
+                      key={a}
+                      className={`ov-avatar-opt ${avatar === a ? 'selected' : ''}`}
+                      onClick={() => setAvatar(a)}
                     >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                      {a}
                     </button>
-                  </div>
-                  {errors.password && <span className="error-message">{errors.password}</span>}
-
-                  {/*{formData.password && (*/}
-                  {/*    <div className="password-strength">*/}
-                  {/*      <div className="strength-bars">*/}
-                  {/*        {[1, 2, 3, 4].map((bar) => (*/}
-                  {/*            <div*/}
-                  {/*                key={bar}*/}
-                  {/*                className="strength-bar"*/}
-                  {/*                style={{*/}
-                  {/*                  backgroundColor: bar <= strength.score ? strength.color : '#E5E7EB'*/}
-                  {/*                }}*/}
-                  {/*            />*/}
-                  {/*        ))}*/}
-                  {/*      </div>*/}
-                  {/*      <span className="strength-label" style={{ color: strength.color }}>*/}
-                  {/*  {strength.label}*/}
-                  {/*</span>*/}
-                  {/*    </div>*/}
-                  {/*)}*/}
-                </div>
-
-                <div className="form-group">
-                  <div className="form-label">
-                    <Lock size={18} />
-                    <span>Confirm Password</span>
-                  </div>
-                  <div className="password-input-wrapper">
-                    <input
-                        className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
-                        name="confirmPassword"
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="Re-enter your password"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                    />
-                    <button
-                        type="button"
-                        className="password-toggle"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    >
-                      {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                  {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
-                </div>
-
-                <div className="password-requirements">
-                  <p>Password must contain:</p>
-                  <ul>
-                    <li className={formData.password.length >= 4 ? 'met' : ''}>
-                      <CheckCircle size={12} /> At least 4 characters
-                    </li>
-                    {/*<li className={/(?=.*[a-z])/.test(formData.password) ? 'met' : ''}>*/}
-                    {/*  <CheckCircle size={12} /> One lowercase letter*/}
-                    {/*</li>*/}
-                    {/*<li className={/(?=.*[A-Z])/.test(formData.password) ? 'met' : ''}>*/}
-                    {/*  <CheckCircle size={12} /> One uppercase letter*/}
-                    {/*</li>*/}
-                    <li className={/(?=.*\d)/.test(formData.password) ? 'met' : ''}>
-                      <CheckCircle size={12} /> One number
-                    </li>
-                  </ul>
+                  ))}
                 </div>
               </div>
+
+              <div className="ov-form-group">
+                <label className="ov-label"><User size={15} /> {mode === 'parent' ? 'Parent Name' : 'Your Name'}</label>
+                <input
+                  className="ov-input"
+                  placeholder={mode === 'parent' ? 'e.g. Jane Wanjiku' : 'e.g. Brian Otieno'}
+                  value={username}
+                  onChange={e => { setUsername(e.target.value); setError(''); }}
+                />
+              </div>
+
+              <div className="ov-form-group">
+                <label className="ov-label"><Phone size={15} /> Phone Number</label>
+                <input
+                  className="ov-input"
+                  type="tel"
+                  placeholder="0712 345 678"
+                  value={phone}
+                  onChange={e => { setPhone(e.target.value); setError(''); }}
+                />
+                <span className="ov-hint">Kenyan number (0712345678 or +254…)</span>
+              </div>
+
+              <div className="ov-form-group">
+                <label className="ov-label">🔐 Set 4-Digit PIN</label>
+                <PinInput value={pin} onChange={setPin} hasError={!!error && pin.length < 4} />
+                <span className="ov-hint">You'll use this PIN to log in</span>
+              </div>
+
+              <button className="ov-submit" onClick={handleNext1} disabled={loading}>
+                {loading ? 'Sending OTP…' : <><span>Continue</span><ArrowRight size={18} /></>}
+              </button>
+
+              <p className="ov-footer-text">
+                Already have an account?{' '}
+                <button className="ov-link" onClick={() => setOverlay('login')}>Log In</button>
+              </p>
+            </div>
           )}
 
-          {/* Education Level Step */}
-          {currentStep === 'education' && (
-              <div className="step-content">
-                <div className="education-header">
-                  <GraduationCap size={48} className="education-icon" />
-                  <h3>What's your education level?</h3>
-                  <p>Select your current level to continue</p>
-                </div>
+          {/* Step 2: OTP */}
+          {step === 2 && (
+            <div className="ov-step-body">
+              <h2 className="ov-title">📱 Verify Number</h2>
+              <p className="ov-sub">
+                Enter the 4-digit code sent to <strong>{cleanPhone}</strong>
+              </p>
 
-                <div className="education-grid">
-                  {educationLevels.map((level) => {
-                    const Icon = level.icon;
-                    const isSelected = formData.educationLevel === level.id;
+              {error && <div className="ov-error"><Shield size={14} />{error}</div>}
 
+              <div className="ov-demo-note">
+                🧪 Demo mode — use code <strong>1234</strong>
+              </div>
+
+              <div className="ov-form-group" style={{ textAlign: 'center' }}>
+                <PinInput value={otp} onChange={v => { setOtp(v); setError(''); }} hasError={!!error} />
+              </div>
+
+              <button className="ov-submit" onClick={handleVerifyOtp}>
+                <span>Verify OTP</span><ArrowRight size={18} />
+              </button>
+
+              <button className="ov-back-btn" onClick={() => { setStep(1); setOtp(''); setError(''); }}>
+                <ArrowLeft size={16} /> Back
+              </button>
+            </div>
+          )}
+
+          {/* Step 3: Level (student) or Students (parent) */}
+          {step === 3 && mode === 'student' && (
+            <div className="ov-step-body">
+              <h2 className="ov-title">🎓 Pick Your Level</h2>
+              <p className="ov-sub">Which class are you in?</p>
+
+              {error && <div className="ov-error"><Shield size={14} />{error}</div>}
+
+              <div className="ov-level-grid">
+                {LEVEL_OPTIONS.map(opt => (
+                  <button
+                    key={opt.id}
+                    className={`ov-level-card ${selectedLevel === opt.id ? 'selected' : ''}`}
+                    style={selectedLevel === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
+                    onClick={() => setSelectedLevel(opt.id)}
+                  >
+                    <span className="ov-level-emoji">{opt.emoji}</span>
+                    <div className="ov-level-info">
+                      <span className="ov-level-name">{opt.label}</span>
+                      <span className="ov-level-grades">{opt.grades}</span>
+                    </div>
+                    {selectedLevel === opt.id && (
+                      <CheckCircle size={18} color={opt.color} style={{ marginLeft: 'auto' }} />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <button
+                className="ov-submit"
+                onClick={handleFinish}
+                disabled={!selectedLevel}
+                style={{ marginTop: '1rem' }}
+              >
+                <span>🚀 Start Learning!</span>
+              </button>
+            </div>
+          )}
+
+          {step === 3 && mode === 'parent' && (
+            <div className="ov-step-body">
+              <h2 className="ov-title">👨‍👩‍👧 Add Students</h2>
+              <p className="ov-sub">Add your children's accounts now or do it later</p>
+
+              {parentStudents.length > 0 && (
+                <div className="ov-student-list">
+                  {parentStudents.map((s, i) => {
+                    const lvl = LEVEL_OPTIONS.find(l => l.id === s.level)!;
                     return (
+                      <div key={i} className="ov-added-student">
+                        <span>{s.avatar}</span>
+                        <div>
+                          <strong>{s.name}</strong>
+                          <span>{lvl.emoji} {lvl.label}</span>
+                        </div>
                         <button
-                            key={level.id}
-                            className={`education-card ${isSelected ? 'selected' : ''}`}
-                            onClick={() => handleEducationSelect(level.id as EducationLevel)}
-                            style={{
-                              borderColor: isSelected ? level.color : '#E5E7EB',
-                              background: isSelected ? `${level.color}10` : 'white'
-                            }}
+                          className="ov-remove-student"
+                          onClick={() => setParentStudents(prev => prev.filter((_, j) => j !== i))}
                         >
-                          <div className="card-icon" style={{ background: `${level.color}20` }}>
-                            <Icon size={24} color={level.color} />
-                          </div>
-                          <div className="card-content">
-                            <h4>{level.label}</h4>
-                            <p className="card-grades">{level.grades}</p>
-                            <p className="card-description">{level.description}</p>
-                          </div>
-                          {isSelected && (
-                              <div className="selected-check">
-                                <CheckCircle size={20} color={level.color} />
-                              </div>
-                          )}
+                          <X size={14} />
                         </button>
+                      </div>
                     );
                   })}
                 </div>
-                {errors.educationLevel && (
-                    <span className="error-message center">{errors.educationLevel}</span>
-                )}
-
-                <div className="grade-info">
-                  <Award size={16} color="#8B5CF6" />
-                  <span>Content will be tailored to your specific level</span>
-                </div>
-              </div>
-          )}
-
-          {/* Navigation Buttons */}
-          <div className="step-navigation">
-            {currentStep !== 'account' && (
-                <button className="nav-btn back" onClick={handleBack} disabled={isLoading}>
-                  <ArrowLeft size={18} />
-                  Back
-                </button>
-            )}
-            <button
-                className={`nav-btn next ${isLoading ? 'loading' : ''}`}
-                onClick={handleNext}
-                disabled={isLoading}
-            >
-              {isLoading ? (
-                  <span>Creating Account...</span>
-              ) : (
-                  <>
-                <span>
-                  {currentStep === 'education' ? 'Start Learning' : 'Continue'}
-                </span>
-                    <ArrowRight size={18} />
-                  </>
               )}
-            </button>
-          </div>
 
-          <p className="form-footer">
-            Already have an account?{' '}
-            <button className="form-link" onClick={() => setOverlay('login')}>
-              Log In
-            </button>
-          </p>
-        </div>
-        </div>
+              {addingStudent ? (
+                <div className="ov-add-student-form">
+                  <input
+                    className="ov-input"
+                    placeholder="Child's name"
+                    value={newStudentName}
+                    onChange={e => setNewStudentName(e.target.value)}
+                  />
+                  <div className="ov-level-grid compact">
+                    {LEVEL_OPTIONS.map(opt => (
+                      <button
+                        key={opt.id}
+                        className={`ov-level-card ${newStudentLevel === opt.id ? 'selected' : ''}`}
+                        style={newStudentLevel === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
+                        onClick={() => setNewStudentLevel(opt.id)}
+                      >
+                        <span>{opt.emoji}</span>
+                        <span style={{ fontSize: '0.8rem' }}>{opt.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button className="ov-submit" style={{ flex: 1 }} onClick={addParentStudent}>
+                      <Plus size={16} /> Add
+                    </button>
+                    <button
+                      className="ov-ghost-btn"
+                      onClick={() => { setAddingStudent(false); setNewStudentName(''); }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <button className="ov-add-btn" onClick={() => setAddingStudent(true)}>
+                  <Plus size={16} /> Add a Student
+                </button>
+              )}
 
+              <div className="ov-parent-actions">
+                <button className="ov-submit" onClick={handleFinish}>
+                  {parentStudents.length > 0
+                    ? `✅ Finish (${parentStudents.length} student${parentStudents.length > 1 ? 's' : ''})`
+                    : 'Skip & Finish Later'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+    </div>
   );
 };
 

@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, {type FC, useRef, useState} from 'react';
 import { Zap } from 'lucide-react';
-import { type GradeFilter, useExamStore } from '../store/UseexamStore';
+import { type GradeFilter, useExamStore } from '../store/useExamStore.ts';
 import { useStore } from '../store/useStore';
 import "../styles/exambrowser.css";
 
@@ -80,7 +80,7 @@ const GradeRow: React.FC<{
 };
 
 /* ─── Main component ──────────────────────────────────────── */
-const ExamBrowser: React.FC = () => {
+export const ExamBrowser: FC = () => {
     const { setOverlay } = useStore();
     const { exams } = useExamStore();
 
@@ -105,4 +105,3 @@ const ExamBrowser: React.FC = () => {
     );
 };
 
-export default ExamBrowser;

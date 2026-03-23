@@ -1,173 +1,187 @@
-import React, {useState} from 'react';
-import {useStore} from '../../store/useStore';
-import {useNavigate} from "react-router-dom";
-import {Phone, Lock, ArrowRight, Shield} from 'lucide-react';
+import React, { useState } from 'react';
+import { useStore } from '../../store/useStore';
+import { useNavigate } from 'react-router-dom';
+import { Phone, ArrowRight, Shield, BookOpen, Users, X } from 'lucide-react';
+import '../../styles/overlay.css';
 
+type UserMode = 'student' | 'parent';
+
+/* ─── PIN Input ──────────────────────────────────────────── */
+import { useRef } from 'react';
+
+const PinInput: React.FC<{
+  value: string;
+  onChange: (v: string) => void;
+  hasError?: boolean;
+  disabled?: boolean;
+}> = ({ value, onChange, hasError, disabled }) => {
+  const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
+                useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+  const digits = value.padEnd(4, '').split('').slice(0, 4);
+
+  const handleInput = (i: number, char: string) => {
+    if (!/^\d?$/.test(char)) return;
+    const d = [...digits]; d[i] = char;
+    onChange(d.join('').replace(/\s/g, ''));
+    if (char && i < 3) refs[i + 1].current?.focus();
+  };
+
+  const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !digits[i] && i > 0) refs[i - 1].current?.focus();
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    onChange(text);
+    refs[Math.min(text.length, 3)].current?.focus();
+    e.preventDefault();
+  };
+
+  return (
+    <div className="ov-pin-row">
+      {[0, 1, 2, 3].map(i => (
+        <input
+          key={i}
+          ref={refs[i]}
+          type="password"
+          inputMode="numeric"
+          maxLength={1}
+          value={digits[i] || ''}
+          onChange={e => handleInput(i, e.target.value)}
+          onKeyDown={e => handleKeyDown(i, e)}
+          onPaste={handlePaste}
+          disabled={disabled}
+          className={`ov-pin-box ${hasError ? 'error' : ''} ${digits[i] ? 'filled' : ''}`}
+          autoComplete="off"
+        />
+      ))}
+    </div>
+  );
+};
+
+/* ─── Main ───────────────────────────────────────────────── */
 const LoginOverlay: React.FC = () => {
-    const {setOverlay, login, users} = useStore(); // Get users from store
-    const [form, setForm] = useState({phone: '', password: ''});
-    const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+  const { setOverlay, login, allUsers } = useStore();
+  const navigate = useNavigate();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setForm({...form, [e.target.name]: e.target.value});
-        setError('');
-    };
+  const [mode, setMode] = useState<UserMode>('student');
+  const [phone, setPhone] = useState('');
+  const [pin, setPin] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-    const validatePhoneNumber = (phone: string) => {
-        const cleaned = phone.replace(/\s/g, '');
-        return /^(\+254|0)[7][0-9]{8}$/.test(cleaned);
-    };
+  const cleanPhone = phone.replace(/\s/g, '');
 
-    const handleSubmit = async () => {
-        if (!form.phone || !form.password) {
-            setError('Please enter your phone number and password.');
-            return;
-        }
+  const handleLogin = () => {
+    setError('');
+    if (!cleanPhone) { setError('Please enter your phone number'); return; }
+    if (!/^(\+254|0)[7][0-9]{8}$/.test(cleanPhone)) {
+      setError('Enter a valid Kenyan number'); return;
+    }
+    if (pin.length !== 4) { setError('Enter your 4-digit PIN'); return; }
 
-        if (!validatePhoneNumber(form.phone)) {
-            setError('Please enter a valid Kenyan phone number (e.g., 0712345678 or +254712345678)');
-            return;
-        }
+    setLoading(true);
+    setTimeout(() => {
+      const found = allUsers.find(u => u.phone === cleanPhone && u.type === mode);
+      if (!found) {
+        setError(mode === 'student'
+          ? 'No student account found with this number'
+          : 'No parent account found with this number');
+        setLoading(false);
+        return;
+      }
+      if (found.pin !== pin) {
+        setError('Incorrect PIN');
+        setLoading(false);
+        return;
+      }
 
-        setIsLoading(true);
+      login(found);
+      setLoading(false);
 
-        // Simulate API call delay
-        setTimeout(() => {
-            const cleanedPhone = form.phone.replace(/\s/g, '');
+      if (found.type === 'student') {
+        const routes = {
+          lower_primary: '/level/lower-primary',
+          middle_school: '/level/middle-school',
+          senior_school: '/level/senior-school',
+        };
+        navigate(routes[found.educationLevel]);
+      } else {
+        navigate('/');
+      }
+    }, 700);
+  };
 
-            // Find user in the stored users array
-            const foundUser = users.find(u => u.phone === cleanedPhone);
+  return (
+    <div className="ov-backdrop" onClick={() => setOverlay(null)}>
+      <div className="ov-container" onClick={e => e.stopPropagation()}>
+        <div className="ov-card">
+          <button className="ov-close" onClick={() => setOverlay(null)}><X size={18} /></button>
 
-            if (foundUser) {
-                // Check password (in real app, you'd compare hashed passwords)
-                if (foundUser.password === form.password) {
-                    // Login successful - remove password before storing in user state
-                    const {password, ...userWithoutPassword} = foundUser;
+          <div className="ov-logo">Bongo<span>Quiz</span></div>
 
-                    login(userWithoutPassword);
+          <div className="ov-mode-toggle">
+            <button
+              className={`ov-mode-btn ${mode === 'student' ? 'active' : ''}`}
+              onClick={() => { setMode('student'); setError(''); }}
+            >
+              <BookOpen size={16} /> Student
+            </button>
+            <button
+              className={`ov-mode-btn ${mode === 'parent' ? 'active' : ''}`}
+              onClick={() => { setMode('parent'); setError(''); }}
+            >
+              <Users size={16} /> Parent
+            </button>
+          </div>
 
-                    setIsLoading(false);
+          <h2 className="ov-title">
+            {mode === 'student' ? '👋 Welcome Back!' : '👨‍👩‍👧 Parent Login'}
+          </h2>
+          <p className="ov-sub">
+            {mode === 'student' ? 'Continue your learning streak 🔥' : 'Manage your students'}
+          </p>
 
-                    // Navigate based on education level
-                    const levelRoutes = {
-                        lower_primary: '/level/lower-primary',
-                        middle_school: '/level/middle-school',
-                        senior_school: '/level/senior-school'
-                    };
+          {error && <div className="ov-error"><Shield size={14} />{error}</div>}
 
-                    navigate(levelRoutes[foundUser.educationLevel]);
-                    setOverlay(null);
-                } else {
-                    setError('Invalid password.');
-                    setIsLoading(false);
-                }
-            } else {
-                setError('No account found with this phone number. Please sign up first.');
-                setIsLoading(false);
+          <div className="ov-form-group">
+            <label className="ov-label"><Phone size={15} /> Phone Number</label>
+            <input
+              className="ov-input"
+              type="tel"
+              placeholder="0712 345 678"
+              value={phone}
+              onChange={e => { setPhone(e.target.value); setError(''); }}
+              onKeyDown={e => e.key === 'Enter' && handleLogin()}
+              disabled={loading}
+            />
+          </div>
+
+          <div className="ov-form-group">
+            <label className="ov-label">🔐 Enter PIN</label>
+            <PinInput
+              value={pin}
+              onChange={v => { setPin(v); setError(''); }}
+              hasError={!!error && pin.length < 4}
+              disabled={loading}
+            />
+          </div>
+
+          <button className="ov-submit" onClick={handleLogin} disabled={loading}>
+            {loading
+              ? 'Logging in…'
+              : <><span>Log In</span><ArrowRight size={18} /></>
             }
-        }, 1000);
-    };
+          </button>
 
-    const handleKeyPress = (e: React.KeyboardEvent) => {
-        if (e.key === 'Enter') {
-            handleSubmit();
-        }
-    };
-
-    // Optional: Show demo users that have been registered
-    // const getDemoUsers = () => {
-    //     if (users.length > 0) {
-    //         return users.slice(0, 3); // Show first 3 registered users
-    //     }
-    //     return [];
-    // };
-
-    // const demoUsers = getDemoUsers();
-
-    return (
-        <div className="overlay-backdrop" onClick={() => setOverlay(null)}>
-            <div className="overlay-container">
-                <div className="overlay-card login-overlay" onClick={(e) => e.stopPropagation()}>
-                    <button className="overlay-close" onClick={() => setOverlay(null)}>✕</button>
-
-                    <div className="overlay-logo">
-                        <span className="logo-text">Bongo<span>Quiz</span></span>
-                    </div>
-
-                    <h2 className="overlay-title">Welcome Back! 👋🏾</h2>
-                    <p className="overlay-subtitle">Continue your learning journey</p>
-
-                    {error && (
-                        <div className="error-message show">
-                            <Shield size={16}/>
-                            <span>{error}</span>
-                        </div>
-                    )}
-
-                    <div className="form-group">
-                        <div className="form-label">
-                            <Phone size={18}/>
-                            <span>Phone Number</span>
-                        </div>
-                        <input
-                            className={`form-input ${error && !form.phone ? 'error' : ''}`}
-                            name="phone"
-                            type="tel"
-                            placeholder="0712 345 678"
-                            value={form.phone}
-                            onChange={handleChange}
-                            onKeyPress={handleKeyPress}
-                            disabled={isLoading}
-                        />
-                        <small className="input-hint">Enter Kenyan phone number (e.g., 0712345678)</small>
-                    </div>
-
-                    <div className="form-group">
-                        <div className="form-label">
-                            <Lock size={18}/>
-                            <span>Password</span>
-                        </div>
-                        <input
-                            className={`form-input ${error && !form.password ? 'error' : ''}`}
-                            name="password"
-                            type="password"
-                            placeholder="Enter your password"
-                            value={form.password}
-                            onChange={handleChange}
-                            onKeyPress={handleKeyPress}
-                            disabled={isLoading}
-                        />
-                    </div>
-
-                    <button
-                        className={`form-submit ${isLoading ? 'loading' : ''}`}
-                        onClick={handleSubmit}
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <span>Logging in...</span>
-                        ) : (
-                            <>
-                                <span>Log In</span>
-                                <ArrowRight size={20}/>
-                            </>
-                        )}
-                    </button>
-
-                    <div className="form-footer">
-                        <p>
-                            Don't have an account?{' '}
-                            <button className="form-link" onClick={() => setOverlay('signup')}>
-                                Sign Up Free
-                            </button>
-                        </p>
-                    </div>
-                </div>
-            </div>
+          <p className="ov-footer-text">
+            Don't have an account?{' '}
+            <button className="ov-link" onClick={() => setOverlay('signup')}>Sign Up Free</button>
+          </p>
         </div>
-    );
+      </div>
+    </div>
+  );
 };
 
 export default LoginOverlay;

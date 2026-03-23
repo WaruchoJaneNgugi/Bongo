@@ -1,80 +1,153 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+
 export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
-// export type Grade =
-//     | 'grade1' | 'grade2' | 'grade3'
-//     | 'grade4' | 'grade5' | 'grade6' | 'grade7' | 'grade8' | 'grade9'
-//     | 'grade10' | 'grade11' | 'grade12';
+export type UserType = 'student' | 'parent';
 
-
-
-export interface User {
-    username: string;
-    phone: string;
-    educationLevel: EducationLevel;
-    // grade: Grade;
-    password?: string;
+export interface StudentUser {
+  type: 'student';
+  username: string;
+  phone: string;       // own phone OR "parentPhone-N" for child accounts
+  pin: string;         // 4-digit PIN
+  educationLevel: EducationLevel;
+  parentPhone?: string;
+  xp: number;
+  level: number;
+  streak: number;
+  points: number;
+  avatar: string;
 }
 
-export type Overlay =
-    | null
-    | 'signup'
-    | 'login';
-interface AppState {
-    overlay: Overlay;
-    user: User | null;
-    users: User[]; // Store all registered users
-    isLoggedIn: boolean;
-    currentSubjectId: string | null;
-    currentTopicId: string | null;
+export interface ParentUser {
+  type: 'parent';
+  username: string;
+  phone: string;
+  pin: string;
+  students: StudentUser[];
+  avatar: string;
+}
 
-    setOverlay: (overlay: Overlay) => void;
-    login: (user: User) => void;
-    logout: () => void;
-    registerUser: (user: User) => void; // New function to register users
-    setCurrentSubject: (id: string) => void;
-    setCurrentTopic: (id: string) => void;
+export type AppUser = StudentUser | ParentUser;
+export type Overlay = null | 'signup' | 'login';
+
+interface AppState {
+  overlay: Overlay;
+  user: AppUser | null;
+  allUsers: AppUser[];
+  isLoggedIn: boolean;
+
+  setOverlay: (overlay: Overlay) => void;
+  login: (user: AppUser) => void;
+  logout: () => void;
+  // registers a user (and their child students) into allUsers
+  registerUser: (user: AppUser) => void;
+  updateUser: (updates: Partial<AppUser>) => void;
+  // adds a student to a parent AND registers the student in allUsers
+  addStudentToParent: (parentPhone: string, student: StudentUser) => void;
+  // removes a student from a parent AND from allUsers
+  removeStudentFromParent: (parentPhone: string, studentPhone: string) => void;
+  findUserByPhone: (phone: string) => AppUser | undefined;
 }
 
 export const useStore = create<AppState>()(
-    persist(
-        (set) => ({
-            overlay: null,
-            user: null,
-            users: [], // Initialize empty users array
-            isLoggedIn: false,
-            currentSubjectId: null,
-            currentTopicId: null,
+  persist(
+    (set, get) => ({
+      overlay: null,
+      user: null,
+      allUsers: [],
+      isLoggedIn: false,
 
-            setOverlay: (overlay) => set({ overlay }),
+      setOverlay: (overlay) => set({ overlay }),
 
-            login: (user) => set({ user, isLoggedIn: true }),
+      login: (user) => set({ user, isLoggedIn: true, overlay: null }),
 
-            logout: () =>
-                set({
-                    user: null,
-                    isLoggedIn: false,
-                    overlay: null,
-                    currentSubjectId: null,
-                    currentTopicId: null,
-                }),
+      logout: () => set({ user: null, isLoggedIn: false, overlay: null }),
 
-            registerUser: (newUser) =>
-                set((state) => ({
-                    users: [...state.users, newUser]
-                })),
-
-            setCurrentSubject: (id) => set({ currentSubjectId: id }),
-
-            setCurrentTopic: (id) => set({ currentTopicId: id }),
+      // When registering a parent, also push each child student into allUsers
+      // so children can log in independently with their phone (parentPhone-N)
+      registerUser: (newUser) =>
+        set((state) => {
+          const extras: AppUser[] =
+            newUser.type === 'parent' ? newUser.students : [];
+          return { allUsers: [...state.allUsers, newUser, ...extras] };
         }),
-        {
-            name: 'bongo-quiz-storage',
-            partialize: (state) => ({
-                user: state.user,
-                users: state.users,
-                isLoggedIn: state.isLoggedIn,
-            }),
-        }
-    )
+
+      updateUser: (updates) =>
+        set((state) => ({
+          user: state.user ? { ...state.user, ...updates } as AppUser : null,
+          allUsers: state.allUsers.map((u) =>
+            state.user && u.phone === state.user.phone
+              ? { ...u, ...updates } as AppUser
+              : u
+          ),
+        })),
+
+      addStudentToParent: (parentPhone, student) =>
+        set((state) => {
+          // 1. Update the parent's students array (in allUsers + current user)
+          const updatedAllUsers = state.allUsers.map((u) =>
+            u.type === 'parent' && u.phone === parentPhone
+              ? { ...u, students: [...u.students, student] }
+              : u
+          );
+
+          // 2. Also add the student as a standalone entry in allUsers
+          //    so they can log in with their "parentPhone-N" phone
+          const alreadyExists = updatedAllUsers.some(
+            (u) => u.phone === student.phone
+          );
+          const finalAllUsers = alreadyExists
+            ? updatedAllUsers
+            : [...updatedAllUsers, student];
+
+          const updatedCurrentUser =
+            state.user?.type === 'parent' && state.user.phone === parentPhone
+              ? { ...state.user, students: [...state.user.students, student] }
+              : state.user;
+
+          return { allUsers: finalAllUsers, user: updatedCurrentUser };
+        }),
+
+      removeStudentFromParent: (parentPhone, studentPhone) =>
+        set((state) => {
+          // Remove from parent's students array
+          const updatedAllUsers = state.allUsers
+            .map((u) =>
+              u.type === 'parent' && u.phone === parentPhone
+                ? {
+                    ...u,
+                    students: u.students.filter(
+                      (s) => s.phone !== studentPhone
+                    ),
+                  }
+                : u
+            )
+            // Remove the student's standalone allUsers entry
+            .filter((u) => u.phone !== studentPhone);
+
+          const updatedCurrentUser =
+            state.user?.type === 'parent' && state.user.phone === parentPhone
+              ? {
+                  ...state.user,
+                  students: state.user.students.filter(
+                    (s) => s.phone !== studentPhone
+                  ),
+                }
+              : state.user;
+
+          return { allUsers: updatedAllUsers, user: updatedCurrentUser };
+        }),
+
+      findUserByPhone: (phone) =>
+        get().allUsers.find((u) => u.phone === phone),
+    }),
+    {
+      name: 'bongoquiz-v2',
+      partialize: (state) => ({
+        user: state.user,
+        allUsers: state.allUsers,
+        isLoggedIn: state.isLoggedIn,
+      }),
+    }
+  )
 );
