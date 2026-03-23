@@ -3,11 +3,7 @@ body{
     scrollbar-width: none; /* Hides scrollbar in Firefox */
     -ms-overflow-style: none;
 }
-@media (min-width: 740px){
-    .main-body-container{
-        /*max-width: 1300px;*/
-    }
-}
+
 .main-body-container{
     display: flex;
     flex-direction: column;

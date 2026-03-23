@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   User, Trophy, BarChart3, Settings, Zap, Flame,
   Star, CheckCircle, Shield, Plus, X, Users,
-  BookOpen, ChevronRight, Pencil, Trash2,
+  BookOpen, Pencil, Trash2,
 } from 'lucide-react';
 import '../styles/profile.css';
 
@@ -287,7 +287,7 @@ const ParentProfile: React.FC = () => {
               </div>
             ) : (
               <div className="pr-student-cards">
-                {parent.students.map((student, i) => {
+                {parent.students.map((student) => {
                   const lvl = LEVEL_OPTIONS.find(l => l.id === student.educationLevel)!;
                   return (
                     <div key={student.phone} className="pr-student-card">

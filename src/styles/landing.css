@@ -5,6 +5,11 @@
   background: #fff;
   color: #1e1b4b;
   overflow-x: hidden;
+  /*max-height: 100vh;*/
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  /*padding-top: var(--nav-h);*/
 }
 
 /* Slider */
@@ -314,7 +319,7 @@
 
 /* Responsive */
 @media (max-width: 768px) {
-  .gh-slider-full { height: 500px; margin: 0 1rem; }
+  .gh-slider-full { height: 350px; margin: 0 1rem; }
   .gh-slider-title { font-size: 2rem; }
   .gh-slider-content { left: 5%; bottom: 12%; }
   .gh-arrow { width: 40px; height: 40px; }

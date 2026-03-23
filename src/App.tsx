@@ -14,6 +14,11 @@ import AboutPage from './components/AboutPage';
 import StudentProfile from './components/StudentProfile';
 import DashboardPage from './components/DashboardPage';
 import NotFound from './components/404/NotFound';
+// import {ZenMain} from "./components/games/zen-mahjong/src/components/ZenMain.tsx";
+// import {BongoMain} from "./components/games/BongoQuiz/component/BongoMain.tsx";
+// import {SudokuMain} from "./components/games/Sudoku/SudokuMain.tsx";
+// import {MathQuiz} from "./components/games/MathQuiz/MathQuiz.tsx";
+// import {KiswahiliQuiz} from "./components/games/KiswahiliQuiz/Kiswahili.tsx";
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isLoggedIn } = useStore();
@@ -42,6 +47,12 @@ const AppContent: React.FC = () => {
         <Route path="/about"   element={<AboutPage />} />
         <Route path="/games"   element={<GamesPage />} />
         <Route path="/profile" element={<StudentProfile />} />
+
+        {/*<Route path="/games/mahjong" element={<ZenMain />} />*/}
+        {/*<Route path="/games/bongo-quiz" element={<BongoMain />} />*/}
+        {/*<Route path="/games/sudoku" element={<SudokuMain />} />*/}
+        {/*<Route path="/games/math-quiz" element={<MathQuiz />} />*/}
+        {/*<Route path="/games/kiswahili-quiz" element={<KiswahiliQuiz />} />*/}
 
         <Route path="/dashboard"          element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/level/lower-primary" element={<ProtectedRoute><LowerPrimaryDashboard /></ProtectedRoute>} />

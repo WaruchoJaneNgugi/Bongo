@@ -5,8 +5,15 @@
 /* ── Root ────────────────────────────────────────────────── */
 .gp-root {
   min-height: 100vh;
+
   background: #0d0520;
   color: #fff;
+  /*display: flex;*/
+  /*flex-direction: column;*/
+  /*align-items: center;*/
+  background:
+          radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.4) 0%, transparent 70%),
+          linear-gradient(180deg, #1a0a3a 0%, #0d0520 100%);
 }
 
 /* ── Hero ────────────────────────────────────────────────── */
@@ -15,14 +22,14 @@
   padding: 4rem 2rem 3rem;
   overflow: hidden;
   text-align: center;
+  /*z-index: 0;*/
+  width: 100%;
 }
 
 .gp-hero-bg {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,58,237,0.4) 0%, transparent 70%),
-    linear-gradient(180deg, #1a0a3a 0%, #0d0520 100%);
+
 }
 
 .gp-hero-bg::before {
@@ -265,11 +272,15 @@
 /* Lock overlay */
 .gc-lock-overlay {
   position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.7);
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 20;
 }
 
 /* Card body */
@@ -347,3 +358,4 @@
   .gp-grid { grid-template-columns: 1fr; }
   .gc-thumb { height: 130px; }
 }
+

@@ -500,3 +500,44 @@
   }
   .ov-pin-box { width: 48px; height: 56px; font-size: 1.3rem; }
 }
+
+/* ─── LOGIN METHOD TOGGLE (Phone / Username) ─────────────────
+   Add these to your existing overlay.css
+────────────────────────────────────────────────────────────── */
+
+.ov-method-toggle {
+  display: flex;
+  gap: 0.4rem;
+  background: var(--bg-muted, #f4f4f5);
+  border-radius: var(--r-full, 9999px);
+  padding: 3px;
+  margin-bottom: 1rem;
+}
+
+.ov-method-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.7rem;
+  border-radius: var(--r-full, 9999px);
+  border: none;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  color: var(--text-muted, #6b7280);
+  background: transparent;
+  font-family: inherit;
+}
+
+.ov-method-btn.active {
+  background: #fff;
+  color: var(--primary, #7c3aed);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+}
+
+.ov-method-btn:hover:not(.active) {
+  color: var(--text, #1e1b4b);
+}

@@ -24,10 +24,10 @@ const Navbar: React.FC = () => {
   // Close menu on route change
   useEffect(() => { setMenuOpen(false); setDropdownOpen(false); }, [location]);
 
-  const isMobile = window.innerWidth <= 768;
+  // const isMobile = window.innerWidth <= 768;
   const isActive = (p: string) => location.pathname === p || location.pathname.startsWith(p + '/');
 
-  const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
+  // const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
   const userAvatar = user?.avatar || (user?.type === 'parent' ? '👩' : '🧒');
 
   const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };

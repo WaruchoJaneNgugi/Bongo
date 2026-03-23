@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from '../../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, Mic, FlaskConical, Globe, History, ChevronRight, Star, Flame, Trophy, Brain, BookMarked, GraduationCap } from 'lucide-react';
+import { BookOpen, Calculator, Mic, FlaskConical, Globe, History, ChevronRight, Star, Flame, Brain, BookMarked, GraduationCap } from 'lucide-react';
 import '../../styles/level.css';
 
 const subjects = [

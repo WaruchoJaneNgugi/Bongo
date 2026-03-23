@@ -76,13 +76,18 @@
 /* ── BASE ────────────────────────────────────────────── */
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  font-size: 16px;
-  line-height: 1.5;
-}
+/*body {*/
+/*  background: var(--bg);*/
+/*  color: var(--text);*/
+/*  !*min-height: 100vh;*!*/
+/*  font-size: 16px;*/
+/*  line-height: 1.5;*/
+/*  !*height: 100%;*!*/
+/*  overflow-y: auto;*/
+/*  !*height: 100vh;*!*/
+/*  scrollbar-width: thin;            !* 👈 makes it thin *!*/
+/*  scrollbar-color: #888 transparent;*/
+/*}*/
 
 h1,h2,h3,h4,h5,h6 {
   font-weight: 700;
@@ -92,13 +97,24 @@ h1,h2,h3,h4,h5,h6 {
 
 a { text-decoration: none; color: inherit; }
 img { display: block; max-width: 100%; }
-
-/* ── LAYOUT ──────────────────────────────────────────── */
-.main-body-container {
-  min-height: 100vh;
+body {
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  /*padding-top: var(--nav-h);}*/
 }
+.main-body-container {
+  overflow-y: auto;
+   /* 👈 move it here instead */
+}
+
+/*.main-body-container {*/
+/*  flex: 1;*/
+/*  min-height: 0;  !* 👈 CRITICAL for scrolling in flex layouts *!*/
+/*  !*overflow-y: auto;*!*/
+/*  max-height: 100vh;*/
+/*}*/
 
 .page-content {
   flex: 1;

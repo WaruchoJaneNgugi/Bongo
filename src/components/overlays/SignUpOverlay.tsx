@@ -3,7 +3,7 @@ import { useStore, type StudentUser, type ParentUser, type EducationLevel } from
 import { useNavigate } from 'react-router-dom';
 import {
   Phone, User, ArrowRight, ArrowLeft, CheckCircle,
-  BookOpen, Users, GraduationCap, Shield, Plus, X,
+  BookOpen, Users, Shield, Plus, X,
 } from 'lucide-react';
 import '../../styles/overlay.css';
 
@@ -72,7 +72,7 @@ const PinInput: React.FC<{
 
 /* ─── Main Component ─────────────────────────────────────── */
 const SignUpOverlay: React.FC = () => {
-  const { setOverlay, registerUser, login, allUsers, addStudentToParent } = useStore();
+  const { setOverlay, registerUser, login, allUsers } = useStore();
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<UserMode>('student');

@@ -1,12 +1,22 @@
 import { create } from 'zustand';
+import Mahjong from '../assets/Games/mahjong.png';
+import BongoQuiz from '../assets/Games/bongoquiz.png';
+import Sudoku from '../assets/Games/sodoku.png';
+import MathQuiz from '../assets/Games/mathquiz.png';
+import BibleQuiz from '../assets/Games/Bible-IMG.png';
+import Checkers from '../assets/Games/checkers.png';
+import TicTacToe from '../assets/Games/tictactoe.png';
+import WordQuest from '../assets/Games/wordquest.png';
+import KiswahiliQuiz from '../assets/Games/kiswahili.png';
+import ConnectFour from '../assets/Games/connectfour.png';
 
 export type GameTag = 'new' | 'popular' | 'hot' | 'coming_soon' | 'math' | 'english' | 'science' | 'puzzle' | 'kiswahili' | 'quiz';
-export type FilterTag = 'all' | 'new' | 'popular' | 'hot' | 'coming_soon';
+export type FilterTag = 'all' |'arcade'|'puzzle'| 'quiz'|'timed' |'latest'| 'new' | 'popular' | 'hot' | 'coming_soon';
 
 export interface Game {
   id: string;           // unique game ID e.g. "bq-math-001"
   name: string;
-  description: string;
+  // description: string;
   tags: GameTag[];
   image: string;        // image path / emoji placeholder
   emoji: string;        // fallback display emoji
@@ -31,14 +41,14 @@ type GameState = {
 
 const ALL_GAMES: Game[] = [
   {
-    id: 'bq-math-001',
-    name: 'Math Blitz',
-    description: 'Race against the clock solving arithmetic challenges!',
+    id: 'mahjong',
+    name: 'Mahjong',
+    // description: 'Race against the clock solving arithmetic challenges!',
     tags: ['hot', 'popular', 'math'],
-    image: '',
+    image: Mahjong,
     emoji: '🧮',
     bgColor: 'linear-gradient(135deg, #7c3aed 0%, #4f46e5 100%)',
-    component: '/games/math-blitz',
+    component: '/games/mahjong',
     xpReward: 120,
     coinReward: 50,
     players: 24300,
@@ -47,14 +57,14 @@ const ALL_GAMES: Game[] = [
     subject: 'Mathematics',
   },
   {
-    id: 'bq-eng-001',
-    name: 'Word Wizard',
-    description: 'Build vocabulary and master spelling with fun word puzzles.',
+    id: 'bongo-quiz',
+    name: 'Bongo Quiz',
+    // description: 'Build vocabulary and master spelling with fun word puzzles.',
     tags: ['popular', 'english', 'puzzle'],
-    image: '',
+    image: BongoQuiz,
     emoji: '📝',
     bgColor: 'linear-gradient(135deg, #2563eb 0%, #0891b2 100%)',
-    component: '/games/word-wizard',
+    component: '/games/bongo-quiz',
     xpReward: 100,
     coinReward: 40,
     players: 19800,
@@ -63,14 +73,14 @@ const ALL_GAMES: Game[] = [
     subject: 'English',
   },
   {
-    id: 'bq-sci-001',
-    name: 'Lab Escape',
-    description: 'Solve science riddles to escape the virtual laboratory!',
+    id: 'sudoku',
+    name: 'Sudoku',
+    // description: 'Solve science riddles to escape the virtual laboratory!',
     tags: ['new', 'science', 'puzzle'],
-    image: '',
+    image: Sudoku,
     emoji: '🔬',
     bgColor: 'linear-gradient(135deg, #059669 0%, #0d9488 100%)',
-    component: '/games/lab-escape',
+    component: '/games/sudoku',
     xpReward: 150,
     coinReward: 60,
     players: 8400,
@@ -79,14 +89,14 @@ const ALL_GAMES: Game[] = [
     subject: 'Science',
   },
   {
-    id: 'bq-kiswahili-001',
-    name: 'Maneno Moto',
-    description: 'Master Kiswahili vocabulary in fast-paced word battles.',
+    id: 'math-quiz',
+    name: 'Math Quiz',
+    // description: 'Master Kiswahili vocabulary in fast-paced word battles.',
     tags: ['hot', 'kiswahili'],
-    image: '',
+    image: MathQuiz,
     emoji: '🗣️',
     bgColor: 'linear-gradient(135deg, #d97706 0%, #ea580c 100%)',
-    component: '/games/maneno-moto',
+    component: '/games/math-quiz',
     xpReward: 110,
     coinReward: 45,
     players: 15200,
@@ -95,14 +105,13 @@ const ALL_GAMES: Game[] = [
     subject: 'Kiswahili',
   },
   {
-    id: 'bq-math-002',
-    name: 'Fraction Wars',
-    description: 'Battle other students in fraction and decimal showdowns.',
+    id: 'bible-quiz',
+    name: 'Bible Quiz',
     tags: ['popular', 'math'],
-    image: '',
+    image: BibleQuiz,
     emoji: '⚔️',
     bgColor: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 100%)',
-    component: '/games/fraction-wars',
+    component: '/games/bible-quiz',
     xpReward: 130,
     coinReward: 55,
     players: 12100,
@@ -111,14 +120,13 @@ const ALL_GAMES: Game[] = [
     subject: 'Mathematics',
   },
   {
-    id: 'bq-quiz-001',
-    name: 'Grand Quiz',
-    description: 'The ultimate all-subjects knowledge challenge.',
+    id: 'checkers',
+    name: 'Checkers',
     tags: ['popular', 'quiz', 'hot'],
-    image: '',
+    image: Checkers,
     emoji: '🏆',
     bgColor: 'linear-gradient(135deg, #b45309 0%, #d97706 100%)',
-    component: '/games/grand-quiz',
+    component: '/games/checkers',
     xpReward: 200,
     coinReward: 80,
     players: 31000,
@@ -127,14 +135,13 @@ const ALL_GAMES: Game[] = [
     subject: 'All Subjects',
   },
   {
-    id: 'bq-eng-002',
-    name: 'Grammar Gauntlet',
-    description: 'Test your grammar skills through a series of epic challenges.',
+    id: 'tictactoe',
+    name: 'TicTac Toe',
     tags: ['new', 'english'],
-    image: '',
+    image: TicTacToe,
     emoji: '📚',
     bgColor: 'linear-gradient(135deg, #1d4ed8 0%, #7c3aed 100%)',
-    component: '/games/grammar-gauntlet',
+    component: '/games/tictac-toe',
     xpReward: 90,
     coinReward: 35,
     players: 6700,
@@ -143,14 +150,13 @@ const ALL_GAMES: Game[] = [
     subject: 'English',
   },
   {
-    id: 'bq-sci-002',
-    name: 'Planet Quest',
-    description: 'Explore the solar system and answer space science questions.',
+    id: 'word-quest',
+    name: 'WordQuest',
     tags: ['new', 'science'],
-    image: '',
+    image: WordQuest,
     emoji: '🚀',
     bgColor: 'linear-gradient(135deg, #111827 0%, #1e40af 100%)',
-    component: '/games/planet-quest',
+    component: '/games/word-quest',
     xpReward: 140,
     coinReward: 60,
     players: 9200,
@@ -159,14 +165,13 @@ const ALL_GAMES: Game[] = [
     subject: 'Science',
   },
   {
-    id: 'bq-math-003',
-    name: 'Geometry Hero',
-    description: 'Identify shapes, angles and solve geometry puzzles.',
+    id: 'kiswahili-quiz',
+    name: 'Kiswahili Quiz',
     tags: ['math', 'puzzle'],
-    image: '',
+    image: KiswahiliQuiz,
     emoji: '📐',
     bgColor: 'linear-gradient(135deg, #6d28d9 0%, #5b21b6 100%)',
-    component: '/games/geometry-hero',
+    component: '/games/kiswahili-quiz',
     xpReward: 110,
     coinReward: 45,
     players: 10500,
@@ -175,9 +180,25 @@ const ALL_GAMES: Game[] = [
     subject: 'Mathematics',
   },
   {
+    id: 'connect-four',
+    name: 'Connect Four',
+    // description: 'Mixed puzzle challenges that test all subjects at once.',
+    tags: ['hot', 'puzzle', 'quiz'],
+    image: ConnectFour,
+    emoji: '🧠',
+    bgColor: 'linear-gradient(135deg, #dc2626 0%, #9333ea 100%)',
+    component: '/games/connect-four',
+    xpReward: 160,
+    coinReward: 65,
+    players: 17800,
+    rating: 4.7,
+    duration: '8–12 min',
+    subject: 'Mixed',
+  },
+  {
     id: 'bq-cs-001',
     name: 'Code Breaker',
-    description: 'Decode messages and learn basic programming logic.',
+    // description: 'Decode messages and learn basic programming logic.',
     tags: ['coming_soon', 'puzzle'],
     image: '',
     emoji: '💻',
@@ -193,7 +214,7 @@ const ALL_GAMES: Game[] = [
   {
     id: 'bq-history-001',
     name: 'Kenya Chronicles',
-    description: 'Travel through Kenyan history and answer trivia questions.',
+    // description: 'Travel through Kenyan history and answer trivia questions.',
     tags: ['coming_soon'],
     image: '',
     emoji: '🗺️',
@@ -205,23 +226,7 @@ const ALL_GAMES: Game[] = [
     rating: 0,
     duration: '8–12 min',
     subject: 'Social Studies',
-  },
-  {
-    id: 'bq-puzzle-001',
-    name: 'Brain Buster',
-    description: 'Mixed puzzle challenges that test all subjects at once.',
-    tags: ['hot', 'puzzle', 'quiz'],
-    image: '',
-    emoji: '🧠',
-    bgColor: 'linear-gradient(135deg, #dc2626 0%, #9333ea 100%)',
-    component: '/games/brain-buster',
-    xpReward: 160,
-    coinReward: 65,
-    players: 17800,
-    rating: 4.7,
-    duration: '8–12 min',
-    subject: 'Mixed',
-  },
+  }
 ];
 
 export const useGameStore = create<GameState>((set, get) => ({

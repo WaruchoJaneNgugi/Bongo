@@ -2,12 +2,12 @@
 import React, {useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/useStore'
-import heroImg from '../assets/hero-bg.png';
+// import heroImg from '../assets/hero-bg.png';
 import LowerPrimary from '../assets/banners/LowerPrimaryb.png';
 import MiddleSchool from '../assets/banners/middle-school.png';
 import SeniorSchool from '../assets/banners/seniorschool.png';
 import {
-  ChevronLeft, ChevronRight, ArrowRight, BarChart3, Clock, Trophy, Users, Zap, Star, Shield, Flame, TrendingUp, Play
+  ChevronLeft, ChevronRight, ArrowRight, BarChart3, Clock, Trophy, Users, Star, Shield, Flame, TrendingUp, Target
 } from 'lucide-react';
 // import LowerPrimary from '../assets/lower-primary.jpg?url';   // adjust path as needed
 // import MiddleSchool from '../assets/middle-school.jpg?url';
@@ -16,24 +16,25 @@ import {
 import Footer from './Footer';
 import '../styles/landing.css';
 import '../styles/exambrowser.css';
+import '../styles/landing-loggedin.css';
 import {ExamBrowser} from "./ExamBrowser.tsx";
 // import { useExamStore} from "../store/useExamStore.ts";
-const CONTINUE_CARDS = [
-  { id: 1, subject: 'Math',           progress: 65, color: '#7C3AED', emoji: '🧮', isNew: false },
-  { id: 2, subject: 'CRE',            progress: 40, color: '#EA580C', emoji: '✝️',  isNew: false },
-  { id: 3, subject: 'Science',        progress: 20, color: '#059669', emoji: '🔬', isNew: true  },
-  { id: 4, subject: 'Kiswahili',      progress: 35, color: '#D97706', emoji: '🗣️', isNew: true  },
-  { id: 5, subject: 'Social Studies', progress: 50, color: '#7C3AED', emoji: '🌍', isNew: true  },
-];
-const STREAK = 5;
-const LEVEL  = 3;
-const POINTS = 1200;
-const LAST_QUIZ = { name: 'Science Quiz', progress: 65 };
-
-const RECOMMENDED = [
-  { id: 1, subject: 'Geography',         level: 2, xp: 650, pts: 400, emoji: '🌍', color: '#0891B2' },
-  { id: 2, subject: 'Grammar Challenge',  level: 3, xp: 800, pts: 500, emoji: '📝', color: '#D97706' },
-];
+// const CONTINUE_CARDS = [
+//   { id: 1, subject: 'Math',           progress: 65, color: '#7C3AED', emoji: '🧮', isNew: false },
+//   { id: 2, subject: 'CRE',            progress: 40, color: '#EA580C', emoji: '✝️',  isNew: false },
+//   { id: 3, subject: 'Science',        progress: 20, color: '#059669', emoji: '🔬', isNew: true  },
+//   { id: 4, subject: 'Kiswahili',      progress: 35, color: '#D97706', emoji: '🗣️', isNew: true  },
+//   { id: 5, subject: 'Social Studies', progress: 50, color: '#7C3AED', emoji: '🌍', isNew: true  },
+// ];
+// const STREAK = 5;
+// const LEVEL  = 3;
+// const POINTS = 1200;
+// const LAST_QUIZ = { name: 'Science Quiz', progress: 65 };
+//
+// const RECOMMENDED = [
+//   { id: 1, subject: 'Geography',         level: 2, xp: 650, pts: 400, emoji: '🌍', color: '#0891B2' },
+//   { id: 2, subject: 'Grammar Challenge',  level: 3, xp: 800, pts: 500, emoji: '📝', color: '#D97706' },
+// ];
 
 /* ─── Level config (for ExamBrowser) ───────────────────── */
 // const LEVEL_CONFIG = {
@@ -214,7 +215,7 @@ const SLIDES = [
 //   );
 // };
 
-/* ─── Guest Hero (New White/Purple Design) ───────────────── */
+
 const GuestHero: React.FC = () => {
   const [slideIdx, setSlideIdx] = useState(0);
   const slide = SLIDES[slideIdx];
@@ -302,100 +303,205 @@ const GuestHero: React.FC = () => {
       </div>
   );
 };
-/* ── LoggedInHero ── */
+
+const LEVEL_CONFIG = {
+  lower_primary: {
+    label: 'Lower Primary', grades: 'Grade 1–3', emoji: '🧒',
+    color: '#10b981', bg: 'linear-gradient(135deg,#065f46,#10b981)',
+    route: '/level/lower-primary',
+    subjects: ['Mathematics','English','Kiswahili','Science','Art & Craft','Music'],
+    subjectEmojis: ['🧮','📖','🗣️','🌿','🎨','🎵'],
+  },
+  middle_school: {
+    label: 'Middle School', grades: 'Grade 4–9', emoji: '🧠',
+    color: '#3b82f6', bg: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
+    route: '/level/middle-school',
+    subjects: ['Mathematics','English','Kiswahili','Science','Social Studies','History'],
+    subjectEmojis: ['🧮','📖','🗣️','🔬','🌍','🏛️'],
+  },
+  senior_school: {
+    label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓',
+    color: '#a855f7', bg: 'linear-gradient(135deg,#4c1d95,#a855f7)',
+    route: '/level/senior-school',
+    subjects: ['Mathematics','English','Biology','Chemistry','Physics','History'],
+    subjectEmojis: ['🧮','📖','🧬','🧪','⚡','🏛️'],
+  },
+};
+/* ── LoggedInHero (Refined Professional Design) ── */
 const LoggedInHero: React.FC = () => {
+  const { user } = useStore();
   const navigate = useNavigate();
-  return (
-      <main className="lih-root">
-        <section className="lih-hero-card">
-          <div className="lih-banner">
-            <img src={heroImg} alt="Students" className="lih-banner-img" />
-            <div className="lih-banner-overlay" />
-            <span className="lih-streak-badge">
-                        <Flame size={16} fill="#FF6B35" color="#FF6B35" />
-                        You're on a <strong>{STREAK} day streak!</strong>
-                    </span>
-          </div>
-          <div className="lih-info-panel">
-            <div className="lih-info-row">
-              <div className="lih-streak-meta">
-                <BarChart3 size={16} />
-                <span>Daily Streak: <strong>{STREAK} days</strong></span>
-              </div>
-              <button className="lih-level-pill" onClick={() => navigate('/dashboard')}>
-                Level {LEVEL} · {POINTS.toLocaleString()} pts <ChevronRight size={14} />
-              </button>
-            </div>
-            <p className="lih-continue-label">Continue: <strong>{LAST_QUIZ.name}</strong></p>
-            <div className="lih-progress-wrap">
-              <div className="lih-progress-track">
-                <div className="lih-progress-fill" style={{ width: `${LAST_QUIZ.progress}%` }} />
-              </div>
-              <span className="lih-progress-pct">{LAST_QUIZ.progress}%</span>
-            </div>
-            <div className="lih-actions">
-              <button className="lih-btn lih-btn-primary">
-                <Play size={18} fill="white" color="white" /> Continue Learning
-              </button>
-              <button className="lih-btn lih-btn-outline" onClick={() => navigate('/dashboard')}>
-                <BarChart3 size={18} /> View Progress
-              </button>
-            </div>
-          </div>
-        </section>
 
-        <section className="lih-section">
-          <div className="lih-section-header">
-            <h2>Continue Learning</h2>
-            <button className="lih-see-all">See All <ChevronRight size={14} /></button>
-          </div>
-          <div className="lih-cards-row">
-            {CONTINUE_CARDS.map(card => (
-                <div key={card.id} className="lih-subject-card">
-                  {card.isNew
-                      ? <span className="lih-badge lih-badge-new">New</span>
-                      : <span className="lih-badge lih-badge-pct">{card.progress}%</span>
-                  }
-                  <div className="lih-subject-thumb" style={{ background: `linear-gradient(135deg, ${card.color}cc, ${card.color}44)` }}>
-                    <span className="lih-subject-emoji">{card.emoji}</span>
-                  </div>
-                  <p className="lih-subject-name">{card.subject}</p>
-                  <div className="lih-mini-progress-track">
-                    <div className="lih-mini-progress-fill" style={{ width: `${card.progress}%`, background: card.color }} />
-                  </div>
-                  {!card.isNew && <span className="lih-subject-pct-label">{card.progress}%</span>}
-                </div>
-            ))}
-          </div>
-        </section>
+  if (!user) return null;
 
-        <section className="lih-section">
-          <div className="lih-section-header">
-            <h2>Recommended for You</h2>
-            <button className="lih-see-all">See All <ChevronRight size={14} /></button>
+  // Parent view with clear student names
+  if (user.type === 'parent') {
+    return (
+        <div className="lp-parent-dashboard">
+          <div className="lp-parent-welcome">
+            <div className="lp-parent-avatar">{user.avatar || '👩‍👧‍👦'}</div>
+            <div className="lp-parent-info">
+              <h1>Welcome back, {user.username}</h1>
+              <p>{user.students.length} child{user.students.length !== 1 ? 'ren' : ''} learning</p>
+            </div>
           </div>
-          <div className="lih-rec-grid">
-            {RECOMMENDED.map(rec => (
-                <button key={rec.id} className="lih-rec-card">
-                  <div className="lih-rec-thumb" style={{ background: `linear-gradient(135deg, ${rec.color}bb, ${rec.color}33)` }}>
-                    <span className="lih-rec-emoji">{rec.emoji}</span>
-                    <div className="lih-rec-meta">
-                      <span className="lih-rec-title">{rec.subject}</span>
-                      <span className="lih-rec-lvl">
-                                        <Zap size={11} /> Lv {rec.level} · <Star size={11} /> {rec.xp} XP
-                                    </span>
-                    </div>
-                  </div>
-                  <p className="lih-rec-reward">Earn up to <strong>{rec.pts} pts!</strong></p>
+
+          {user.students.length === 0 ? (
+              <div className="lp-empty-state">
+                <div className="lp-empty-icon">📚</div>
+                <h3>Add your first child</h3>
+                <p>Track progress, set goals, and celebrate achievements.</p>
+                <button className="lp-btn-primary lp-btn-add" onClick={() => navigate('/profile')}>
+                  + Add Student
                 </button>
-            ))}
+              </div>
+          ) : (
+              <>
+                <div className="lp-section-header">
+                  <h2>Your children</h2>
+                  <button className="lp-text-link" onClick={() => navigate('/profile')}>Manage</button>
+                </div>
+                <div className="lp-student-list">
+                  {user.students.map((student, i) => {
+                    const level = LEVEL_CONFIG[student.educationLevel];
+                    const xpPercent = ((student.xp % 1000) / 1000) * 100;
+                    return (
+                        <div
+                            key={i}
+                            className="lp-student-item"
+                            onClick={() => navigate(level.route)}
+                        >
+                          <div className="lp-student-avatar">{student.avatar || '🧒'}</div>
+                          <div className="lp-student-details">
+                            <div className="lp-student-name">{student.username}</div>
+                            <div className="lp-student-meta">
+                              <span className="lp-student-level">{level.emoji} {level.label}</span>
+                              <span className="lp-student-xp">{student.xp % 1000}/1000 XP</span>
+                            </div>
+                            <div className="lp-student-progress">
+                              <div className="lp-progress-bar">
+                                <div className="lp-progress-fill" style={{ width: `${xpPercent}%` }}></div>
+                              </div>
+                            </div>
+                          </div>
+                          <ChevronRight size={20} className="lp-student-arrow" />
+                        </div>
+                    );
+                  })}
+                </div>
+              </>
+          )}
+        </div>
+    );
+  }
+
+  // Student view
+  const level = LEVEL_CONFIG[user.educationLevel];
+  const xpInLevel = user.xp % 1000;
+  const xpPercent = (xpInLevel / 1000) * 100;
+
+  return (
+      <div className="lp-student-dashboard">
+        {/* Header */}
+        <div className="lp-student-header" style={{ background: level.bg }}>
+          <div className="lp-student-header-content">
+            <div className="lp-student-avatar-large">{user.avatar || '🧒'}</div>
+            <div className="lp-student-header-info">
+              <h1>{user.username}</h1>
+              <div className="lp-student-badges">
+                <span className="lp-badge">{level.emoji} {level.label}</span>
+                <span className="lp-badge lp-streak-badge">
+                <Flame size={12} /> {user.streak} day streak
+              </span>
+                <span className="lp-badge">Level {user.level}</span>
+              </div>
+            </div>
+            <div className="lp-student-points">
+              <Star size={18} /> {user.points.toLocaleString()} pts
+            </div>
           </div>
-        </section>
-      </main>
+          <div className="lp-xp-section">
+            <div className="lp-xp-label">{xpInLevel} / 1000 XP to level {user.level + 1}</div>
+            <div className="lp-xp-bar">
+              <div className="lp-xp-fill" style={{ width: `${xpPercent}%` }}></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="lp-stats-grid">
+          <div className="lp-stat-card">
+            <Target size={20} className="lp-stat-icon" />
+            <div className="lp-stat-value">3/5</div>
+            <div className="lp-stat-label">Today's goal</div>
+          </div>
+          <div className="lp-stat-card">
+            <BarChart3 size={20} className="lp-stat-icon" />
+            <div className="lp-stat-value">78%</div>
+            <div className="lp-stat-label">Avg score</div>
+          </div>
+          <div className="lp-stat-card">
+            <Clock size={20} className="lp-stat-icon" />
+            <div className="lp-stat-value">2h 15m</div>
+            <div className="lp-stat-label">Study time</div>
+          </div>
+        </div>
+
+        {/* Subjects */}
+        <div className="lp-section-header">
+          <h2>Your subjects</h2>
+          <button className="lp-text-link" onClick={() => navigate(level.route)}>See all</button>
+        </div>
+        <div className="lp-subjects-grid">
+          {level.subjects.map((sub, i) => (
+              <button
+                  key={sub}
+                  className="lp-subject-card"
+                  onClick={() => navigate(level.route)}
+              >
+                <span className="lp-subject-emoji">{level.subjectEmojis[i]}</span>
+                <span className="lp-subject-name">{sub}</span>
+              </button>
+          ))}
+        </div>
+
+        {/* Continue Learning */}
+        <div className="lp-section-header">
+          <h2>Continue learning</h2>
+          <button className="lp-text-link" onClick={() => navigate(level.route)}>View all</button>
+        </div>
+        <div className="lp-continue-list">
+          {[
+            { subject: 'Mathematics', progress: 65, emoji: '🧮' },
+            { subject: 'Science', progress: 40, emoji: '🔬' },
+            { subject: 'Kiswahili', progress: 80, emoji: '🗣️' },
+          ].map((quiz) => (
+              <div key={quiz.subject} className="lp-continue-item" onClick={() => navigate(level.route)}>
+                <div className="lp-continue-emoji">{quiz.emoji}</div>
+                <div className="lp-continue-details">
+                  <div className="lp-continue-name">{quiz.subject}</div>
+                  <div className="lp-continue-progress">
+                    <div className="lp-progress-bar">
+                      <div className="lp-progress-fill" style={{ width: `${quiz.progress}%` }}></div>
+                    </div>
+                    <span>{quiz.progress}%</span>
+                  </div>
+                </div>
+              </div>
+          ))}
+        </div>
+
+        {/* Full Dashboard Button */}
+        <button className="lp-dashboard-btn" onClick={() => navigate('/dashboard')}>
+          <BarChart3 size={20} />
+          Go to full dashboard
+          <ChevronRight size={18} />
+        </button>
+      </div>
   );
 };
 
-/* ─── Root Component ────────────────────────────────────── */
+
 const LandingPage: React.FC = () => {
   const { isLoggedIn } = useStore();
   return (
