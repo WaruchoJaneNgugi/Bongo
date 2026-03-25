@@ -3,7 +3,7 @@ import { useStore, type StudentUser, type ParentUser, type EducationLevel } from
 import { useNavigate } from 'react-router-dom';
 import {
   Phone, User, ArrowRight, ArrowLeft, CheckCircle,
-  BookOpen, Users, Shield, Plus, X,
+  BookOpen, Users, Shield, Plus, X, Star, Zap, Crown,
 } from 'lucide-react';
 import '../../styles/overlay.css';
 
@@ -16,31 +16,51 @@ const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji:
 ];
 
 const AVATARS = ['🧒','👦','👧','🧑','👨','👩','🦸','🧙','🎓','🤓','😎','🌟'];
+const CHILD_AVATARS = ['🧒','👦','👧','🧑','🤓','😎'];
 
-/* ─── PIN Input (4 boxes, like OTP) ──────────────────────── */
+const STUDENT_PLANS = [
+  {
+    id: 'free', name: 'Free', price: 'KSh 0', period: 'forever',
+    icon: Star, color: '#10b981',
+    features: ['5 quizzes/day', 'Basic progress tracking', 'Limited games'],
+  },
+  {
+    id: 'pro', name: 'Pro', price: 'KSh 299', period: '/month',
+    icon: Zap, color: '#7c3aed', badge: '1 month FREE', popular: true,
+    features: ['Unlimited quizzes', 'Full analytics', 'All games', 'Mock exams', 'Leaderboard'],
+  },
+];
+
+const PARENT_PLANS = [
+  {
+    id: 'free', name: 'Basic', price: 'KSh 0', period: 'forever',
+    icon: Star, color: '#10b981',
+    features: ['1 child account', '5 quizzes/day per child', 'Basic reports'],
+  },
+  {
+    id: 'family', name: 'Family', price: 'KSh 599', period: '/month',
+    icon: Crown, color: '#f59e0b', badge: '1 month FREE', popular: true,
+    features: ['Up to 4 children', 'Unlimited quizzes', 'Detailed reports', 'All games & exams', 'Priority support'],
+  },
+];
+
+/* ─── PIN Input ──────────────────────────────────────────── */
 const PinInput: React.FC<{
-  value: string;
-  onChange: (v: string) => void;
-  hasError?: boolean;
-  disabled?: boolean;
+  value: string; onChange: (v: string) => void; hasError?: boolean; disabled?: boolean;
 }> = ({ value, onChange, hasError, disabled }) => {
   const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
                 useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
-
   const digits = value.padEnd(4, '').split('').slice(0, 4);
 
   const handleInput = (i: number, char: string) => {
     if (!/^\d?$/.test(char)) return;
-    const newDigits = [...digits];
-    newDigits[i] = char;
-    onChange(newDigits.join('').replace(/\s/g, ''));
+    const d = [...digits]; d[i] = char;
+    onChange(d.join('').replace(/\s/g, ''));
     if (char && i < 3) refs[i + 1].current?.focus();
   };
-
   const handleKeyDown = (i: number, e: React.KeyboardEvent) => {
     if (e.key === 'Backspace' && !digits[i] && i > 0) refs[i - 1].current?.focus();
   };
-
   const handlePaste = (e: React.ClipboardEvent) => {
     const text = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
     onChange(text);
@@ -50,21 +70,12 @@ const PinInput: React.FC<{
 
   return (
     <div className="ov-pin-row">
-      {[0, 1, 2, 3].map(i => (
-        <input
-          key={i}
-          ref={refs[i]}
-          type="password"
-          inputMode="numeric"
-          maxLength={1}
-          value={digits[i] || ''}
-          onChange={e => handleInput(i, e.target.value)}
-          onKeyDown={e => handleKeyDown(i, e)}
-          onPaste={handlePaste}
-          disabled={disabled}
+      {[0,1,2,3].map(i => (
+        <input key={i} ref={refs[i]} type="password" inputMode="numeric" maxLength={1}
+          value={digits[i] || ''} onChange={e => handleInput(i, e.target.value)}
+          onKeyDown={e => handleKeyDown(i, e)} onPaste={handlePaste} disabled={disabled}
           className={`ov-pin-box ${hasError ? 'error' : ''} ${digits[i] ? 'filled' : ''}`}
-          autoComplete="off"
-        />
+          autoComplete="off" />
       ))}
     </div>
   );
@@ -76,23 +87,24 @@ const SignUpOverlay: React.FC = () => {
   const navigate = useNavigate();
 
   const [mode, setMode] = useState<UserMode>('student');
-  const [step, setStep] = useState(1); // 1=info, 2=otp, 3=level(student)/students(parent)
+  const [step, setStep] = useState(1); // 1=info, 2=otp, 3=level/students, 4=plan
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Form state
   const [username, setUsername] = useState('');
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
   const [otp, setOtp] = useState('');
   const [avatar, setAvatar] = useState('🧒');
   const [selectedLevel, setSelectedLevel] = useState<EducationLevel | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState('pro');
 
-  // Parent-specific: student creation
+  // Parent student adding
   const [parentStudents, setParentStudents] = useState<{ name: string; level: EducationLevel; avatar: string }[]>([]);
   const [addingStudent, setAddingStudent] = useState(false);
   const [newStudentName, setNewStudentName] = useState('');
   const [newStudentLevel, setNewStudentLevel] = useState<EducationLevel>('middle_school');
+  const [newStudentAvatar, setNewStudentAvatar] = useState('🧒');
 
   const cleanPhone = phone.replace(/\s/g, '');
 
@@ -113,33 +125,20 @@ const SignUpOverlay: React.FC = () => {
   const handleNext1 = () => {
     if (!validateStep1()) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setStep(2);
-    }, 800);
+    setTimeout(() => { setLoading(false); setStep(2); }, 800);
   };
 
   const handleVerifyOtp = () => {
     if (otp !== '1234') { setError('Invalid OTP. Use 1234 for demo.'); return; }
-    setError('');
-    setStep(3);
+    setError(''); setStep(3);
   };
 
   const handleFinish = () => {
-    setError('');
     if (mode === 'student') {
       if (!selectedLevel) { setError('Please select your education level'); return; }
       const newUser: StudentUser = {
-        type: 'student',
-        username: username.trim(),
-        phone: cleanPhone,
-        pin,
-        educationLevel: selectedLevel,
-        avatar,
-        xp: 0,
-        level: 1,
-        streak: 0,
-        points: 0,
+        type: 'student', username: username.trim(), phone: cleanPhone, pin,
+        educationLevel: selectedLevel, avatar, xp: 0, level: 1, streak: 0, points: 0,
       };
       registerUser(newUser);
       login(newUser);
@@ -150,25 +149,13 @@ const SignUpOverlay: React.FC = () => {
       };
       navigate(routes[selectedLevel]);
     } else {
-      // Parent finish — create parent + any added students
       const newParent: ParentUser = {
-        type: 'parent',
-        username: username.trim(),
-        phone: cleanPhone,
-        pin,
-        avatar,
+        type: 'parent', username: username.trim(), phone: cleanPhone, pin, avatar,
         students: parentStudents.map((s, i) => ({
-          type: 'student',
-          username: s.name,
-          phone: `${cleanPhone}-${i + 1}`,
-          pin: '0000',
-          educationLevel: s.level,
-          parentPhone: cleanPhone,
-          avatar: s.avatar,
-          xp: 0,
-          level: 1,
-          streak: 0,
-          points: 0,
+          type: 'student' as const, username: s.name,
+          phone: `${cleanPhone}-${i + 1}`, pin: '0000',
+          educationLevel: s.level, parentPhone: cleanPhone,
+          avatar: s.avatar, xp: 0, level: 1, streak: 0, points: 0,
         })),
       };
       registerUser(newParent);
@@ -178,12 +165,21 @@ const SignUpOverlay: React.FC = () => {
     setOverlay(null);
   };
 
+  // Fixed: properly resets all add-student state
   const addParentStudent = () => {
     if (!newStudentName.trim()) return;
-    setParentStudents(prev => [...prev, { name: newStudentName.trim(), level: newStudentLevel, avatar: '🧒' }]);
+    setParentStudents(prev => [...prev, {
+      name: newStudentName.trim(),
+      level: newStudentLevel,
+      avatar: newStudentAvatar,
+    }]);
     setNewStudentName('');
+    setNewStudentLevel('middle_school');
+    setNewStudentAvatar('🧒');
     setAddingStudent(false);
   };
+
+  const plans = mode === 'student' ? STUDENT_PLANS : PARENT_PLANS;
 
   return (
     <div className="ov-backdrop" onClick={() => setOverlay(null)}>
@@ -191,86 +187,58 @@ const SignUpOverlay: React.FC = () => {
         <div className="ov-card">
           <button className="ov-close" onClick={() => setOverlay(null)}><X size={18} /></button>
 
-          {/* Logo */}
           <div className="ov-logo">Bongo<span>Quiz</span></div>
 
-          {/* Mode toggle */}
           {step === 1 && (
             <div className="ov-mode-toggle">
-              <button
-                className={`ov-mode-btn ${mode === 'student' ? 'active' : ''}`}
-                onClick={() => setMode('student')}
-              >
+              <button className={`ov-mode-btn ${mode === 'student' ? 'active' : ''}`} onClick={() => setMode('student')}>
                 <BookOpen size={16} /> Student
               </button>
-              <button
-                className={`ov-mode-btn ${mode === 'parent' ? 'active' : ''}`}
-                onClick={() => setMode('parent')}
-              >
+              <button className={`ov-mode-btn ${mode === 'parent' ? 'active' : ''}`} onClick={() => setMode('parent')}>
                 <Users size={16} /> Parent
               </button>
             </div>
           )}
 
-          {/* Step indicator */}
+          {/* 4-step indicator */}
           <div className="ov-steps">
-            {[1,2,3].map(n => (
+            {[1,2,3,4].map(n => (
               <React.Fragment key={n}>
                 <div className={`ov-step-dot ${step === n ? 'current' : step > n ? 'done' : ''}`}>
                   {step > n ? <CheckCircle size={14} /> : n}
                 </div>
-                {n < 3 && <div className={`ov-step-line ${step > n ? 'done' : ''}`} />}
+                {n < 4 && <div className={`ov-step-line ${step > n ? 'done' : ''}`} />}
               </React.Fragment>
             ))}
           </div>
 
-          {/* Step 1: Info */}
+          {/* ── Step 1: Info ── */}
           {step === 1 && (
             <div className="ov-step-body">
-              <h2 className="ov-title">
-                {mode === 'student' ? '👋 Create Account' : '👨‍👩‍👧 Parent Account'}
-              </h2>
-              <p className="ov-sub">
-                {mode === 'student' ? 'Your learning journey starts here' : 'Manage your children\'s learning'}
-              </p>
+              <h2 className="ov-title">{mode === 'student' ? '👋 Create Account' : '👨‍👩‍👧 Parent Account'}</h2>
+              <p className="ov-sub">{mode === 'student' ? 'Your learning journey starts here' : "Manage your children's learning"}</p>
 
               {error && <div className="ov-error"><Shield size={14} />{error}</div>}
 
-              {/* Avatar picker */}
               <div className="ov-form-group">
                 <label className="ov-label">Choose avatar</label>
                 <div className="ov-avatar-row">
                   {AVATARS.map(a => (
-                    <button
-                      key={a}
-                      className={`ov-avatar-opt ${avatar === a ? 'selected' : ''}`}
-                      onClick={() => setAvatar(a)}
-                    >
-                      {a}
-                    </button>
+                    <button key={a} className={`ov-avatar-opt ${avatar === a ? 'selected' : ''}`} onClick={() => setAvatar(a)}>{a}</button>
                   ))}
                 </div>
               </div>
 
               <div className="ov-form-group">
                 <label className="ov-label"><User size={15} /> {mode === 'parent' ? 'Parent Name' : 'Your Name'}</label>
-                <input
-                  className="ov-input"
-                  placeholder={mode === 'parent' ? 'e.g. Jane Wanjiku' : 'e.g. Brian Otieno'}
-                  value={username}
-                  onChange={e => { setUsername(e.target.value); setError(''); }}
-                />
+                <input className="ov-input" placeholder={mode === 'parent' ? 'e.g. Jane Wanjiku' : 'e.g. Brian Otieno'}
+                  value={username} onChange={e => { setUsername(e.target.value); setError(''); }} />
               </div>
 
               <div className="ov-form-group">
                 <label className="ov-label"><Phone size={15} /> Phone Number</label>
-                <input
-                  className="ov-input"
-                  type="tel"
-                  placeholder="0712 345 678"
-                  value={phone}
-                  onChange={e => { setPhone(e.target.value); setError(''); }}
-                />
+                <input className="ov-input" type="tel" placeholder="0712 345 678"
+                  value={phone} onChange={e => { setPhone(e.target.value); setError(''); }} />
                 <span className="ov-hint">Kenyan number (0712345678 or +254…)</span>
               </div>
 
@@ -291,73 +259,55 @@ const SignUpOverlay: React.FC = () => {
             </div>
           )}
 
-          {/* Step 2: OTP */}
+          {/* ── Step 2: OTP ── */}
           {step === 2 && (
             <div className="ov-step-body">
               <h2 className="ov-title">📱 Verify Number</h2>
-              <p className="ov-sub">
-                Enter the 4-digit code sent to <strong>{cleanPhone}</strong>
-              </p>
-
+              <p className="ov-sub">Enter the 4-digit code sent to <strong>{cleanPhone}</strong></p>
               {error && <div className="ov-error"><Shield size={14} />{error}</div>}
-
-              <div className="ov-demo-note">
-                🧪 Demo mode — use code <strong>1234</strong>
-              </div>
-
+              <div className="ov-demo-note">🧪 Demo mode — use code <strong>1234</strong></div>
               <div className="ov-form-group" style={{ textAlign: 'center' }}>
                 <PinInput value={otp} onChange={v => { setOtp(v); setError(''); }} hasError={!!error} />
               </div>
-
               <button className="ov-submit" onClick={handleVerifyOtp}>
                 <span>Verify OTP</span><ArrowRight size={18} />
               </button>
-
               <button className="ov-back-btn" onClick={() => { setStep(1); setOtp(''); setError(''); }}>
                 <ArrowLeft size={16} /> Back
               </button>
             </div>
           )}
 
-          {/* Step 3: Level (student) or Students (parent) */}
+          {/* ── Step 3: Level (student) ── */}
           {step === 3 && mode === 'student' && (
             <div className="ov-step-body">
               <h2 className="ov-title">🎓 Pick Your Level</h2>
               <p className="ov-sub">Which class are you in?</p>
-
               {error && <div className="ov-error"><Shield size={14} />{error}</div>}
-
               <div className="ov-level-grid">
                 {LEVEL_OPTIONS.map(opt => (
-                  <button
-                    key={opt.id}
+                  <button key={opt.id}
                     className={`ov-level-card ${selectedLevel === opt.id ? 'selected' : ''}`}
                     style={selectedLevel === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
-                    onClick={() => setSelectedLevel(opt.id)}
-                  >
+                    onClick={() => setSelectedLevel(opt.id)}>
                     <span className="ov-level-emoji">{opt.emoji}</span>
                     <div className="ov-level-info">
                       <span className="ov-level-name">{opt.label}</span>
                       <span className="ov-level-grades">{opt.grades}</span>
                     </div>
-                    {selectedLevel === opt.id && (
-                      <CheckCircle size={18} color={opt.color} style={{ marginLeft: 'auto' }} />
-                    )}
+                    {selectedLevel === opt.id && <CheckCircle size={18} color={opt.color} style={{ marginLeft: 'auto' }} />}
                   </button>
                 ))}
               </div>
-
-              <button
-                className="ov-submit"
-                onClick={handleFinish}
-                disabled={!selectedLevel}
-                style={{ marginTop: '1rem' }}
-              >
-                <span>🚀 Start Learning!</span>
+              <button className="ov-submit"
+                onClick={() => { if (!selectedLevel) { setError('Please select your level'); return; } setError(''); setStep(4); }}
+                style={{ marginTop: '1rem' }}>
+                <span>Continue</span><ArrowRight size={18} />
               </button>
             </div>
           )}
 
+          {/* ── Step 3: Add Students (parent) ── */}
           {step === 3 && mode === 'parent' && (
             <div className="ov-step-body">
               <h2 className="ov-title">👨‍👩‍👧 Add Students</h2>
@@ -374,10 +324,8 @@ const SignUpOverlay: React.FC = () => {
                           <strong>{s.name}</strong>
                           <span>{lvl.emoji} {lvl.label}</span>
                         </div>
-                        <button
-                          className="ov-remove-student"
-                          onClick={() => setParentStudents(prev => prev.filter((_, j) => j !== i))}
-                        >
+                        <button className="ov-remove-student"
+                          onClick={() => setParentStudents(prev => prev.filter((_, j) => j !== i))}>
                           <X size={14} />
                         </button>
                       </div>
@@ -388,33 +336,36 @@ const SignUpOverlay: React.FC = () => {
 
               {addingStudent ? (
                 <div className="ov-add-student-form">
-                  <input
-                    className="ov-input"
-                    placeholder="Child's name"
+                  <input className="ov-input" placeholder="Child's name" autoFocus
                     value={newStudentName}
                     onChange={e => setNewStudentName(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && addParentStudent()}
                   />
+                  <div className="ov-avatar-row">
+                    {CHILD_AVATARS.map(a => (
+                      <button key={a} className={`ov-avatar-opt ${newStudentAvatar === a ? 'selected' : ''}`}
+                        onClick={() => setNewStudentAvatar(a)}>{a}</button>
+                    ))}
+                  </div>
                   <div className="ov-level-grid compact">
                     {LEVEL_OPTIONS.map(opt => (
-                      <button
-                        key={opt.id}
+                      <button key={opt.id}
                         className={`ov-level-card ${newStudentLevel === opt.id ? 'selected' : ''}`}
                         style={newStudentLevel === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
-                        onClick={() => setNewStudentLevel(opt.id)}
-                      >
+                        onClick={() => setNewStudentLevel(opt.id)}>
                         <span>{opt.emoji}</span>
-                        <span style={{ fontSize: '0.8rem' }}>{opt.label}</span>
+                        <span style={{ fontSize: '0.82rem', fontWeight: 700 }}>{opt.label}</span>
+                        {newStudentLevel === opt.id && <CheckCircle size={14} color={opt.color} style={{ marginLeft: 'auto' }} />}
                       </button>
                     ))}
                   </div>
                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                    <button className="ov-submit" style={{ flex: 1 }} onClick={addParentStudent}>
-                      <Plus size={16} /> Add
+                    <button className="ov-submit" style={{ flex: 1 }} onClick={addParentStudent}
+                      disabled={!newStudentName.trim()}>
+                      <Plus size={16} /> Add Student
                     </button>
-                    <button
-                      className="ov-ghost-btn"
-                      onClick={() => { setAddingStudent(false); setNewStudentName(''); }}
-                    >
+                    <button className="ov-ghost-btn"
+                      onClick={() => { setAddingStudent(false); setNewStudentName(''); setNewStudentLevel('middle_school'); setNewStudentAvatar('🧒'); }}>
                       Cancel
                     </button>
                   </div>
@@ -425,15 +376,72 @@ const SignUpOverlay: React.FC = () => {
                 </button>
               )}
 
-              <div className="ov-parent-actions">
-                <button className="ov-submit" onClick={handleFinish}>
-                  {parentStudents.length > 0
-                    ? `✅ Finish (${parentStudents.length} student${parentStudents.length > 1 ? 's' : ''})`
-                    : 'Skip & Finish Later'}
-                </button>
-              </div>
+              <button className="ov-submit" onClick={() => setStep(4)} style={{ marginTop: '0.25rem' }}>
+                {parentStudents.length > 0
+                  ? <><span>Continue ({parentStudents.length} student{parentStudents.length > 1 ? 's' : ''})</span><ArrowRight size={18} /></>
+                  : <><span>Skip & Continue</span><ArrowRight size={18} /></>}
+              </button>
             </div>
           )}
+
+          {/* ── Step 4: Plan ── */}
+          {step === 4 && (
+            <div className="ov-step-body">
+              <h2 className="ov-title">🎉 Choose Your Plan</h2>
+              <p className="ov-sub">Start free — upgrade anytime. No credit card needed.</p>
+
+              <div className="ov-plans-grid">
+                {plans.map(plan => {
+                  const Icon = plan.icon;
+                  const isSelected = selectedPlan === plan.id;
+                  return (
+                    <button key={plan.id}
+                      className={`ov-plan-card ${isSelected ? 'selected' : ''}`}
+                      style={isSelected ? { borderColor: plan.color, background: `${plan.color}08` } : {}}
+                      onClick={() => setSelectedPlan(plan.id)}>
+                      {'popular' in plan && plan.popular && (
+                        <div className="ov-plan-popular" style={{ background: plan.color }}>MOST POPULAR</div>
+                      )}
+                      {'badge' in plan && plan.badge && (
+                        <div className="ov-plan-badge" style={{ color: plan.color, borderColor: `${plan.color}40`, background: `${plan.color}10` }}>
+                          🎁 {plan.badge}
+                        </div>
+                      )}
+                      <div className="ov-plan-icon" style={{ background: `${plan.color}15`, color: plan.color }}>
+                        <Icon size={22} />
+                      </div>
+                      <div className="ov-plan-name">{plan.name}</div>
+                      <div className="ov-plan-price">
+                        <span className="ov-plan-amount">{plan.price}</span>
+                        <span className="ov-plan-period">{plan.period}</span>
+                      </div>
+                      <ul className="ov-plan-features">
+                        {plan.features.map(f => (
+                          <li key={f}><CheckCircle size={12} color={plan.color} />{f}</li>
+                        ))}
+                      </ul>
+                      {isSelected && (
+                        <div className="ov-plan-check" style={{ color: plan.color }}><CheckCircle size={20} /></div>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {'badge' in (plans.find(p => p.id === selectedPlan) ?? {}) && (
+                <p className="ov-plan-note">✨ Your first month is <strong>completely free</strong>. Cancel anytime before it ends.</p>
+              )}
+
+              <button className="ov-submit" onClick={handleFinish} style={{ marginTop: '0.75rem' }}>
+                <span>🚀 {selectedPlan === 'free' ? 'Start for Free' : 'Start Free Trial'}</span>
+              </button>
+
+              <button className="ov-back-btn" onClick={() => setStep(3)}>
+                <ArrowLeft size={16} /> Back
+              </button>
+            </div>
+          )}
+
         </div>
       </div>
     </div>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&family=DM+Sans:wght@400;500;600;700&display=swap');
 
 /* ── RESET ──────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -65,34 +65,55 @@
   --sp-12:3rem;   --sp-16:4rem;
 
   /* Fonts */
-  --font-display: 'Syne', sans-serif;
-  --font-body:    'DM Sans', sans-serif;
+  --font-display: 'Fredoka One', cursive;
+  --font-body:    'Nunito', sans-serif;
 
   /* Nav */
-  --nav-h: 60px;
-  --bottom-bar-h: 60px;
+  --nav-h: 64px;
+  --bottom-bar-h: 64px;
 }
 
 /* ── BASE ────────────────────────────────────────────── */
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
 
-/*body {*/
-/*  background: var(--bg);*/
-/*  color: var(--text);*/
-/*  !*min-height: 100vh;*!*/
-/*  font-size: 16px;*/
-/*  line-height: 1.5;*/
-/*  !*height: 100%;*!*/
-/*  overflow-y: auto;*/
-/*  !*height: 100vh;*!*/
-/*  scrollbar-width: thin;            !* 👈 makes it thin *!*/
-/*  scrollbar-color: #888 transparent;*/
-/*}*/
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+}
 
 h1,h2,h3,h4,h5,h6 {
+  font-family: var(--font-display);
   font-weight: 700;
   line-height: 1.2;
   color: var(--text);
+}
+
+/* Playful bounce animation for interactive elements */
+@keyframes bounce-in {
+  0%   { transform: scale(0.85); opacity: 0; }
+  60%  { transform: scale(1.05); }
+  100% { transform: scale(1);    opacity: 1; }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
+}
+
+@keyframes float-up {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.4); }
+  50%       { box-shadow: 0 0 0 10px rgba(124,58,237,0); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
 }
 
 a { text-decoration: none; color: inherit; }

@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
-export type UserType = 'student' | 'parent';
 
 export interface StudentUser {
   type: 'student';
@@ -63,7 +62,6 @@ export const useStore = create<AppState>()(
 
       logout: () => set({ user: null, isLoggedIn: false, overlay: null }),
 
-      // When registering a parent, also push each child student into allUsers
       // so children can log in independently with their phone (parentPhone-N)
       registerUser: (newUser) =>
         set((state) => {
@@ -91,7 +89,6 @@ export const useStore = create<AppState>()(
               : u
           );
 
-          // 2. Also add the student as a standalone entry in allUsers
           //    so they can log in with their "parentPhone-N" phone
           const alreadyExists = updatedAllUsers.some(
             (u) => u.phone === student.phone

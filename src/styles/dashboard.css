@@ -16,21 +16,22 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--purple-50);
-  border: 1.5px solid var(--purple-200);
+  background: linear-gradient(135deg, #f5f3ff, #fce7f3);
+  border: 2px solid var(--purple-200);
   color: var(--primary);
   padding: 0.55rem 1rem;
   border-radius: 999px;
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
-  transition: background 0.2s;
+  transition: all 0.2s;
   flex-shrink: 0;
+  font-family: 'Nunito', sans-serif;
 }
-.db-back:hover { background: var(--purple-100); }
+.db-back:hover { background: var(--purple-100); transform: translateY(-1px); }
 
-.db-header h1 { font-size: 1.5rem; font-weight: 800; margin-bottom: 0.2rem; }
+.db-header h1 { font-family: 'Fredoka One', cursive; font-size: 1.7rem; font-weight: 400; margin-bottom: 0.2rem; letter-spacing: 0.3px; }
 .db-header p  { font-size: 0.85rem; color: var(--text-muted); }
 
 /* Stats */
@@ -46,23 +47,26 @@
   align-items: center;
   gap: 0.85rem;
   background: #fff;
-  border: 1.5px solid var(--purple-100);
-  border-radius: 16px;
+  border: 2px solid var(--purple-100);
+  border-radius: 20px;
   padding: 1rem;
   box-shadow: var(--shadow-xs);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
+.db-stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
 
 .db-stat-icon {
   width: 44px; height: 44px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
 .db-stat-val {
   display: block;
-  font-size: 1.3rem;
-  font-weight: 800;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.4rem;
+  font-weight: 400;
   color: var(--text);
   line-height: 1.1;
 }
@@ -71,14 +75,16 @@
   display: block;
   font-size: 0.72rem;
   color: var(--text-faint);
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 /* Chart */
 .db-chart-card {
   background: #fff;
-  border: 1.5px solid var(--purple-100);
-  border-radius: 20px;
+  border: 2px solid var(--purple-100);
+  border-radius: 24px;
   padding: 1.5rem;
   margin-bottom: 2rem;
   box-shadow: var(--shadow-xs);
@@ -89,9 +95,11 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 1rem;
-  font-weight: 700;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  font-weight: 400;
   color: var(--text);
+  letter-spacing: 0.3px;
 }
 
 .db-chart-bars {
@@ -112,8 +120,8 @@
 
 .db-bar {
   width: 100%;
-  background: linear-gradient(to top, #7c3aed, #a855f7);
-  border-radius: 8px 8px 0 0;
+  background: linear-gradient(to top, #7c3aed, #ec4899);
+  border-radius: 10px 10px 0 0;
   min-height: 4px;
   transition: height 0.5s ease;
 }
@@ -121,12 +129,12 @@
 .db-bar-col span {
   font-size: 0.72rem;
   color: var(--text-faint);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Subjects */
 .db-subjects-header { margin-bottom: 1rem; }
-.db-subjects-header h2 { font-size: 1.2rem; font-weight: 800; }
+.db-subjects-header h2 { font-family: 'Fredoka One', cursive; font-size: 1.3rem; font-weight: 400; letter-spacing: 0.3px; }
 .db-subjects-header p  { font-size: 0.82rem; color: var(--text-muted); margin-top: 0.2rem; }
 
 .db-subjects-grid {
@@ -138,46 +146,46 @@
 
 .db-subject-card {
   background: #fff;
-  border: 1.5px solid var(--purple-100);
-  border-radius: 20px;
+  border: 2px solid var(--purple-100);
+  border-radius: 22px;
   padding: 1.25rem;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   box-shadow: var(--shadow-xs);
 }
-.db-subject-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.db-subject-card:hover { transform: translateY(-5px) rotate(-0.5deg); box-shadow: var(--shadow-md); border-color: #c084fc; }
 
 .db-subject-top { display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1rem; }
 
 .db-subject-icon {
   width: 52px; height: 52px;
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
 .db-subject-title { display: flex; align-items: center; justify-content: space-between; flex: 1; gap: 0.5rem; }
-.db-subject-title h3 { font-size: 0.95rem; font-weight: 700; }
+.db-subject-title h3 { font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 800; }
 
 .db-subject-score {
   color: #fff;
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 3px 10px;
   border-radius: 999px;
   white-space: nowrap;
 }
 
 .db-subject-progress { margin-bottom: 1rem; }
-.db-progress-row { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-faint); margin-bottom: 4px; }
-.db-progress-track { height: 6px; background: var(--gray-100); border-radius: 999px; overflow: hidden; }
+.db-progress-row { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-faint); margin-bottom: 4px; font-weight: 700; }
+.db-progress-track { height: 8px; background: var(--gray-100); border-radius: 999px; overflow: hidden; }
 .db-progress-fill  { height: 100%; border-radius: 999px; }
 
 .db-subject-metrics { display: flex; gap: 0; border-top: 1px solid var(--gray-100); padding-top: 0.85rem; margin-bottom: 0.85rem; }
 
 .db-metric { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.db-metric-lbl { font-size: 0.65rem; color: var(--text-faint); font-weight: 600; text-transform: uppercase; letter-spacing: 0.3px; }
-.db-metric-val { font-size: 0.75rem; font-weight: 700; color: var(--text); }
+.db-metric-lbl { font-size: 0.65rem; color: var(--text-faint); font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; }
+.db-metric-val { font-size: 0.75rem; font-weight: 800; color: var(--text); }
 
 .db-view-btn {
   display: flex;
@@ -186,16 +194,17 @@
   background: none;
   border: none;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   padding: 0;
   transition: opacity 0.2s;
+  font-family: 'Nunito', sans-serif;
 }
 .db-view-btn:hover { opacity: 0.7; }
 
 /* Recommendations */
 .db-recs-header { margin-bottom: 1rem; }
-.db-recs-header h2 { font-size: 1.2rem; font-weight: 800; }
+.db-recs-header h2 { font-family: 'Fredoka One', cursive; font-size: 1.3rem; font-weight: 400; letter-spacing: 0.3px; }
 
 .db-recs-grid { display: flex; flex-direction: column; gap: 0.6rem; }
 
@@ -204,23 +213,23 @@
   align-items: center;
   gap: 1rem;
   background: #fff;
-  border: 1.5px solid var(--purple-100);
-  border-radius: 16px;
+  border: 2px solid var(--purple-100);
+  border-radius: 18px;
   padding: 1rem;
   cursor: pointer;
-  transition: box-shadow 0.2s;
+  transition: all 0.2s;
 }
-.db-rec-card:hover { box-shadow: var(--shadow-sm); }
+.db-rec-card:hover { box-shadow: var(--shadow-sm); border-color: #c084fc; transform: translateX(4px); }
 
 .db-rec-icon {
   width: 44px; height: 44px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
 }
 
 .db-rec-info { flex: 1; }
-.db-rec-info h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+.db-rec-info h4 { font-size: 0.9rem; font-weight: 800; margin-bottom: 2px; font-family: 'Nunito', sans-serif; }
 .db-rec-info p  { font-size: 0.75rem; color: var(--text-muted); }
 
 .db-rec-btn {
@@ -229,12 +238,13 @@
   padding: 0.45rem 1rem;
   border-radius: 999px;
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 800;
   cursor: pointer;
   white-space: nowrap;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
+  font-family: 'Nunito', sans-serif;
 }
-.db-rec-btn:hover { opacity: 0.85; }
+.db-rec-btn:hover { opacity: 0.85; transform: scale(1.03); }
 
 @media (max-width: 1024px) { .db-subjects-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 768px) {

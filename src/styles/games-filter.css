@@ -2,7 +2,7 @@
    GAMES FILTER — Cyberpunk Gaming Theme
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap');
 
 /* ── Root Variables ── */
 :root {
@@ -25,10 +25,8 @@
 .games-filter-wrapper {
     position: relative;
     width: 100%;
-    /*background: var(--bg-primary);*/
     overflow: hidden;
-    /*padding: 0 0 20px;*/
-    font-family: 'Inter', sans-serif;
+    font-family: 'Nunito', sans-serif;
 }
 
 /* Cyberpunk Grid Background */
@@ -245,9 +243,9 @@
 }
 
 .header-label {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Nunito', sans-serif;
     font-size: 0.8rem;
-    font-weight: 600;
+    font-weight: 800;
     letter-spacing: 2px;
     color: var(--text-dim);
 }
@@ -338,8 +336,9 @@
 }
 
 .card-label {
+    font-family: 'Nunito', sans-serif;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 800;
     color: var(--text-primary);
     letter-spacing: 0.3px;
 }
@@ -410,9 +409,9 @@
 }
 
 .mobile-header-label {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Nunito', sans-serif;
     font-size: 0.9rem;
-    font-weight: 600;
+    font-weight: 800;
     letter-spacing: 1px;
     color: var(--text-secondary);
 }
@@ -475,8 +474,9 @@
 }
 
 .chip-label {
-    font-size: 0.8rem;
-    font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 800;
     color: var(--text-primary);
 }
 

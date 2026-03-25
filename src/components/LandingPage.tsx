@@ -7,7 +7,7 @@ import LowerPrimary from '../assets/banners/LowerPrimaryb.png';
 import MiddleSchool from '../assets/banners/middle-school.png';
 import SeniorSchool from '../assets/banners/seniorschool.png';
 import {
-  ChevronLeft, ChevronRight, ArrowRight, BarChart3, Clock, Trophy, Users, Star, Shield, Flame, TrendingUp, Target
+  ChevronLeft, ChevronRight, ArrowRight, BarChart3, Clock, Users, Star, Shield, Flame, TrendingUp, Target
 } from 'lucide-react';
 // import LowerPrimary from '../assets/lower-primary.jpg?url';   // adjust path as needed
 // import MiddleSchool from '../assets/middle-school.jpg?url';
@@ -265,6 +265,26 @@ const GuestHero: React.FC = () => {
           </div>
         </section>
 
+        {/* Stats Strip */}
+        <div className="gh-stats-strip">
+          <div className="gh-stat-item">
+            <span className="gh-stat-num">50K+</span>
+            <span className="gh-stat-label">Students</span>
+          </div>
+          <div className="gh-stat-item">
+            <span className="gh-stat-num">1,200+</span>
+            <span className="gh-stat-label">Exams</span>
+          </div>
+          <div className="gh-stat-item">
+            <span className="gh-stat-num">CBC</span>
+            <span className="gh-stat-label">Aligned</span>
+          </div>
+          <div className="gh-stat-item">
+            <span className="gh-stat-num">Free</span>
+            <span className="gh-stat-label">To Join</span>
+          </div>
+        </div>
+
         {/* Exam Browser */}
         <ExamBrowser />
 
@@ -293,8 +313,7 @@ const GuestHero: React.FC = () => {
         {/* Final CTA */}
         <div className="gh-cta-banner">
           <div className="gh-cta-orb" />
-          <Trophy size={48} color="rgba(124,58,237,0.2)" />
-          <h2>Ready to ace your exams?</h2>
+          <h2>🏆 Ready to ace your exams?</h2>
           <p>Join 50,000+ students already using BongoQuiz.</p>
           <button className="gh-cta-btn" onClick={() => setOverlay('signup')}>
             🎮 Join Free Today
