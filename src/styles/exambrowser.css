@@ -3,7 +3,7 @@
 ══════════════════════════════════════════════════════════════ */
 
 /* ── Outer section ───────────────────────────────────────── */
-.eb-section {
+.lpeb-section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -17,24 +17,24 @@
 }
 
 /* ── One grade row ───────────────────────────────────────── */
-.eb-row-section {
+.lpeb-row-section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     width: 100%;
     background: rgba(30, 27, 75, 0.05);
-    min-width: 0; /* critical: prevents flex children from overflowing */
+    min-width: 0;
 }
 
 /* ── Row header (title + Show all) ──────────────────────── */
-.eb-row-header {
+.lpeb-row-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 1rem;
 }
 
-.eb-row-title {
+.lpeb-row-title {
     display: flex;
     align-items: center;
     gap: 0.45rem;
@@ -45,12 +45,12 @@
     letter-spacing: -0.2px;
 }
 
-.eb-row-emoji {
+.lpeb-row-emoji {
     font-size: 1.15rem;
     line-height: 1;
 }
 
-.eb-row-count {
+.lpeb-row-count {
     background: rgba(61, 51, 101, 0.17);
     color: #7c3aed;
     font-size: 0.7rem;
@@ -60,7 +60,7 @@
     margin-left: 2px;
 }
 
-.eb-show-all-btn {
+.lpeb-show-all-btn {
     font-size: 0.8rem;
     font-weight: 700;
     color: #7c3aed;
@@ -73,21 +73,21 @@
     flex-shrink: 0;
 }
 
-.eb-show-all-btn:hover {
+.lpeb-show-all-btn:hover {
     opacity: 0.7;
     text-decoration: underline;
 }
 
 /* ── Card track wrapper (clips the scroll bar) ───────────── */
-.eb-card-track-wrap {
+.lpeb-card-track-wrap {
     width: 100%;
     min-width: 0;
-    overflow: hidden; /* clips the scrollable track to the row width */
+    overflow: hidden;
     padding: 0.35rem 0 0.5rem;
 }
 
 /* ── Scrollable card row ─────────────────────────────────── */
-.eb-card-track {
+.lpeb-card-track {
     display: flex;
     flex-direction: row;
     gap: 0.65rem;
@@ -95,42 +95,28 @@
     background: rgba(30, 27, 75, 0.05);
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
-    /* Optional: show thin scrollbar (remove if you prefer hidden) */
     scrollbar-width: thin;
     scrollbar-color: #c084fc #e9e4ff;
-    /* Optional: snap scrolling */
     scroll-snap-type: x mandatory;
 }
 
-.eb-card-track::-webkit-scrollbar {
-    height: 6px;
-}
-.eb-card-track::-webkit-scrollbar-track {
-    background: #e9e4ff;
-    border-radius: 10px;
-}
-.eb-card-track::-webkit-scrollbar-thumb {
-    background: #c084fc;
-    border-radius: 10px;
-}
+.lpeb-card-track::-webkit-scrollbar { height: 6px; }
+.lpeb-card-track::-webkit-scrollbar-track { background: #e9e4ff; border-radius: 10px; }
+.lpeb-card-track::-webkit-scrollbar-thumb { background: #c084fc; border-radius: 10px; }
 
-/* When "Show all" is toggled: wrap instead of scroll */
-.eb-card-track--expanded {
+.lpeb-card-track--expanded {
     flex-wrap: wrap;
     overflow-x: hidden;
-    /* reset scrollbar when wrapping */
     scrollbar-width: auto;
     scrollbar-color: auto;
     scroll-snap-type: none;
 }
-.eb-card-track--expanded::-webkit-scrollbar {
-    height: auto;
-}
+.lpeb-card-track--expanded::-webkit-scrollbar { height: auto; }
 
 /* ── Individual exam card ────────────────────────────────── */
-.exam-card {
+.lpeb-exam-card {
     position: relative;
-    flex: 0 0 auto; /* never shrink */
+    flex: 0 0 auto;
     width: 140px;
     aspect-ratio: 1 / 1;
     border-radius: 14px;
@@ -138,12 +124,10 @@
     cursor: pointer;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     transition: transform 0.25s ease, box-shadow 0.25s ease;
-    /* Snap alignment */
     scroll-snap-align: start;
 }
 
-/* Pixel-border inset */
-.exam-card::before {
+.lpeb-exam-card::before {
     content: '';
     position: absolute;
     inset: 0;
@@ -153,29 +137,24 @@
     z-index: 2;
 }
 
-.exam-card:hover {
+.lpeb-exam-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 28px rgba(102, 126, 234, 0.55);
-    animation: gameGlow 0.5s ease infinite alternate;
+    animation: lpebGameGlow 0.5s ease infinite alternate;
 }
 
-@keyframes gameGlow {
-    from {
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-    }
-    to {
-        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.65);
-    }
+@keyframes lpebGameGlow {
+    from { box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); }
+    to   { box-shadow: 0 10px 30px rgba(102, 126, 234, 0.65); }
 }
 
-/* ── Card inner ──────────────────────────────────────────── */
-.exam-card-inner {
+.lpeb-exam-card-inner {
     position: relative;
     width: 100%;
     height: 100%;
 }
 
-.exam-image {
+.lpeb-exam-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -186,19 +165,15 @@
     transition: filter 0.3s ease;
 }
 
-.exam-card:hover .exam-image {
+.lpeb-exam-card:hover .lpeb-exam-image {
     filter: blur(2px) brightness(0.65);
 }
 
 /* ── Hover overlay ───────────────────────────────────────── */
-.exam-overlay {
+.lpeb-exam-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(
-            135deg,
-            rgba(102, 126, 234, 0.25),
-            rgba(118, 75, 162, 0.5)
-    );
+    background: linear-gradient(135deg, rgba(102,126,234,0.25), rgba(118,75,162,0.5));
     display: flex;
     align-items: center;
     justify-content: center;
@@ -208,11 +183,9 @@
     backdrop-filter: blur(3px);
 }
 
-.exam-card:hover .exam-overlay {
-    opacity: 1;
-}
+.lpeb-exam-card:hover .lpeb-exam-overlay { opacity: 1; }
 
-.overlay-content {
+.lpeb-overlay-content {
     text-align: center;
     padding: 12px;
     transform: translateY(14px);
@@ -223,24 +196,22 @@
     gap: 10px;
 }
 
-.exam-card:hover .overlay-content {
-    transform: translateY(0);
-}
+.lpeb-exam-card:hover .lpeb-overlay-content { transform: translateY(0); }
 
-.exam-title {
+.lpeb-exam-title {
     display: block;
     color: #fff;
     font-size: 0.65rem;
     font-weight: 800;
     text-align: center;
-    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
     font-family: 'Press Start 2P', 'Courier New', monospace;
     line-height: 1.4;
     letter-spacing: 0.5px;
 }
 
 /* ── Buttons ─────────────────────────────────────────────── */
-.cta-button {
+.lpeb-cta-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -255,31 +226,21 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     white-space: nowrap;
-}
-
-.try-button {
     background: linear-gradient(135deg, #b28aff 0%, #bf00ff 100%);
     color: #fff;
     box-shadow: 0 4px 0 #61107c;
 }
 
-.try-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 0 #74029a;
-}
-
-.try-button:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #61107c;
-}
+.lpeb-cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #74029a; }
+.lpeb-cta-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #61107c; }
 
 /* ── Unlock CTA ──────────────────────────────────────────── */
-.eb-unlock {
+.lpeb-unlock {
     padding: 1rem 1.5rem 0;
     text-align: center;
 }
 
-.eb-unlock-btn {
+.lpeb-unlock-btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -294,80 +255,36 @@
     transition: all 0.18s;
 }
 
-.eb-unlock-btn:hover {
+.lpeb-unlock-btn:hover {
     background: #7c3aed;
     color: #fff;
-    box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3);
+    box-shadow: 0 6px 20px rgba(124,58,237,0.3);
 }
 
 /* ══════════════════════════════════════════════════════════
    RESPONSIVE
 ══════════════════════════════════════════════════════════ */
-
-/* Desktop — wider cards, more per view */
 @media (min-width: 860px) {
-    .exam-card {
-        width: 170px;
-    }
-
-    .eb-row-title {
-        font-size: 1.1rem;
-    }
-
-    .eb-row-header {
-        padding: 0 1.5rem;
-    }
-
-    .eb-card-track {
-        padding: 1.5rem 0.5rem;
-        gap: 0.75rem;
-    }
+    .lpeb-exam-card  { width: 170px; }
+    .lpeb-row-title  { font-size: 1.1rem; }
+    .lpeb-row-header { padding: 0 1.5rem; }
+    .lpeb-card-track { padding: 1.5rem 0.5rem; gap: 0.75rem; }
 }
 
-/* Large desktop — even wider */
 @media (min-width: 1200px) {
-    .exam-card {
-        width: 185px;
-    }
+    .lpeb-exam-card { width: 185px; }
 }
 
-/* Tablet */
 @media (max-width: 768px) {
-    .exam-card {
-        width: 120px;
-    }
-
-    .eb-row-title {
-        font-size: 0.9rem;
-    }
+    .lpeb-exam-card  { width: 120px; }
+    .lpeb-row-title  { font-size: 0.9rem; }
 }
 
-/* Mobile */
 @media (max-width: 480px) {
-    .exam-card {
-        width: 100px;
-        min-width: 100px;
-    }
-
-    .eb-card-track {
-        gap: 0.5rem;
-        padding: 6px 0.75rem 0.5rem;
-    }
-
-    .eb-row-header {
-        padding: 0 0.75rem;
-    }
-
-    .eb-row-title {
-        font-size: 0.85rem;
-    }
-
-    .exam-title {
-        font-size: 0.5rem;
-    }
-
-    .try-button {
-        font-size: 0.45rem;
-        padding: 5px 10px;
-    }
+    .lpeb-exam-card  { width: 100px; min-width: 100px; }
+    .lpeb-card-track { gap: 0.5rem; padding: 6px 0.75rem 0.5rem; }
+    .lpeb-row-header { padding: 0 0.75rem; }
+    .lpeb-row-title  { font-size: 0.85rem; }
+    .lpeb-exam-title { font-size: 0.5rem; }
+    .lpeb-cta-btn    { font-size: 0.45rem; padding: 5px 10px; }
 }

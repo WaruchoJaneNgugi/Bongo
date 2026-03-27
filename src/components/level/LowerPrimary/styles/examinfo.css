@@ -1,0 +1,218 @@
+.ei-wrapper {
+    min-height: 100vh;
+    background: var(--bg);
+    background-image: radial-gradient(rgba(167,139,250,0.2) 1.5px, transparent 1.5px);
+    background-size: 22px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    font-family: var(--font-body);
+}
+
+.ei-card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 24px 20px 28px;
+    box-shadow: var(--shadow-lg);
+    border: var(--border);
+}
+
+/* ── Back ── */
+.ei-back {
+    background: var(--bg);
+    border: var(--border);
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 20px;
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: var(--transition);
+}
+.ei-back:hover { background: var(--purple-ghost); color: var(--purple); border-color: var(--purple-light); }
+
+/* ── Header ── */
+.ei-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    animation: fadeUp 0.35s ease both;
+}
+
+.ei-subject-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-md);
+}
+
+.ei-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--text-heading);
+    line-height: 1.15;
+    margin-bottom: 4px;
+}
+.ei-subtitle {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+/* ── Divider ── */
+.ei-divider {
+    border: none;
+    border-top: 1.5px dashed rgba(167,139,250,0.3);
+    margin: 18px 0;
+}
+
+/* ── Meta Row ── */
+.ei-meta-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    background: var(--purple-ghost);
+    border: var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    animation: fadeUp 0.35s ease both 0.06s;
+}
+
+.ei-meta-box {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ei-meta-divider {
+    width: 1.5px;
+    height: 36px;
+    background: rgba(167,139,250,0.3);
+    margin: 0 12px;
+    flex-shrink: 0;
+}
+
+.ei-meta-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+.ei-meta-label {
+    font-size: 0.65rem;
+    font-weight: 900;
+    color: var(--text-subtle);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+}
+.ei-meta-value {
+    font-family: var(--font-display);
+    font-size: 0.95rem;
+    color: var(--text-heading);
+    line-height: 1.2;
+}
+
+/* ── Instructions ── */
+.ei-instructions {
+    animation: fadeUp 0.35s ease both 0.1s;
+}
+
+.ei-instructions-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    color: var(--text-heading);
+    margin-bottom: 12px;
+    letter-spacing: 0.3px;
+}
+
+.ei-instructions-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.ei-instruction-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-body);
+    line-height: 1.5;
+}
+
+.ei-instruction-num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+/* ── Start Button ── */
+.ei-start-btn {
+    width: 100%;
+    margin-top: 22px;
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: none;
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    color: #fff;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.3px;
+    animation: fadeUp 0.35s ease both 0.15s;
+}
+.ei-start-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.ei-start-btn:active { transform: translateY(1px); }
+
+.ei-start-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-subtle);
+    margin-top: 10px;
+    letter-spacing: 0.2px;
+}
+
+/* ── Responsive ── */
+@media (min-width: 768px) {
+    .ei-card  { max-width: 520px; padding: 32px 28px 36px; }
+    .ei-title { font-size: 2rem; }
+}
+
+@media (min-width: 1024px) {
+    .ei-card { max-width: 560px; padding: 36px 32px 40px; }
+}
+
+@media (max-width: 400px) {
+    .ei-meta-row    { flex-direction: column; gap: 12px; align-items: flex-start; }
+    .ei-meta-divider { width: 100%; height: 1.5px; margin: 0; }
+}

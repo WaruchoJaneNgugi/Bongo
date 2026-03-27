@@ -1,0 +1,1 @@
+export type Screen = "landing" | "term" | "subjects" | "examinfo" | "quiz" | "results";

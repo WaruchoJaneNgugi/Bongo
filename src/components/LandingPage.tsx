@@ -7,7 +7,7 @@ import LowerPrimary from '../assets/banners/LowerPrimaryb.png';
 import MiddleSchool from '../assets/banners/middle-school.png';
 import SeniorSchool from '../assets/banners/seniorschool.png';
 import {
-  ChevronLeft, ChevronRight, ArrowRight, BarChart3, Clock, Users, Star, Shield, Flame, TrendingUp, Target
+   ChevronRight, ArrowRight, BarChart3, Clock, Users, Star, Shield, Flame, TrendingUp, Target
 } from 'lucide-react';
 // import LowerPrimary from '../assets/lower-primary.jpg?url';   // adjust path as needed
 // import MiddleSchool from '../assets/middle-school.jpg?url';
@@ -72,15 +72,15 @@ const FEATURES = [
 
 const SLIDES = [
   {
-    id: 'lower', img: LowerPrimary, grade: 'Grade 1–3', tag: '🧒 Lower Primary',
+    id: 'lower', img: LowerPrimary, grade: 'Grade 1–3', tag: '🧒',
     // bg: 'linear-gradient(135deg, #7c3aed 0%, #a855f7 60%, #c084fc 100%)',
   },
   {
-    id: 'middle', img: MiddleSchool, grade: 'Grade 4–9', tag: '🧠 Middle School',
+    id: 'middle', img: MiddleSchool, grade: 'Grade 4–9', tag: '🧠',
     // bg: 'linear-gradient(135deg, #0891b2 0%, #0284c7 60%, #38bdf8 100%)',
   },
   {
-    id: 'senior', img: SeniorSchool, grade: 'Grade 10–12', tag: '🎓 Senior School',
+    id: 'senior', img: SeniorSchool, grade: 'Grade 10–12', tag: '🎓',
     // bg: 'linear-gradient(135deg, #dc2626 0%, #ea580c 60%, #fb923c 100%)',
   },
 ];
@@ -223,16 +223,23 @@ const GuestHero: React.FC = () => {
 
   const goSlide = (idx: number) => setSlideIdx(idx);
 
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setSlideIdx(i => (i + 1) % SLIDES.length);
+    }, 3500);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
       <div className="gh-guest">
         {/* Slider Section */}
         <section className="gh-slider-full">
           <div className="gh-slider-bg-image">
-            <img src={slide.img} alt={slide.grade} />
+            <img key={slideIdx} src={slide.img} alt={slide.grade} />
             {/*<div className="gh-slider-overlay" style={{ background: slide.bg }} />*/}
           </div>
           <div className="gh-slider-content">
-            <div className="gh-slider-tag">{slide.tag}</div>
+            {/*<div className="gh-slider-tag">{slide.tag}</div>*/}
             {/*<h2 className="gh-slider-title">Master {slide.grade}<br />with BongoQuiz</h2>*/}
             <button
                 className="gh-slider-cta"
@@ -241,18 +248,18 @@ const GuestHero: React.FC = () => {
               Start Learning <ArrowRight size={18} />
             </button>
           </div>
-          <button
-              className="gh-arrow gh-arrow-left"
-              onClick={() => goSlide((slideIdx - 1 + SLIDES.length) % SLIDES.length)}
-          >
-            <ChevronLeft size={28} />
-          </button>
-          <button
-              className="gh-arrow gh-arrow-right"
-              onClick={() => goSlide((slideIdx + 1) % SLIDES.length)}
-          >
-            <ChevronRight size={28} />
-          </button>
+          {/*<button*/}
+          {/*    className="lp-slider-arrow lp-slider-arrow-left"*/}
+          {/*    onClick={() => goSlide((slideIdx - 1 + SLIDES.length) % SLIDES.length)}*/}
+          {/*>*/}
+          {/*  <ChevronLeft size={28} />*/}
+          {/*</button>*/}
+          {/*<button*/}
+          {/*    className="lp-slider-arrow lp-slider-arrow-right"*/}
+          {/*    onClick={() => goSlide((slideIdx + 1) % SLIDES.length)}*/}
+          {/*>*/}
+          {/*  <ChevronRight size={28} />*/}
+          {/*</button>*/}
           <div className="gh-dots">
             {SLIDES.map((_, i) => (
                 <button

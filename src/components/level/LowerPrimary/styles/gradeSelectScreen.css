@@ -1,0 +1,210 @@
+/* ── Grade Select Screen ── */
+
+.gs-wrapper {
+    min-height: 100vh;
+    background: var(--bg);
+    background-size: 22px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    font-family: var(--font-body);
+}
+
+.gs-card {
+    width: 100%;
+    max-width: 480px;          /* compact on all sizes — grows only on xl */
+    background: var(--surface);
+    border-radius: 28px;
+    padding: 24px 20px 28px;
+    box-shadow: var(--shadow-lg);
+    border: var(--border);
+}
+
+.gs-back {
+    background: var(--bg-card, var(--bg));
+    border: var(--border);
+    color: var(--text-muted);
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin-bottom: 16px;
+    padding: 0.45rem 1rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: var(--transition);
+}
+.gs-back:hover { background: var(--purple-ghost); color: var(--purple); border-color: var(--purple-light); }
+
+.gs-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 5vw, 1.9rem);
+    font-weight: 900;
+    color: var(--text-heading);
+    margin-bottom: 4px;
+    line-height: 1.15;
+}
+
+.gs-subtitle {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+
+/* ── Hero Image ── */
+.gs-hero {
+    width: 100%;
+    height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 22px;
+    background: linear-gradient(180deg, #c4aef0 0%, #8b5cf6 100%);
+    position: relative;
+}
+.gs-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 20%;
+}
+
+/* ── Grade Buttons ── */
+.gs-grades { display: flex; flex-direction: column; gap: 11px; }
+
+.gs-grade {
+    width: 100%;
+    padding: 15px 16px;
+    border-radius: var(--radius-md);
+    border: var(--border);
+    background: var(--purple-ghost);
+    font-family: var(--font-display);
+    font-weight: 800;
+    color: var(--purple);
+    font-size: 1.05rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
+}
+.gs-grade:hover {
+    transform: translateY(-2px);
+    background: var(--purple-pale);
+    box-shadow: var(--shadow-md);
+    border-color: var(--purple-light);
+}
+.gs-grade.active {
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    color: white;
+    border-color: transparent;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
+}
+
+.gs-check-circle {
+    width: 28px;
+    height: 28px;
+    background: rgba(255,255,255,0.25);
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 0.85rem;
+    color: #fff;
+}
+
+/* ── Continue Button ── */
+.gs-continue {
+    width: 100%;
+    margin-top: 22px;
+    padding: 15px;
+    border-radius: var(--radius-md);
+    border: none;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.1rem;
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    color: white;
+    cursor: pointer;
+    transition: var(--transition);
+    box-shadow: var(--shadow-md);
+}
+.gs-continue:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.gs-continue:active:not(:disabled) { transform: translateY(1px); }
+.gs-continue:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; transform: none; }
+
+/* ── Term Select extras ── */
+.ts-grade-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--purple-ghost);
+    border: var(--border);
+    border-radius: var(--radius-pill);
+    padding: 4px 14px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    color: var(--purple);
+    margin-bottom: 14px;
+}
+.ts-grade-btn { padding: 14px 16px; align-items: center; }
+.ts-btn-left  { display: flex; align-items: center; gap: 12px; text-align: left; }
+.ts-emoji     { font-size: 1.6rem; flex-shrink: 0; }
+.ts-label     { font-family: var(--font-display); font-size: 1rem; color: inherit; line-height: 1.2; }
+.ts-desc      { font-family: var(--font-body); font-size: 0.76rem; font-weight: 700; color: var(--text-muted); line-height: 1.3; margin-top: 1px; }
+.gs-grade.active .ts-desc { color: rgba(255,255,255,0.7); }
+
+/* ════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ════════════════════════════════════════ */
+
+/* ── Mobile small (< 420px) ── */
+@media (max-width: 420px) {
+    .gs-card    { border-radius: 22px; padding: 18px 16px 22px; }
+    .gs-hero    { height: 160px; }
+    .gs-title   { font-size: 1.5rem; }
+}
+
+/* ── Tablet (768px – 1024px) ── */
+@media (min-width: 768px) {
+    .gs-card  { max-width: 520px; padding: 32px 28px 36px; border-radius: 32px; }
+    .gs-hero  { height: 220px; }
+    .gs-title { font-size: 2.1rem; }
+
+    .gs-grade { padding: 18px 20px; font-size: 1.1rem; }
+
+    .gs-continue { padding: 17px; font-size: 1.15rem; margin-top: 26px; }
+}
+
+/* ── Desktop (1024px – 1440px) ── */
+@media (min-width: 1024px) {
+    .gs-wrapper { padding: 32px; }
+
+    .gs-card { max-width: 560px; padding: 36px 32px 40px; border-radius: 36px; }
+    .gs-hero  { height: 240px; }
+    .gs-title { font-size: 2.2rem; }
+
+    .gs-grades { gap: 13px; }
+    .gs-grade  { padding: 20px 22px; font-size: 1.15rem; }
+}
+
+/* ── Large desktop (> 1440px) ── */
+@media (min-width: 1440px) {
+    .gs-card  { max-width: 600px; padding: 40px 36px 44px; }
+    .gs-hero  { height: 260px; }
+    .gs-title { font-size: 2.4rem; }
+
+    .gs-subtitle  { font-size: 1rem; }
+    .gs-grade     { padding: 22px 24px; font-size: 1.2rem; }
+    .gs-continue  { padding: 19px; font-size: 1.2rem; }
+    .ts-emoji     { font-size: 1.9rem; }
+    .ts-label     { font-size: 1.1rem; }
+    .ts-desc      { font-size: 0.82rem; }
+}

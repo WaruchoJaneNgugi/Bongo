@@ -1,106 +1,318 @@
-import React from 'react';
-import { useStore } from '../../store/useStore';
-import { useNavigate } from 'react-router-dom';
-import { BookOpen, Calculator, Mic, FlaskConical, Globe, History, ChevronRight, Star, Flame, Brain, BookMarked, GraduationCap } from 'lucide-react';
-import '../../styles/level.css';
+import { useState, useEffect } from 'react';
+import { EXAM_DATA } from './SeniorSchool/data/paperDb';
+import type { AppView, Grade, Subject } from './SeniorSchool/types/school';
+import './SeniorSchool/styles/portal.css';
 
-const subjects = [
-  { id: 'math',      name: 'Mathematics', icon: Calculator,   color: '#10b981', progress: 55 },
-  { id: 'english',   name: 'English',     icon: BookOpen,     color: '#3b82f6', progress: 60 },
-  { id: 'kiswahili', name: 'Kiswahili',   icon: Mic,          color: '#8b5cf6', progress: 45 },
-  { id: 'biology',   name: 'Biology',     icon: FlaskConical, color: '#f59e0b', progress: 30 },
-  { id: 'chemistry', name: 'Chemistry',   icon: FlaskConical, color: '#ec4899', progress: 25 },
-  { id: 'physics',   name: 'Physics',     icon: Brain,        color: '#ef4444', progress: 20 },
-  { id: 'history',   name: 'History',     icon: History,      color: '#14b8a6', progress: 35 },
-  { id: 'geography', name: 'Geography',   icon: Globe,        color: '#f97316', progress: 40 },
-];
+import heroImg from './SeniorSchool/assets/chuoimage3.jpeg';
 
-const recentPerf = [
-  { name: 'Mathematics', score: '85%' },
-  { name: 'English',     score: '78%' },
-  { name: 'Kiswahili',   score: '82%' },
-  { name: 'Biology',     score: '71%' },
-];
+type ExtendedView = AppView | 'INSTRUCTIONS';
 
-const SeniorSchoolDashboard: React.FC = () => {
-  const { user } = useStore();
-  const navigate = useNavigate();
-  const student = user?.type === 'student' ? user : null;
-
-  return (
-    <div className="lvl-root">
-      <div className="lvl-welcome">
-        <div className="lvl-welcome-top">
-          <div className="lvl-avatar">{student?.avatar || '🎓'}</div>
-          <div className="lvl-welcome-info">
-            <h1>Welcome back, {student?.username || 'Student'}! 👋</h1>
-            <span className="lvl-level-badge">🎓 Senior School · Grade 10–12</span>
-          </div>
-        </div>
-        <div className="lvl-stats-row">
-          {[
-            { icon: <Star size={18} color="#fbbf24" />,           val: student?.points?.toLocaleString() ?? '0', lbl: 'Points' },
-            { icon: <Flame size={18} color="#f97316" />,           val: `${student?.streak ?? 0} days`, lbl: 'Streak' },
-            { icon: <GraduationCap size={18} color="#fbbf24" />,   val: `Lv ${student?.level ?? 1}`, lbl: 'Level' },
-          ].map(s => (
-            <div key={s.lbl} className="lvl-stat-chip">
-              <div className="lvl-stat-chip-icon">{s.icon}</div>
-              <div><div className="lvl-stat-val">{s.val}</div><div className="lvl-stat-lbl">{s.lbl}</div></div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* KCSE countdown */}
-      <div className="lvl-section">
-        <div className="lvl-countdown">
-          <BookMarked size={24} color="#8b5cf6" />
-          <div>
-            <div className="lvl-countdown-label">Days until KCSE</div>
-            <div className="lvl-countdown-val">156 days</div>
-          </div>
-        </div>
-      </div>
-
-      <div className="lvl-section">
-        <div className="lvl-section-header">
-          <h2>Your Subjects</h2>
-          <button className="lvl-see-all" onClick={() => navigate('/games')}>Play games <ChevronRight size={14}/></button>
-        </div>
-        <p className="lvl-section-sub">Track your progress across all subjects</p>
-        <div className="lvl-subjects-grid">
-          {subjects.map(({ id, name, icon: Icon, color, progress }) => (
-            <div key={id} className="lvl-subject-card" onClick={() => navigate('/games')}>
-              <div className="lvl-subject-card-top">
-                <div className="lvl-subject-icon" style={{ background: `${color}20` }}>
-                  <Icon size={28} color={color} />
-                </div>
-                <ChevronRight size={18} className="lvl-subject-arrow" />
-              </div>
-              <h3>{name}</h3>
-              <div className="lvl-progress-bar">
-                <div className="lvl-progress-fill" style={{ width: `${progress}%`, background: color }} />
-              </div>
-              <div className="lvl-progress-text">{progress}% complete</div>
-              <button className="lvl-continue-btn" style={{ color }}>Continue Revision →</button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="lvl-section">
-        <h2 style={{ marginBottom: '1rem' }}>Recent Performance</h2>
-        <div className="lvl-perf-grid">
-          {recentPerf.map((p, i) => (
-            <div key={i} className="lvl-perf-item">
-              <span className="lvl-perf-name">{p.name}</span>
-              <span className="lvl-perf-score">{p.score}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+const SUBJECT_ICONS: Record<string, string> = {
+  Mathematics: '📐', English: '📚', Kiswahili: '✍️',
+  Science: '🧪', Physics: '⚡', Chemistry: '🔬',
+  Biology: '🌿', 'Social Studies': '🌍', Geography: '🗺️',
+  CRE: '🙏', 'Computer Studies': '💻',
 };
 
-export default SeniorSchoolDashboard;
+const getIcon = (name: string) => SUBJECT_ICONS[name] ?? '📖';
+
+export const SeniorSchoolDashboard =() =>{
+  const [view, setView] = useState<ExtendedView>('GRADES');
+  const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [currentQIndex, setCurrentQIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
+  const [timeLeft, setTimeLeft] = useState(120);
+  const [isTimeUp, setIsTimeUp] = useState(false);
+
+  useEffect(() => {
+    if (view !== 'EXAM' || !selectedSubject || timeLeft <= 0 || isTimeUp) {
+      if (timeLeft === 0 && view === 'EXAM') { setIsTimeUp(true); setView('RESULTS'); }
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft(p => p - 1), 1000);
+    return () => clearInterval(timer);
+  }, [view, timeLeft, isTimeUp, selectedSubject]);
+
+  const calcResults = () => {
+    if (!selectedSubject) return { correct: 0, total: 0, percent: 0 };
+    const total = selectedSubject.questions.length;
+    const correct = selectedSubject.questions.filter(q => userAnswers[q.id] === q.correctAnswer).length;
+    return { correct, total, percent: total > 0 ? Math.round((correct / total) * 100) : 0 };
+  };
+
+  const fmt = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+
+  const startExam = () => {
+    setTimeLeft(120); setCurrentQIndex(0); setUserAnswers({}); setIsTimeUp(false); setView('EXAM');
+  };
+
+  const gradeInfo: Record<Grade, { label: string; desc: string }> = {
+    '10': { label: 'Grade 10', desc: 'Form 4 · Secondary Level' },
+    '11': { label: 'Grade 11', desc: 'Form 5 · Advanced Level' },
+    '12': { label: 'Grade 12', desc: 'Form 6 · Final Year' },
+  };
+
+  return (
+      <div className="portal-container">
+
+        {/* ── GRADE SELECTION ── */}
+        {view === 'GRADES' && (
+            <div className="grade-screen-wrap">
+              <div className="grade-card">
+                <h1 className="grade-card-title">Select Your Grade Level</h1>
+                <p className="grade-card-subtitle">Please select your current grade level.</p>
+
+                <div className="grade-hero-banner">
+                  <img src={heroImg} alt="Students" className="grade-hero-img" />
+                </div>
+
+                <div className="grade-list">
+                  {(['10', '11', '12'] as Grade[]).map(g => (
+                      <button
+                          key={g}
+                          className={`grade-list-btn ${selectedGrade === g ? 'grade-list-btn--active' : ''}`}
+                          onClick={() => setSelectedGrade(g)}
+                      >
+                        <span className="grade-list-label">{gradeInfo[g].label}</span>
+                        {selectedGrade === g && <span className="grade-list-check">✓</span>}
+                      </button>
+                  ))}
+                </div>
+
+                <button
+                    className="grade-continue-btn"
+                    disabled={!selectedGrade}
+                    onClick={() => setView('TERMS')}
+                >
+                  Continue
+                </button>
+              </div>
+            </div>
+        )}
+
+        {/* ── TERM SELECTION ── */}
+        {view === 'TERMS' && (
+            <div className="selection-screen">
+              <span className="back-link" onClick={() => setView('GRADES')}>← Back</span>
+              <h1>Select Term</h1>
+              <p className="portal-tagline">Grade {selectedGrade} · Choose an academic term</p>
+              <div className="button-group">
+                {['TERM 1', 'TERM 2', 'TERM 3'].map((term, i) => (
+                    <button key={term} className="menu-btn" onClick={() => { setSelectedTerm(term); setView('SUBJECTS'); }}>
+                      <span className="menu-btn-icon">{['📅', '📆', '🗓️'][i]}</span>
+                      <span className="menu-btn-label">
+                  {term}
+                        <small>Academic Term {i + 1}</small>
+                </span>
+                      <span className="menu-btn-arrow">›</span>
+                    </button>
+                ))}
+              </div>
+            </div>
+        )}
+
+        {/* ── SUBJECT SELECTION ── */}
+        {view === 'SUBJECTS' && selectedGrade && selectedTerm && (
+            <div className="subject-background-box">
+              <span className="back-link" onClick={() => setView('TERMS')}>← Back</span>
+              <div className="subject-screen-header">
+                <h2 className="subject-screen-title">Choose a Subject</h2>
+                <p className="subject-screen-subtitle">Grade {selectedGrade} · {selectedTerm}</p>
+              </div>
+              <div className="subject-grid">
+                {((EXAM_DATA as any)[selectedGrade]?.[selectedTerm] || []).map((sub: any) => (
+                    <div key={sub.name} className={`subject-card ${sub.questions.length === 0 ? 'subject-card--empty' : ''}`} onClick={() => { setSelectedSubject(sub); setView('INSTRUCTIONS'); }}>
+                      <div className="subject-icon-box">{getIcon(sub.name)}</div>
+                      <span className="subject-name">{sub.name}</span>
+                      <span className="subject-q-count">{sub.questions.length > 0 ? `${sub.questions.length} questions` : 'Coming soon'}</span>
+                    </div>
+                ))}
+              </div>
+            </div>
+        )}
+
+        {/* ── INSTRUCTIONS ── */}
+        {view === 'INSTRUCTIONS' && selectedSubject && selectedSubject.questions.length === 0 && (
+            <div className="instructions-card">
+              <div className="instr-header-group">
+                <div className="book-circle">🚧</div>
+                <h1 className="instr-title">{selectedSubject.name}</h1>
+                <span className="instr-subject-badge">Coming Soon</span>
+              </div>
+              <div className="instructions-box">
+                <ul>
+                  <li>Questions for this subject are not yet available.</li>
+                  <li>Check back soon — content is being added regularly.</li>
+                </ul>
+              </div>
+              <div className="instr-actions">
+                <button className="start-exam-btn" onClick={() => setView('SUBJECTS')}>← Back to Subjects</button>
+              </div>
+            </div>
+        )}
+
+        {view === 'INSTRUCTIONS' && selectedSubject && selectedSubject.questions.length > 0 && (
+            <div className="instructions-card">
+              <div className="instr-header-group">
+                <div className="book-circle">{getIcon(selectedSubject.name)}</div>
+                <h1 className="instr-title">{selectedSubject.name}</h1>
+                <span className="instr-subject-badge">📋 Exam Instructions</span>
+              </div>
+
+              <div className="instr-stats-row">
+                <div className="instr-stat-pill">
+                  <span className="stat-icon-blue">🕒</span>
+                  <div className="stat-text">
+                    <small>Duration</small>
+                    <strong>2 Minutes</strong>
+                  </div>
+                </div>
+                <div className="instr-stat-pill">
+                  <span className="stat-icon-blue">📝</span>
+                  <div className="stat-text">
+                    <small>Questions</small>
+                    <strong>{selectedSubject.questions.length} MCQs</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div className="instructions-box">
+                <ul>
+                  <li>Ensure you have a stable internet connection before starting.</li>
+                  <li>Do not refresh or close the page during the exam.</li>
+                  <li>The exam auto-submits when the timer reaches zero.</li>
+                  <li>Navigate between questions using the Next and Previous buttons.</li>
+                </ul>
+              </div>
+
+              <div className="instr-actions">
+                <button className="cancel-btn" onClick={() => setView('SUBJECTS')}>Cancel</button>
+                <button className="start-exam-btn" onClick={startExam}>▶ Start Exam</button>
+              </div>
+            </div>
+        )}
+
+
+        {/* ── EXAM ── */}
+        {view === 'EXAM' && selectedSubject && (() => {
+          const q = selectedSubject.questions[currentQIndex];
+          const total = selectedSubject.questions.length;
+          const progress = ((currentQIndex + 1) / total) * 100;
+          return (
+              <div className="question-card">
+                <header className="exam-header">
+                  <div className="exam-header-left">
+                    <span className="subject-title">{selectedSubject.name}</span>
+                    <div className="exam-progress-bar-wrap">
+                      <div className="exam-progress-bar-fill" style={{ width: `${progress}%` }} />
+                    </div>
+                  </div>
+                  <div className={`timer-badge ${timeLeft < 20 ? 'timer-warning' : ''}`}>
+                    <span className="timer-dot" />
+                    {fmt(timeLeft)}
+                  </div>
+                </header>
+
+                <div className="exam-content">
+                  <span className="q-number-label">Question {currentQIndex + 1} of {total}</span>
+                  <h2 className="question-text">{q?.text}</h2>
+                  <div className="options-grid">
+                    {(['A', 'B', 'C', 'D'] as const).map(letter => (
+                        <button
+                            key={letter}
+                            onClick={() => setUserAnswers({ ...userAnswers, [q.id]: letter })}
+                            className={`option-btn ${userAnswers[q.id] === letter ? 'selected' : ''}`}
+                        >
+                          <span className="option-letter">{letter}</span>
+                          <span className="option-text">{(q.options as any)[letter]}</span>
+                        </button>
+                    ))}
+                  </div>
+                </div>
+
+                <footer className="exam-footer">
+                  <button className="nav-btn prev" disabled={currentQIndex === 0} onClick={() => setCurrentQIndex(p => p - 1)}>
+                    ← Prev
+                  </button>
+                  <div className="exam-footer-center">
+                    {selectedSubject.questions.map((_, i) => (
+                        <div
+                            key={i}
+                            className={`q-dot ${i === currentQIndex ? 'current' : userAnswers[selectedSubject.questions[i].id] ? 'answered' : ''}`}
+                            onClick={() => setCurrentQIndex(i)}
+                        />
+                    ))}
+                  </div>
+                  {currentQIndex < total - 1 ? (
+                      <button className="nav-btn next" onClick={() => setCurrentQIndex(p => p + 1)}>Next →</button>
+                  ) : (
+                      <button className="nav-btn finish" onClick={() => setView('RESULTS')}>Submit ✓</button>
+                  )}
+                </footer>
+              </div>
+          );
+        })()}
+
+        {/* ── RESULTS ── */}
+        {view === 'RESULTS' && selectedSubject && (() => {
+          const { correct, total, percent } = calcResults();
+          return (
+              <div className="results-wrapper">
+                <div className="results-card">
+                  <div className="results-top">
+                    <div className="results-badge">{percent >= 70 ? '🏆' : percent >= 50 ? '👍' : '📚'}</div>
+                    <h1>{percent >= 70 ? 'Well Done!' : percent >= 50 ? 'Good Effort!' : 'Keep Practicing!'}</h1>
+                    <p className="results-subtitle">
+                      <span>Grade {selectedGrade}</span>
+                      <span>{selectedSubject.name}</span>
+                      <span>{selectedTerm}</span>
+                    </p>
+                  </div>
+
+                  <div className="score-summary-flex">
+                    <div className="score-circle-outer" style={{ '--pct': percent } as any}>
+                      <div className="score-circle-inner">
+                        <span className="score-big-text">{percent}%</span>
+                        <span className="score-label">Score</span>
+                      </div>
+                    </div>
+                    <div className="stats-column">
+                      <div className="stat-pill correct">✓ {correct} Correct</div>
+                      <div className="stat-pill incorrect">✗ {total - correct} Incorrect</div>
+                      <p className="total-text">{total} total questions</p>
+                    </div>
+                  </div>
+
+                  <div className="results-actions">
+                    <button className="try-again-btn" onClick={startExam}>🔄 Try Again</button>
+                    <button className="new-subject-btn" onClick={() => setView('SUBJECTS')}>📚 New Subject</button>
+                  </div>
+                </div>
+
+                <div className="results-card review-card-container">
+                  <h3 className="review-title">📋 Question Review</h3>
+                  <div className="review-list">
+                    {selectedSubject.questions.map((q, idx) => (
+                        <div key={q.id} className={`review-box ${userAnswers[q.id] === q.correctAnswer ? 'is-correct' : 'is-wrong'}`}>
+                          <p>
+                            <span className="status-icon">{userAnswers[q.id] === q.correctAnswer ? '✅' : '❌'}</span>
+                            <span><strong>Q{idx + 1}:</strong> {q.text}</span>
+                          </p>
+                          {userAnswers[q.id] !== q.correctAnswer && (
+                              <div className="correct-answer-hint">
+                                Correct answer: <span className="purple-hint">{q.correctAnswer}</span>
+                              </div>
+                          )}
+                        </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+          );
+        })()}
+
+      </div>
+  );
+}

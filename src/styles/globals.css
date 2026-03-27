@@ -68,6 +68,13 @@
   --font-display: 'Fredoka One', cursive;
   --font-body:    'Nunito', sans-serif;
 
+  /* Glassmorphism */
+  --glass-bg:        rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.75);
+  --glass-border:    rgba(255, 255, 255, 0.45);
+  --glass-blur:      blur(18px);
+  --glass-shadow:    0 8px 32px rgba(124, 58, 237, 0.12), 0 1.5px 0 rgba(255,255,255,0.6) inset;
+
   /* Nav */
   --nav-h: 64px;
   --bottom-bar-h: 64px;
@@ -123,11 +130,13 @@ body {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  /*padding-top: var(--nav-h);}*/
 }
 .main-body-container {
-  overflow-y: auto;
-   /* 👈 move it here instead */
+  display: contents;
+}
+.main-body-container > main,
+.main-body-container > div:not(.nb-root) {
+  padding-top: var(--nav-h);
 }
 
 /*.main-body-container {*/

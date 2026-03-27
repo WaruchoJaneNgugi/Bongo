@@ -1,0 +1,28 @@
+/* ── Question Timer ── */
+
+.timer-wrap { display: flex; align-items: center; gap: 0.6rem; }
+.timer-ring-svg { flex-shrink: 0; transform: rotate(-90deg); }
+.timer-track { fill: none; stroke: var(--purple-pale); stroke-width: 3; }
+.timer-fill {
+    fill: none;
+    stroke: var(--purple);
+    stroke-width: 3;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+.timer-fill.urgent {
+    stroke: #ef4444;
+    animation: timerPulse 0.5s ease infinite alternate;
+}
+@keyframes timerPulse { from { opacity:1; } to { opacity:0.35; } }
+
+.timer-count {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    letter-spacing: 0.3px;
+    min-width: 28px;
+    text-align: center;
+    color: var(--text-muted);
+    transition: color 0.3s;
+}
+.timer-count.urgent { color: #ef4444; font-size: 1.1rem; }

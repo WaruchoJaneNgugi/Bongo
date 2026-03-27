@@ -13,7 +13,7 @@
 /* ── Slider ─────────────────────────────────────────────── */
 .gh-slider-full {
   position: relative;
-  height: 580px;
+  height: clamp(260px, 55dvh, 680px);
   margin: 1.5rem 2rem 0;
   border-radius: 28px;
   overflow: hidden;
@@ -31,6 +31,12 @@
   height: 100%;
   object-fit: fill;
   transition: transform 0.6s ease;
+  animation: slideInFromRight 0.6s ease forwards;
+}
+
+@keyframes slideInFromRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
 }
 
 .gh-slider-full:hover .gh-slider-bg-image img {
@@ -113,7 +119,7 @@
   box-shadow: 0 12px 28px rgba(0,0,0,0.2);
 }
 
-.gh-arrow {
+.lp-slider-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -131,13 +137,13 @@
   z-index: 20;
   box-shadow: 0 4px 16px rgba(0,0,0,0.15);
 }
-.gh-arrow:hover {
+.lp-slider-arrow:hover {
   background: #fff;
   transform: translateY(-50%) scale(1.1);
   box-shadow: 0 8px 24px rgba(124,58,237,0.25);
 }
-.gh-arrow-left { left: 20px; }
-.gh-arrow-right { right: 20px; }
+.lp-slider-arrow-left { left: 20px; }
+.lp-slider-arrow-right { right: 20px; }
 
 .gh-dots {
   position: absolute;
@@ -457,11 +463,11 @@
 }
 
 @media (max-width: 768px) {
-  .gh-slider-full { height: 340px; margin: 1rem 1rem 0; border-radius: 20px; }
+  .gh-slider-full { margin: 1rem 1rem 0; border-radius: 20px; }
   .gh-slider-full::before { display: none; }
   .gh-slider-title { font-size: 2rem; }
   .gh-slider-content { left: 6%; bottom: 10%; }
-  .gh-arrow { width: 40px; height: 40px; }
+  .lp-slider-arrow { width: 40px; height: 40px; }
   .gh-stats-strip { margin: 0.75rem 1rem; }
   .gh-features-grid { grid-template-columns: 1fr; gap: 0.85rem; }
   .gh-subject-grid { grid-template-columns: repeat(3, 1fr); }

@@ -1,0 +1,118 @@
+/* ========================================
+   RESULTS SCREEN — Purple theme
+   ======================================== */
+
+.results-screen { justify-content: flex-start; padding-top: 1.5rem; }
+.results-inner  { width: 100%; max-width: 540px; }
+
+/* --- Hero Card --- */
+.results-hero-card {
+    text-align: center;
+    margin-bottom: 1.2rem;
+    animation: bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.results-badge-emoji  { font-size: 3.5rem; display: block; margin-bottom: 0.4rem; }
+.results-badge-title  { font-family: var(--font-display); font-size: 2.2rem; letter-spacing: 0.5px; margin-bottom: 0.3rem; color: var(--text-heading); }
+.results-context      { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); }
+
+/* --- Score row --- */
+.results-score-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1.1rem 0;
+    flex-wrap: wrap;
+}
+
+.results-ring {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 5px solid var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: linear-gradient(135deg, var(--purple-ghost), var(--surface));
+    box-shadow: var(--shadow-lg);
+    flex-shrink: 0;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both 0.2s;
+}
+.results-pct       { font-family: var(--font-display); font-size: 2.2rem; line-height: 1.1; color: var(--text-heading); }
+.results-pct-label { font-size: 0.62rem; font-weight: 900; color: var(--text-subtle); letter-spacing: 1px; text-transform: uppercase; }
+
+.results-tally { display: flex; flex-direction: column; gap: 0.5rem; text-align: left; }
+.tally-row     { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; font-weight: 800; color: var(--text-body); }
+
+.tally-tag-correct {
+    background: linear-gradient(135deg, var(--purple-mid), var(--purple));
+    color: #fff;
+    border-radius: var(--radius-sm);
+    padding: 0.15rem 0.6rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    min-width: 44px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+.tally-tag-wrong {
+    background: var(--wrong-bg);
+    color: var(--wrong-text);
+    border: 1.5px solid var(--wrong-border);
+    border-radius: var(--radius-sm);
+    padding: 0.15rem 0.6rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    min-width: 44px;
+    text-align: center;
+}
+
+/* --- Action buttons --- */
+.results-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-top: 1rem; }
+.results-actions .btn-full { grid-column: span 2; }
+
+/* --- Review Card --- */
+.results-review-card { margin-bottom: 1.5rem; animation: fadeUp 0.4s ease both 0.3s; }
+
+.review-title {
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-heading);
+}
+
+.review-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+.review-item {
+    background: var(--purple-ghost);
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: flex-start;
+}
+.review-item.review-correct {
+    background: linear-gradient(135deg, var(--purple-pale), var(--purple-ghost));
+    border-color: var(--purple-light);
+}
+.review-item-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+.review-item-q    { font-weight: 800; font-size: 0.88rem; margin-bottom: 0.25rem; line-height: 1.4; color: var(--text-body); }
+.review-item-ans  { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); }
+
+.review-ans-pill {
+    background: var(--purple);
+    color: #fff;
+    border-radius: 6px;
+    padding: 1px 8px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: inline-block;
+}
+
+/* --- Confetti --- */
+.confetti-piece { position: fixed; top: -10px; pointer-events: none; z-index: 9999; animation: fall linear forwards; }
