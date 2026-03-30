@@ -13,7 +13,7 @@
 /* ── Slider ─────────────────────────────────────────────── */
 .gh-slider-full {
   position: relative;
-  height: clamp(260px, 55dvh, 680px);
+  height: clamp(260px, 48dvh, 680px);
   margin: 1.5rem 2rem 0;
   border-radius: 28px;
   overflow: hidden;
