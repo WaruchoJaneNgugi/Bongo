@@ -1,0 +1,212 @@
+/* ── Profile Select (Netflix-style) ─────────────────────── */
+.ps-backdrop {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #2a003f, #711391);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  min-height: 100vh;
+}
+
+.ps-logo {
+  position: absolute;
+  top: 1.5rem;
+  left: 2rem;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.ps-logo span { color: #ca00c9; }
+
+/* ── Profile grid ── */
+.ps-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  animation: ps-fade-in 0.35s ease;
+}
+
+@keyframes ps-fade-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ps-heading {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+}
+
+.ps-profiles-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
+  max-width: 700px;
+}
+
+.ps-profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgb(0 0 0 / 0.42);
+  border: 2px solid transparent;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s;
+  min-width: 120px;
+}
+.ps-profile-card:hover {
+  border-color: #eaaaff;
+  transform: scale(1.06);
+}
+
+.ps-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 8px;
+  background: rgb(54 35 93 / 0.57);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  border: 2px solid rgb(234 170 255 / 0.35);
+  transition: border-color 0.2s;
+}
+.ps-profile-card:hover .ps-avatar {
+  border-color: #eaaaff;
+}
+
+.ps-profile-name {
+  color: #ffea00;
+  font-size: 0.95rem;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+.ps-profile-card:hover .ps-profile-name { color: #fff; }
+
+.ps-profile-level {
+  color: #eaaaff;
+  font-size: 0.75rem;
+}
+
+.ps-logout-btn {
+  background: none;
+  border: 1px solid #eaaaff;
+  color: #dec4e7;
+  font-weight: 700;
+  padding: 0.5rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: border-color 0.2s, color 0.2s;
+}
+.ps-logout-btn:hover { border-color: #eaaaff; color: #fff; }
+
+/* ── PIN screen ── */
+.ps-pin-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  animation: ps-fade-in 0.3s ease;
+}
+
+.ps-pin-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+  background: rgb(68 16 86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.8rem;
+  border: 2px solid #fd9b0d;
+}
+
+.ps-pin-name {
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.ps-pin-label {
+  color: #eaaaff;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.ps-pin-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #ef4444;
+  font-size: 0.85rem;
+  background: #ef444415;
+  border: 1px solid #ef444430;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+}
+
+.ps-pin-row {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.ps-pin-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 8px;
+  border: 2px solid #444;
+  /*background: #1e1e1e;*/
+  color: #fff;
+  font-size: 1.4rem;
+  text-align: center;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ps-pin-box:focus { border-color: #f59e0b; }
+.ps-pin-box.filled { border-color: #f59e0b; background: #f59e0b15; }
+.ps-pin-box.error  { border-color: #ef4444; }
+
+.ps-pin-submit {
+  background: #f59e0b;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 0.65rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.ps-pin-submit:hover { background: #fbbf24; transform: scale(1.03); }
+
+.ps-back-link {
+  background: none;
+  border: none;
+  color: #eaaaff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+  margin-top: 0.25rem;
+}
+.ps-back-link:hover { color: #fff; }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .ps-heading { font-size: 1.4rem; }
+  .ps-avatar { width: 72px; height: 72px; font-size: 2.4rem; }
+  .ps-profiles-grid { gap: 1rem; }
+}
