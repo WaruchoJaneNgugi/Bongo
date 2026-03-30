@@ -29,8 +29,8 @@ const AboutPage: React.FC = () => {
         <div className="ab-hero-content">
           {isLoggedIn && user && (
             <div className="ab-user-chip">
-              <span>{user.avatar || '🧒'}</span>
-              <span>{user.username}</span>
+              <span>{user.profiles[0]?.avatar || '🧒🏿'}</span>
+              <span>{user.profiles.find(p => p.id === user.activeProfileId)?.username ?? user.profiles[0]?.username}</span>
             </div>
           )}
           <h1 className="ab-hero-title">About <span>BongoQuiz</span></h1>

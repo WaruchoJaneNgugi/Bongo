@@ -6,6 +6,7 @@ import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
 import SignUpOverlay from './components/overlays/SignUpOverlay';
 import LoginOverlay from './components/overlays/LoginOverlay';
+import ProfileSelectOverlay from './components/overlays/ProfileSelectOverlay';
 import GamesPage from './components/GamesPage';
 import AboutPage from './components/AboutPage';
 import StudentProfile from './components/StudentProfile';
@@ -35,12 +36,14 @@ const AppContent: React.FC = () => {
 
   const levelRoute = () => {
     if (user?.type !== 'student') return '/';
+    const activeProfile = user.profiles.find(p => p.id === user.activeProfileId);
+    if (!activeProfile) return '/';
     const routes = {
       lower_primary: '/level/lower-primary',
       middle_school: '/level/middle-school',
       senior_school: '/level/senior-school',
     };
-    return routes[user.educationLevel] ?? '/';
+    return routes[activeProfile.educationLevel] ?? '/';
   };
 
   return (
@@ -76,6 +79,7 @@ const AppContent: React.FC = () => {
 
       {overlay === 'signup' && <SignUpOverlay />}
       {overlay === 'login'  && <LoginOverlay />}
+      {overlay === 'profile-select' && <ProfileSelectOverlay />}
     </div>
   );
 };

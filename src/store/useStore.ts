@@ -2,32 +2,31 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
+export type FamilyPackage = 'solo' | 'trio' | 'quad' | 'family';
 
-export interface StudentUser {
-  type: 'student';
+export interface StudentProfile {
+  id: string;           // unique id within the account
   username: string;
-  phone: string;       // own phone OR "parentPhone-N" for child accounts
-  pin: string;         // 4-digit PIN
   educationLevel: EducationLevel;
-  parentPhone?: string;
+  pin: string;          // 4-digit profile PIN
+  avatar: string;
   xp: number;
   level: number;
   streak: number;
   points: number;
-  avatar: string;
 }
 
-export interface ParentUser {
-  type: 'parent';
-  username: string;
-  phone: string;
-  pin: string;
-  students: StudentUser[];
-  avatar: string;
+export interface StudentUser {
+  type: 'student';
+  phone: string;        // account phone number (parent's or student's own)
+  pin: string;          // account-level PIN used at login
+  package: FamilyPackage;
+  profiles: StudentProfile[];  // 1 profile for solo, up to N for others
+  activeProfileId: string | null;
 }
 
-export type AppUser = StudentUser | ParentUser;
-export type Overlay = null | 'signup' | 'login';
+export type AppUser = StudentUser;
+export type Overlay = null | 'signup' | 'login' | 'profile-select';
 
 interface AppState {
   overlay: Overlay;
@@ -38,13 +37,9 @@ interface AppState {
   setOverlay: (overlay: Overlay) => void;
   login: (user: AppUser) => void;
   logout: () => void;
-  // registers a user (and their child students) into allUsers
   registerUser: (user: AppUser) => void;
+  setActiveProfile: (profileId: string) => void;
   updateUser: (updates: Partial<AppUser>) => void;
-  // adds a student to a parent AND registers the student in allUsers
-  addStudentToParent: (parentPhone: string, student: StudentUser) => void;
-  // removes a student from a parent AND from allUsers
-  removeStudentFromParent: (parentPhone: string, studentPhone: string) => void;
   findUserByPhone: (phone: string) => AppUser | undefined;
 }
 
@@ -62,12 +57,19 @@ export const useStore = create<AppState>()(
 
       logout: () => set({ user: null, isLoggedIn: false, overlay: null }),
 
-      // so children can log in independently with their phone (parentPhone-N)
       registerUser: (newUser) =>
+        set((state) => ({ allUsers: [...state.allUsers, newUser] })),
+
+      setActiveProfile: (profileId) =>
         set((state) => {
-          const extras: AppUser[] =
-            newUser.type === 'parent' ? newUser.students : [];
-          return { allUsers: [...state.allUsers, newUser, ...extras] };
+          if (!state.user) return {};
+          const updated = { ...state.user, activeProfileId: profileId };
+          return {
+            user: updated,
+            allUsers: state.allUsers.map((u) =>
+              u.phone === state.user!.phone ? updated : u
+            ),
+          };
         }),
 
       updateUser: (updates) =>
@@ -80,66 +82,11 @@ export const useStore = create<AppState>()(
           ),
         })),
 
-      addStudentToParent: (parentPhone, student) =>
-        set((state) => {
-          // 1. Update the parent's students array (in allUsers + current user)
-          const updatedAllUsers = state.allUsers.map((u) =>
-            u.type === 'parent' && u.phone === parentPhone
-              ? { ...u, students: [...u.students, student] }
-              : u
-          );
-
-          //    so they can log in with their "parentPhone-N" phone
-          const alreadyExists = updatedAllUsers.some(
-            (u) => u.phone === student.phone
-          );
-          const finalAllUsers = alreadyExists
-            ? updatedAllUsers
-            : [...updatedAllUsers, student];
-
-          const updatedCurrentUser =
-            state.user?.type === 'parent' && state.user.phone === parentPhone
-              ? { ...state.user, students: [...state.user.students, student] }
-              : state.user;
-
-          return { allUsers: finalAllUsers, user: updatedCurrentUser };
-        }),
-
-      removeStudentFromParent: (parentPhone, studentPhone) =>
-        set((state) => {
-          // Remove from parent's students array
-          const updatedAllUsers = state.allUsers
-            .map((u) =>
-              u.type === 'parent' && u.phone === parentPhone
-                ? {
-                    ...u,
-                    students: u.students.filter(
-                      (s) => s.phone !== studentPhone
-                    ),
-                  }
-                : u
-            )
-            // Remove the student's standalone allUsers entry
-            .filter((u) => u.phone !== studentPhone);
-
-          const updatedCurrentUser =
-            state.user?.type === 'parent' && state.user.phone === parentPhone
-              ? {
-                  ...state.user,
-                  students: state.user.students.filter(
-                    (s) => s.phone !== studentPhone
-                  ),
-                }
-              : state.user;
-
-          return { allUsers: updatedAllUsers, user: updatedCurrentUser };
-        }),
-
       findUserByPhone: (phone) =>
         get().allUsers.find((u) => u.phone === phone),
     }),
     {
-      name: 'bongoquiz-v2',
+      name: 'bongoquiz-v3',
       partialize: (state) => ({
         user: state.user,
         allUsers: state.allUsers,

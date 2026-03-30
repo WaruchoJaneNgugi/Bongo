@@ -28,20 +28,23 @@ const Navbar: React.FC = () => {
   const isActive = (p: string) => location.pathname === p || location.pathname.startsWith(p + '/');
 
   // const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
-  const userAvatar = user?.avatar || (user?.type === 'parent' ? '👩' : '🧒');
+  const userAvatar = user?.profiles.find(p => p.id === user.activeProfileId)?.avatar
+    ?? user?.profiles[0]?.avatar ?? '🧒🏿';
 
   const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };
 
-  const levelRoute = user?.type === 'student'
-    ? { lower_primary: '/level/lower-primary', middle_school: '/level/middle-school', senior_school: '/level/senior-school' }[user.educationLevel]
+  const activeProfile = user?.profiles.find(p => p.id === user.activeProfileId) ?? user?.profiles[0];
+  const levelRoute = activeProfile
+    ? ({ lower_primary: '/level/lower-primary', middle_school: '/level/middle-school', senior_school: '/level/senior-school' } as Record<string, string>)[activeProfile.educationLevel]
     : '/';
 
   /* ── Bottom nav items (logged in) ──────────────────────── */
   const bottomItems = [
-    { path: '/',       icon: Home,      label: 'Home' },
-    { path: levelRoute || '/level', icon: BookOpen, label: 'Learn' },
-    { path: '/games',  icon: Gamepad2,  label: 'Games' },
-    { path: '/profile',icon: User,      label: 'Profile' },
+    { path: '/',                        icon: Home,      label: 'Home',      exact: true },
+    { path: levelRoute || '/level',     icon: BookOpen,  label: 'Learn',     exact: false },
+    { path: '/games',                   icon: Gamepad2,  label: 'Games',     exact: false },
+    { path: '/profile',                 icon: User,      label: 'Profile',   exact: false },
+    { path: '/dashboard',               icon: Trophy,    label: 'Progress',  exact: false },
   ];
 
   return (
@@ -63,16 +66,21 @@ const Navbar: React.FC = () => {
 
             {/* Desktop nav links */}
             <div className="nb-links">
-              <Link to="/" className={`nb-link ${isActive('/') && location.pathname === '/' ? 'active' : ''}`}>
+              <Link to="/" className={`nb-link ${location.pathname === '/' ? 'active' : ''}`}>
                 <Home size={17} /> Home
               </Link>
               <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={17} /> Games
               </Link>
               {isLoggedIn && (
-                <Link to={levelRoute || '/level'} className={`nb-link ${isActive('/level') ? 'active' : ''}`}>
-                  <BookOpen size={17} /> Learn
-                </Link>
+                <>
+                  <Link to={levelRoute || '/level'} className={`nb-link ${isActive('/level') ? 'active' : ''}`}>
+                    <BookOpen size={17} /> Learn
+                  </Link>
+                  <Link to="/dashboard" className={`nb-link ${isActive('/dashboard') ? 'active' : ''}`}>
+                    <Trophy size={17} /> Progress
+                  </Link>
+                </>
               )}
             </div>
           </div>
@@ -86,7 +94,7 @@ const Navbar: React.FC = () => {
                   onClick={() => setDropdownOpen(v => !v)}
                 >
                   <span className="nb-user-avatar">{userAvatar}</span>
-                  <span className="nb-user-name nb-desktop-only">{user?.username}</span>
+                  <span className="nb-user-name nb-desktop-only">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</span>
                   <ChevronDown size={15} className={`nb-chevron ${dropdownOpen ? 'open' : ''}`} />
                 </button>
 
@@ -97,8 +105,8 @@ const Navbar: React.FC = () => {
                       <div className="nb-dropdown-header">
                         <span className="nb-dd-avatar">{userAvatar}</span>
                         <div>
-                          <p className="nb-dd-name">{user?.username}</p>
-                          <p className="nb-dd-role">{user?.type === 'parent' ? '👨‍👩‍👧 Parent' : '🎓 Student'}</p>
+                          <p className="nb-dd-name">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</p>
+                          <p className="nb-dd-role">🎓 Student</p>
                         </div>
                       </div>
                       <div className="nb-dropdown-divider" />
@@ -141,8 +149,8 @@ const Navbar: React.FC = () => {
               <div className="nb-drawer-profile">
                 <span className="nb-drawer-avatar">{userAvatar}</span>
                 <div>
-                  <p className="nb-drawer-name">{user?.username}</p>
-                  <p className="nb-drawer-role">{user?.type === 'parent' ? '👨‍👩‍👧 Parent' : '🎓 Student'}</p>
+                  <p className="nb-drawer-name">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</p>
+                  <p className="nb-drawer-role">🎓 Student</p>
                 </div>
               </div>
             )}
@@ -194,10 +202,10 @@ const Navbar: React.FC = () => {
               key={item.path}
               to={item.path}
               className={`nb-bottom-item ${
-                item.path === '/'
-                  ? location.pathname === '/'
-                  : location.pathname.startsWith(item.path)
-                ? 'active' : ''
+                (item.exact
+                  ? location.pathname === item.path
+                  : location.pathname === item.path || location.pathname.startsWith(item.path + '/'))
+                    ? 'active' : ''
               }`}
             >
               <item.icon size={22} />

@@ -355,106 +355,50 @@ const LEVEL_CONFIG = {
 };
 /* ── LoggedInHero (Refined Professional Design) ── */
 const LoggedInHero: React.FC = () => {
-  const { user } = useStore();
+  const { user, setOverlay } = useStore();
   const navigate = useNavigate();
 
   if (!user) return null;
 
-  // Parent view with clear student names
-  if (user.type === 'parent') {
-    return (
-        <div className="lp-parent-dashboard">
-          <div className="lp-parent-welcome">
-            <div className="lp-parent-avatar">{user.avatar || '👩‍👧‍👦'}</div>
-            <div className="lp-parent-info">
-              <h1>Welcome back, {user.username}</h1>
-              <p>{user.students.length} child{user.students.length !== 1 ? 'ren' : ''} learning</p>
-            </div>
-          </div>
+  const activeProfile = user.profiles.find(p => p.id === user.activeProfileId) ?? user.profiles[0];
+  if (!activeProfile) return null;
 
-          {user.students.length === 0 ? (
-              <div className="lp-empty-state">
-                <div className="lp-empty-icon">📚</div>
-                <h3>Add your first child</h3>
-                <p>Track progress, set goals, and celebrate achievements.</p>
-                <button className="lp-btn-primary lp-btn-add" onClick={() => navigate('/profile')}>
-                  + Add Student
-                </button>
-              </div>
-          ) : (
-              <>
-                <div className="lp-section-header">
-                  <h2>Your children</h2>
-                  <button className="lp-text-link" onClick={() => navigate('/profile')}>Manage</button>
-                </div>
-                <div className="lp-student-list">
-                  {user.students.map((student, i) => {
-                    const level = LEVEL_CONFIG[student.educationLevel];
-                    const xpPercent = ((student.xp % 1000) / 1000) * 100;
-                    return (
-                        <div
-                            key={i}
-                            className="lp-student-item"
-                            onClick={() => navigate(level.route)}
-                        >
-                          <div className="lp-student-avatar">{student.avatar || '🧒'}</div>
-                          <div className="lp-student-details">
-                            <div className="lp-student-name">{student.username}</div>
-                            <div className="lp-student-meta">
-                              <span className="lp-student-level">{level.emoji} {level.label}</span>
-                              <span className="lp-student-xp">{student.xp % 1000}/1000 XP</span>
-                            </div>
-                            <div className="lp-student-progress">
-                              <div className="lp-progress-bar">
-                                <div className="lp-progress-fill" style={{ width: `${xpPercent}%` }}></div>
-                              </div>
-                            </div>
-                          </div>
-                          <ChevronRight size={20} className="lp-student-arrow" />
-                        </div>
-                    );
-                  })}
-                </div>
-              </>
-          )}
-        </div>
-    );
-  }
-
-  // Student view
-  const level = LEVEL_CONFIG[user.educationLevel];
-  const xpInLevel = user.xp % 1000;
+  const level = LEVEL_CONFIG[activeProfile.educationLevel];
+  const xpInLevel = activeProfile.xp % 1000;
   const xpPercent = (xpInLevel / 1000) * 100;
 
   return (
       <div className="lp-student-dashboard">
-        {/* Header */}
         <div className="lp-student-header" style={{ background: level.bg }}>
           <div className="lp-student-header-content">
-            <div className="lp-student-avatar-large">{user.avatar || '🧒'}</div>
+            <div className="lp-student-avatar-large">{activeProfile.avatar || '🧒'}</div>
             <div className="lp-student-header-info">
-              <h1>{user.username}</h1>
+              <h1>{activeProfile.username}</h1>
               <div className="lp-student-badges">
                 <span className="lp-badge">{level.emoji} {level.label}</span>
                 <span className="lp-badge lp-streak-badge">
-                <Flame size={12} /> {user.streak} day streak
-              </span>
-                <span className="lp-badge">Level {user.level}</span>
+                  <Flame size={12} /> {activeProfile.streak} day streak
+                </span>
+                <span className="lp-badge">Level {activeProfile.level}</span>
               </div>
             </div>
             <div className="lp-student-points">
-              <Star size={18} /> {user.points.toLocaleString()} pts
+              <Star size={18} /> {activeProfile.points.toLocaleString()} pts
             </div>
           </div>
           <div className="lp-xp-section">
-            <div className="lp-xp-label">{xpInLevel} / 1000 XP to level {user.level + 1}</div>
+            <div className="lp-xp-label">{xpInLevel} / 1000 XP to level {activeProfile.level + 1}</div>
             <div className="lp-xp-bar">
               <div className="lp-xp-fill" style={{ width: `${xpPercent}%` }}></div>
             </div>
           </div>
+          {user.profiles.length > 1 && (
+            <button className="lp-switch-profile-btn" onClick={() => setOverlay('profile-select')}>
+              Switch Profile
+            </button>
+          )}
         </div>
 
-        {/* Quick Stats */}
         <div className="lp-stats-grid">
           <div className="lp-stat-card">
             <Target size={20} className="lp-stat-icon" />
@@ -473,25 +417,19 @@ const LoggedInHero: React.FC = () => {
           </div>
         </div>
 
-        {/* Subjects */}
         <div className="lp-section-header">
           <h2>Your subjects</h2>
           <button className="lp-text-link" onClick={() => navigate(level.route)}>See all</button>
         </div>
         <div className="lp-subjects-grid">
           {level.subjects.map((sub, i) => (
-              <button
-                  key={sub}
-                  className="lp-subject-card"
-                  onClick={() => navigate(level.route)}
-              >
+              <button key={sub} className="lp-subject-card" onClick={() => navigate(level.route)}>
                 <span className="lp-subject-emoji">{level.subjectEmojis[i]}</span>
                 <span className="lp-subject-name">{sub}</span>
               </button>
           ))}
         </div>
 
-        {/* Continue Learning */}
         <div className="lp-section-header">
           <h2>Continue learning</h2>
           <button className="lp-text-link" onClick={() => navigate(level.route)}>View all</button>
@@ -517,7 +455,6 @@ const LoggedInHero: React.FC = () => {
           ))}
         </div>
 
-        {/* Full Dashboard Button */}
         <button className="lp-dashboard-btn" onClick={() => navigate('/dashboard')}>
           <BarChart3 size={20} />
           Go to full dashboard

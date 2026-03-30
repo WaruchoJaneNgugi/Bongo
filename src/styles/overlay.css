@@ -643,3 +643,30 @@
 .ov-method-btn:hover:not(.active) {
   color: var(--text, #1e1b4b);
 }
+
+/* ── Profile Builder (signup step 4) ────────────────────── */
+.ov-profiles-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.ov-profile-builder {
+  background: #faf5ff;
+  border: 1.5px solid #ede9fe;
+  border-radius: 16px;
+  padding: 1rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ov-profile-builder-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #1e1b4b;
+  margin: 0;
+}

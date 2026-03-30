@@ -1091,3 +1091,21 @@
   .lp-student-header-content { flex-wrap: wrap; }
   .lp-student-points { margin-left: auto; }
 }
+
+/* ── Switch Profile button ───────────────────────────────── */
+.lp-switch-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 0.75rem;
+  transition: background 0.2s;
+}
+.lp-switch-profile-btn:hover { background: rgba(255,255,255,0.25); }

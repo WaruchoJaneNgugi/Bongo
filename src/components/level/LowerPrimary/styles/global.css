@@ -47,19 +47,19 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-:root { color-scheme: light; color: var(--text-body); background-color: var(--bg); }
+/*:root { color-scheme: light; color: var(--text-body); background-color: var(--bg); }*/
 
 #root { min-height: 100vh; display: flex; flex-direction: column; }
 
-body {
-    font-family: var(--font-body);
-    background: var(--bg);
-    color: var(--text-body);
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    display: block;
-    place-items: unset;
-}
+/*body {*/
+/*    font-family: var(--font-body);*/
+/*    !*background: var(--bg);*!*/
+/*    color: var(--text-body);*/
+/*    -webkit-font-smoothing: antialiased;*/
+/*    min-height: 100vh;*/
+/*    display: block;*/
+/*    place-items: unset;*/
+/*}*/
 
 button { font-family: var(--font-body); cursor: pointer; outline: none; border: none; background: none; }
 button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
