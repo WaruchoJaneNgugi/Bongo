@@ -456,12 +456,13 @@
     border: 1px solid rgba(255,255,255,0.08);
     border-radius: 30px;
     white-space: nowrap;
+    /*color:white;*/
     cursor: pointer;
     transition: all 0.3s ease;
     flex-shrink: 0;
 }
 
-.mobile-category-chip.active {
+.mobile-category-chip.active-game-cat {
     background: linear-gradient(135deg,
     rgba(0,245,212,0.15) 0%,
     rgba(255,60,172,0.15) 100%);

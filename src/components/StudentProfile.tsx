@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { useStore, type EducationLevel } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import {
-  User, Trophy, BarChart3, Settings, Zap, Flame, Star, CheckCircle, Shield,
-} from 'lucide-react';
+import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users } from 'lucide-react';
 import '../styles/profile.css';
 
 const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji: string; color: string }[] = [
@@ -11,8 +9,6 @@ const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji:
   { id: 'middle_school', label: 'Middle School', grades: 'Grade 4–9',  emoji: '🧠', color: '#3b82f6' },
   { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12',emoji: '🎓', color: '#a855f7' },
 ];
-
-const WEEK_SCORES = [72, 85, 68, 92, 78, 88, 76];
 
 const ACHIEVEMENTS = [
   { emoji: '🔥', title: 'First Streak',   desc: '7 days in a row',        pts: 50,  earned: true  },
@@ -27,144 +23,120 @@ const StudentProfile: React.FC = () => {
   const { isLoggedIn, user, updateUser, setOverlay } = useStore();
   const navigate = useNavigate();
 
-  const [tab, setTab] = useState<'analytics' | 'achievements' | 'account'>('analytics');
+  const [tab, setTab] = useState<'badges' | 'account'>('badges');
+  const [editName, setEditName] = useState('');
   const [saveMsg, setSaveMsg] = useState('');
   const [error, setError] = useState('');
 
   if (!isLoggedIn || !user) {
     return (
       <div className="pr-guest">
-        <Shield size={48} color="#a855f7" />
+        <Shield size={48} color="#3b82f6" />
         <h2>Sign in to view your profile</h2>
         <button onClick={() => navigate('/')} className="pr-guest-btn">Go Home</button>
       </div>
     );
   }
 
-  // Get the active profile
-  const activeProfile = user.profiles.find(p => p.id === user.activeProfileId)
-    ?? user.profiles[0];
-
+  const activeProfile = user.profiles.find(p => p.id === user.activeProfileId) ?? user.profiles[0];
   if (!activeProfile) return null;
 
   const lvl = LEVEL_OPTIONS.find(l => l.id === activeProfile.educationLevel)!;
-  const xpInLevel = activeProfile.xp % 1000;
-  const xpPercent = (xpInLevel / 1000) * 100;
+  const xpPercent = (activeProfile.xp % 1000) / 10;
   const earnedAch = ACHIEVEMENTS.filter(a => a.earned).length;
-
-  const [editName, setEditName] = useState(activeProfile.username);
 
   const handleSave = () => {
     setError('');
     if (!editName.trim()) { setError('Name cannot be empty'); return; }
-    // Update the active profile's username within the profiles array
-    const updatedProfiles = user.profiles.map(p =>
+    updateUser({ profiles: user.profiles.map(p =>
       p.id === activeProfile.id ? { ...p, username: editName.trim() } : p
-    );
-    updateUser({ profiles: updatedProfiles });
+    )});
     setSaveMsg('Saved!');
     setTimeout(() => setSaveMsg(''), 2000);
   };
 
+  // init editName lazily
+  if (editName === '' && activeProfile.username) {
+    setEditName(activeProfile.username);
+  }
+
   return (
     <div className="pr-root">
-      {/* Hero */}
-      <div className="pr-hero">
-        <div className="pr-hero-bg" />
-        <div className="pr-hero-inner">
-          <div className="pr-avatar">{activeProfile.avatar || '🧒'}</div>
-          <div className="pr-hero-info">
-            <h1 className="pr-name">{activeProfile.username}</h1>
-            <div className="pr-hero-chips">
-              <span className="pr-chip" style={{ color: lvl.color }}>{lvl.emoji} {lvl.label}</span>
-              <span className="pr-chip">🎓 Level {activeProfile.level}</span>
-              <span className="pr-chip pr-chip-streak">
-                <Flame size={13} color="#f97316" fill="#f97316" />
-                {activeProfile.streak} day streak
-              </span>
-              <span className="pr-chip">
-                <Star size={13} color="#fbbf24" fill="#fbbf24" />
-                {activeProfile.points.toLocaleString()} pts
-              </span>
+
+      {/* ── Profile Card ── */}
+      <div className="pr-card-hero">
+        <div className="pr-card-hero-bg" style={{ background: `linear-gradient(135deg, ${lvl.color}22 0%, ${lvl.color}08 100%)` }} />
+        <div className="pr-card-hero-inner">
+          <div className="pr-big-avatar">{activeProfile.avatar || '🧒'}</div>
+          <div className="pr-card-info">
+            <h1 className="pr-card-name">{activeProfile.username}</h1>
+            <span className="pr-level-badge" style={{ background: `${lvl.color}18`, color: lvl.color, border: `1px solid ${lvl.color}30` }}>
+              {lvl.emoji} {lvl.label} · {lvl.grades}
+            </span>
+            <div className="pr-stats-row">
+              <div className="pr-stat-pill">
+                <Flame size={14} color="#f97316" />
+                <span>{activeProfile.streak} streak</span>
+              </div>
+              <div className="pr-stat-pill">
+                <Zap size={14} color="#a855f7" />
+                <span>{activeProfile.xp} XP</span>
+              </div>
+              <div className="pr-stat-pill">
+                <Star size={14} color="#f59e0b" />
+                <span>{activeProfile.points.toLocaleString()} pts</span>
+              </div>
             </div>
-            <div className="pr-xp-wrap">
-              <div className="pr-xp-label">
-                <Zap size={13} />
-                <span>{xpInLevel} / 1000 XP to Level {activeProfile.level + 1}</span>
+            {/* XP bar */}
+            <div className="pr-xp-row">
+              <span className="pr-xp-txt">Level {activeProfile.level}</span>
+              <div className="pr-xp-bar">
+                <div className="pr-xp-fill" style={{ width: `${xpPercent}%`, background: lvl.color }} />
               </div>
-              <div className="pr-xp-track">
-                <div className="pr-xp-fill" style={{ width: `${xpPercent}%` }} />
-              </div>
+              <span className="pr-xp-txt">{activeProfile.xp % 1000}/1000</span>
             </div>
           </div>
         </div>
 
-        {/* Switch profile button for multi-profile accounts */}
         {user.profiles.length > 1 && (
-          <button className="pr-switch-profile-btn" onClick={() => setOverlay('profile-select')}>
-            Switch Profile
+          <button className="pr-switch-btn" onClick={() => setOverlay('profile-select')}>
+            <Users size={14} /> Switch Profile
           </button>
         )}
-
-        <div className="pr-tabs">
-          {[
-            { id: 'analytics',    label: 'Analytics', icon: BarChart3 },
-            { id: 'achievements', label: 'Badges',     icon: Trophy },
-            { id: 'account',      label: 'Account',    icon: Settings },
-          ].map(t => (
-            <button key={t.id} className={`pr-tab ${tab === t.id ? 'active' : ''}`}
-              onClick={() => setTab(t.id as typeof tab)}>
-              <t.icon size={15} />{t.label}
-            </button>
-          ))}
-        </div>
       </div>
 
-      <div className="pr-content">
-        {/* Analytics */}
-        {tab === 'analytics' && (
-          <>
-            <div className="pr-card">
-              <h3><BarChart3 size={17} /> Weekly Performance</h3>
-              <div className="pr-bar-chart">
-                {WEEK_SCORES.map((s, i) => (
-                  <div key={i} className="pr-bar-col">
-                    <span className="pr-bar-val">{s}%</span>
-                    <div className="pr-bar-track">
-                      <div className="pr-bar-fill" style={{ height: `${s}%` }} />
-                    </div>
-                    <span className="pr-bar-day">{['M','T','W','T','F','S','S'][i]}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="pr-stats-2col">
-              {[
-                { icon: <Trophy size={20} color="#f59e0b"/>, bg:'#fffbeb', val:`${earnedAch}/${ACHIEVEMENTS.length}`, lbl:'Badges Earned' },
-                { icon: <Zap    size={20} color="#a855f7"/>, bg:'#f5f3ff', val:`${activeProfile.xp} XP`,              lbl:'Total XP'     },
-                { icon: <Flame  size={20} color="#f97316"/>, bg:'#fff7ed', val:`${activeProfile.streak}`,              lbl:'Day Streak'   },
-                { icon: <Star   size={20} color="#f59e0b"/>, bg:'#fffbeb', val:`${activeProfile.points.toLocaleString()}`, lbl:'Points'  },
-              ].map(s => (
-                <div key={s.lbl} className="pr-stat-card">
-                  <div className="pr-stat-icon" style={{ background: s.bg }}>{s.icon}</div>
-                  <div className="pr-stat-val">{s.val}</div>
-                  <div className="pr-stat-lbl">{s.lbl}</div>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+      {/* ── Tabs ── */}
+      <div className="pr-tabs-bar">
+        <button className={`pr-tab-btn ${tab === 'badges' ? 'active' : ''}`} onClick={() => setTab('badges')}>
+          <Trophy size={15} /> Badges
+        </button>
+        <button className={`pr-tab-btn ${tab === 'account' ? 'active' : ''}`} onClick={() => setTab('account')}>
+          <Settings size={15} /> Account
+        </button>
+      </div>
 
-        {/* Achievements */}
-        {tab === 'achievements' && (
+      <div className="pr-tab-content">
+
+        {/* Badges */}
+        {tab === 'badges' && (
           <>
             <div className="pr-ach-summary">
-              <div className="pr-ach-sum-item"><span className="pr-ach-sum-val">{earnedAch}</span><span className="pr-ach-sum-lbl">Earned</span></div>
+              <div className="pr-ach-sum-item">
+                <span className="pr-ach-sum-val">{earnedAch}</span>
+                <span className="pr-ach-sum-lbl">Earned</span>
+              </div>
               <div className="pr-ach-sum-div" />
-              <div className="pr-ach-sum-item"><span className="pr-ach-sum-val">{ACHIEVEMENTS.length - earnedAch}</span><span className="pr-ach-sum-lbl">Locked</span></div>
+              <div className="pr-ach-sum-item">
+                <span className="pr-ach-sum-val">{ACHIEVEMENTS.length - earnedAch}</span>
+                <span className="pr-ach-sum-lbl">Locked</span>
+              </div>
               <div className="pr-ach-sum-div" />
-              <div className="pr-ach-sum-item"><span className="pr-ach-sum-val">{ACHIEVEMENTS.filter(a=>a.earned).reduce((acc,a)=>acc+a.pts,0)}</span><span className="pr-ach-sum-lbl">XP Earned</span></div>
+              <div className="pr-ach-sum-item">
+                <span className="pr-ach-sum-val">{ACHIEVEMENTS.filter(a => a.earned).reduce((s, a) => s + a.pts, 0)}</span>
+                <span className="pr-ach-sum-lbl">XP Earned</span>
+              </div>
             </div>
+
             <div className="pr-ach-grid">
               {ACHIEVEMENTS.map((a, i) => (
                 <div key={i} className={`pr-ach-card ${a.earned ? 'earned' : 'locked'}`}>
@@ -185,25 +157,26 @@ const StudentProfile: React.FC = () => {
 
         {/* Account */}
         {tab === 'account' && (
-          <div className="pr-card">
-            <h3><User size={17} /> Edit Profile</h3>
+          <div className="pr-account-card">
             {error   && <div className="pr-error"><Shield size={14} />{error}</div>}
             {saveMsg && <div className="pr-success"><CheckCircle size={14} />{saveMsg}</div>}
+
             <div className="pr-form-group">
               <label className="pr-label">Display Name</label>
               <input className="pr-input" value={editName} onChange={e => setEditName(e.target.value)} />
             </div>
             <div className="pr-form-group">
               <label className="pr-label">Phone Number</label>
-              <input className="pr-input" value={user.phone} disabled style={{ opacity: 0.6 }} />
-              <span className="pr-hint">Phone cannot be changed</span>
+              <input className="pr-input" value={user.phone} disabled style={{ opacity: 0.5 }} />
+              <span className="pr-hint">Cannot be changed</span>
             </div>
             <button className="pr-save-btn" onClick={handleSave}>
               <CheckCircle size={16} /> Save Changes
             </button>
+
             <div className="pr-danger-zone">
               <h4>⚠️ Danger Zone</h4>
-              <p>Once you delete your account, there is no going back.</p>
+              <p>Once deleted, your account cannot be recovered.</p>
               <button className="pr-delete-btn">Delete Account</button>
             </div>
           </div>

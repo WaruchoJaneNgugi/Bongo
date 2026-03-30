@@ -34,16 +34,7 @@
 /* ── Left ────────────────────────────────────────────────── */
 .nb-left { display: flex; align-items: center; gap: 0.5rem; }
 
-.nb-hamburger {
-  display: none;
-  background: none;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 6px;
-  border-radius: 10px;
-  transition: background 0.2s;
-}
+.nb-hamburger { display: none; }
 .nb-hamburger:hover { background: #f4f0ff; color: #7c3aed; }
 
 .nb-logo {
@@ -388,7 +379,7 @@
 
 /* ── Responsive ──────────────────────────────────────────── */
 @media (max-width: 768px) {
-  .nb-hamburger { display: flex; }
+  .nb-hamburger { display: none; }
   .nb-links { display: none; }
   .nb-desktop-only { display: none; }
   .nb-bottom-bar { display: flex; }

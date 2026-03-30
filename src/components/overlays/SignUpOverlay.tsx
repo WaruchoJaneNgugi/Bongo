@@ -14,20 +14,18 @@ const AVATARS = ['🧒🏿','👦🏿','👧🏿','🧑🏿','🤓','😎','🦸
 
 const PACKAGES: {
   id: FamilyPackage; label: string; price: string; period: string;
-  students: number; icon: React.ElementType; color: string; popular?: boolean;
+  maxStudents: number; icon: React.ElementType; color: string; popular?: boolean;
 }[] = [
-  { id: 'solo',   label: '1 Student',        price: 'KSh 140',  period: '/month', students: 1, icon: User,   color: '#10b981' },
-  { id: 'trio',   label: '3 Students',       price: 'KSh 280',  period: '/month', students: 3, icon: Users,  color: '#3b82f6', popular: true },
-  { id: 'quad',   label: '4 Students',       price: 'KSh 500',  period: '/month', students: 4, icon: Crown,  color: '#f59e0b' },
-  { id: 'family', label: '5+ Students',      price: 'KSh 900',  period: '/month', students: 5, icon: Star,   color: '#a855f7' },
+  { id: 'solo',   label: '1 Student',   price: 'KSh 140', period: '/month', maxStudents: 1, icon: User,   color: '#10b981' },
+  { id: 'trio',   label: '3 Students',  price: 'KSh 280', period: '/month', maxStudents: 3, icon: Users,  color: '#3b82f6', popular: true },
+  { id: 'quad',   label: '4 Students',  price: 'KSh 500', period: '/month', maxStudents: 4, icon: Crown,  color: '#f59e0b' },
+  { id: 'family', label: '5+ Students', price: 'KSh 900', period: '/month', maxStudents: 9, icon: Star,   color: '#a855f7' },
 ];
 
-/* ─── PIN Input ─────────────────────────────────────────── */
 const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasError?: boolean }> = ({ value, onChange, hasError }) => {
   const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
                 useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
   const digits = value.padEnd(4, '').split('').slice(0, 4);
-
   const handleInput = (i: number, char: string) => {
     if (!/^\d?$/.test(char)) return;
     const d = [...digits]; d[i] = char;
@@ -43,7 +41,6 @@ const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasErro
     refs[Math.min(text.length, 3)].current?.focus();
     e.preventDefault();
   };
-
   return (
     <div className="ov-pin-row">
       {[0,1,2,3].map(i => (
@@ -57,55 +54,11 @@ const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasErro
   );
 };
 
-/* ─── Profile Builder ───────────────────────────────────── */
-const ProfileBuilder: React.FC<{
-  index: number; total: number;
-  profile: Partial<StudentProfile>;
-  onChange: (p: Partial<StudentProfile>) => void;
-}> = ({ index, total, profile, onChange }) => (
-  <div className="ov-profile-builder">
-    <h3 className="ov-profile-builder-title">
-      {total === 1 ? '👤 Your Profile' : `👤 Student ${index + 1} of ${total}`}
-    </h3>
-    <div className="ov-avatar-row">
-      {AVATARS.map(a => (
-        <button key={a} className={`ov-avatar-opt ${profile.avatar === a ? 'selected' : ''}`}
-          onClick={() => onChange({ ...profile, avatar: a })}>{a}</button>
-      ))}
-    </div>
-    <input className="ov-input" placeholder="Student name" value={profile.username ?? ''}
-      onChange={e => onChange({ ...profile, username: e.target.value })} />
-    <div className="ov-level-grid">
-      {LEVEL_OPTIONS.map(opt => (
-        <button key={opt.id}
-          className={`ov-level-card ${profile.educationLevel === opt.id ? 'selected' : ''}`}
-          style={profile.educationLevel === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
-          onClick={() => onChange({ ...profile, educationLevel: opt.id })}>
-          <span className="ov-level-emoji">{opt.emoji}</span>
-          <div className="ov-level-info">
-            <span className="ov-level-name">{opt.label}</span>
-            <span className="ov-level-grades">{opt.grades}</span>
-          </div>
-          {profile.educationLevel === opt.id && <CheckCircle size={16} color={opt.color} style={{ marginLeft: 'auto' }} />}
-        </button>
-      ))}
-    </div>
-    {total > 1 && (
-      <div className="ov-form-group" style={{ marginTop: '0.75rem' }}>
-        <label className="ov-label">🔐 Profile PIN</label>
-        <PinInput value={profile.pin ?? ''} onChange={pin => onChange({ ...profile, pin })} />
-        <span className="ov-hint">Student uses this PIN to select their profile</span>
-      </div>
-    )}
-  </div>
-);
-
-/* ─── Main ──────────────────────────────────────────────── */
 const SignUpOverlay: React.FC = () => {
   const { setOverlay, registerUser, login, allUsers } = useStore();
   const navigate = useNavigate();
 
-  // step 1=phone+pin, 2=otp, 3=package, 4=profiles
+  // steps: 1=phone+pin, 2=otp, 3=package, 4=first profile
   const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -115,15 +68,10 @@ const SignUpOverlay: React.FC = () => {
   const [otp, setOtp] = useState('');
   const [selectedPackage, setSelectedPackage] = useState<FamilyPackage | null>(null);
 
-  const profileCount = selectedPackage
-    ? PACKAGES.find(p => p.id === selectedPackage)!.students
-    : 1;
-
-  const emptyProfile = (): Partial<StudentProfile> => ({
-    username: '', avatar: AVATARS[0], educationLevel: 'middle_school', pin: '',
-  });
-
-  const [profiles, setProfiles] = useState<Partial<StudentProfile>[]>([emptyProfile()]);
+  // First profile (name + level only — PIN comes from account)
+  const [username, setUsername] = useState('');
+  const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [level, setLevel] = useState<EducationLevel | null>(null);
 
   const cleanPhone = phone.replace(/\s/g, '');
 
@@ -133,7 +81,7 @@ const SignUpOverlay: React.FC = () => {
     if (!/^(\+254|0)[7][0-9]{8}$/.test(cleanPhone)) {
       setError('Enter a valid Kenyan number (e.g. 0712345678)'); return;
     }
-    if (accountPin.length !== 4) { setError('Set a 4-digit account PIN'); return; }
+    if (accountPin.length !== 4) { setError('Set a 4-digit PIN'); return; }
     if (allUsers.find(u => u.phone === cleanPhone)) {
       setError('This number is already registered'); return;
     }
@@ -148,58 +96,47 @@ const SignUpOverlay: React.FC = () => {
 
   const handlePackageNext = () => {
     if (!selectedPackage) { setError('Please select a package'); return; }
-    const count = PACKAGES.find(p => p.id === selectedPackage)!.students;
-    setProfiles(Array.from({ length: count }, emptyProfile));
     setError(''); setStep(4);
   };
 
   const handleFinish = () => {
     setError('');
-    for (let i = 0; i < profiles.length; i++) {
-      const p = profiles[i];
-      if (!p.username?.trim()) { setError(`Enter a name for Student ${i + 1}`); return; }
-      if (!p.educationLevel) { setError(`Select a level for Student ${i + 1}`); return; }
-      if (profiles.length > 1 && (p.pin?.length ?? 0) < 4) {
-        setError(`Set a 4-digit PIN for Student ${i + 1}`); return;
-      }
-    }
+    if (!username.trim()) { setError('Enter your name'); return; }
+    if (!level) { setError('Select your education level'); return; }
 
-    const builtProfiles: StudentProfile[] = profiles.map((p, i) => ({
-      id: `${cleanPhone}-${i}`,
-      username: p.username!.trim(),
-      educationLevel: p.educationLevel!,
-      pin: profiles.length === 1 ? accountPin : p.pin!,
-      avatar: p.avatar ?? AVATARS[0],
+    const firstProfile: StudentProfile = {
+      id: `${cleanPhone}-0`,
+      username: username.trim(),
+      educationLevel: level,
+      pin: accountPin,   // all profiles share the account PIN
+      avatar,
       xp: 0, level: 1, streak: 0, points: 0,
-    }));
+    };
 
     const newUser = {
       type: 'student' as const,
       phone: cleanPhone,
       pin: accountPin,
       package: selectedPackage!,
-      profiles: builtProfiles,
-      activeProfileId: profiles.length === 1 ? builtProfiles[0].id : null,
+      profiles: [firstProfile],
+      activeProfileId: selectedPackage === 'solo' ? firstProfile.id : null,
     };
 
     registerUser(newUser);
     login(newUser);
     setOverlay(null);
 
-    if (profiles.length === 1) {
+    if (selectedPackage === 'solo') {
       const routes: Record<EducationLevel, string> = {
         lower_primary: '/level/lower-primary',
         middle_school: '/level/middle-school',
         senior_school: '/level/senior-school',
       };
-      navigate(routes[builtProfiles[0].educationLevel]);
+      navigate(routes[level]);
     } else {
+      // Go to profile select where they can add more profiles
       setOverlay('profile-select');
     }
-  };
-
-  const updateProfile = (i: number, p: Partial<StudentProfile>) => {
-    setProfiles(prev => prev.map((old, idx) => idx === i ? p : old));
   };
 
   return (
@@ -209,7 +146,6 @@ const SignUpOverlay: React.FC = () => {
           <button className="ov-close" onClick={() => setOverlay(null)}>✕</button>
           <div className="ov-logo">Bongo<span>Quiz</span></div>
 
-          {/* Step dots */}
           <div className="ov-steps">
             {[1,2,3,4].map(n => (
               <React.Fragment key={n}>
@@ -227,20 +163,17 @@ const SignUpOverlay: React.FC = () => {
               <h2 className="ov-title">👋 Get Started</h2>
               <p className="ov-sub">Enter your phone number to create an account</p>
               {error && <div className="ov-error"><Shield size={14} />{error}</div>}
-
               <div className="ov-form-group">
                 <label className="ov-label"><Phone size={15} /> Phone Number</label>
                 <input className="ov-input" type="tel" placeholder="0712 345 678"
                   value={phone} onChange={e => { setPhone(e.target.value); setError(''); }} />
-                <span className="ov-hint">This is your account login number</span>
+                <span className="ov-hint">Used to log in to your account</span>
               </div>
-
               <div className="ov-form-group">
-                <label className="ov-label">🔐 Set Account PIN</label>
+                <label className="ov-label">🔐 Set PIN</label>
                 <PinInput value={accountPin} onChange={setAccountPin} hasError={!!error && accountPin.length < 4} />
-                <span className="ov-hint">You'll use this to log in</span>
+                <span className="ov-hint">All profiles on this account share this PIN</span>
               </div>
-
               <button className="ov-submit" onClick={handleNext1} disabled={loading}>
                 {loading ? 'Sending OTP…' : <><span>Continue</span><ArrowRight size={18} /></>}
               </button>
@@ -276,7 +209,6 @@ const SignUpOverlay: React.FC = () => {
               <h2 className="ov-title">📦 Choose a Package</h2>
               <p className="ov-sub">How many students are in your family?</p>
               {error && <div className="ov-error"><Shield size={14} />{error}</div>}
-
               <div className="ov-plans-grid">
                 {PACKAGES.map(pkg => {
                   const Icon = pkg.icon;
@@ -286,9 +218,7 @@ const SignUpOverlay: React.FC = () => {
                       className={`ov-plan-card ${isSelected ? 'selected' : ''}`}
                       style={isSelected ? { borderColor: pkg.color, background: `${pkg.color}10` } : {}}
                       onClick={() => { setSelectedPackage(pkg.id); setError(''); }}>
-                      {pkg.popular && (
-                        <div className="ov-plan-popular" style={{ background: pkg.color }}>POPULAR</div>
-                      )}
+                      {pkg.popular && <div className="ov-plan-popular" style={{ background: pkg.color }}>POPULAR</div>}
                       <div className="ov-plan-icon" style={{ background: `${pkg.color}18`, color: pkg.color }}>
                         <Icon size={22} />
                       </div>
@@ -302,7 +232,6 @@ const SignUpOverlay: React.FC = () => {
                   );
                 })}
               </div>
-
               <button className="ov-submit" onClick={handlePackageNext} style={{ marginTop: '1rem' }}>
                 <span>Continue</span><ArrowRight size={18} />
               </button>
@@ -312,25 +241,49 @@ const SignUpOverlay: React.FC = () => {
             </div>
           )}
 
-          {/* Step 4: Build profiles */}
+          {/* Step 4: First profile */}
           {step === 4 && (
             <div className="ov-step-body">
-              <h2 className="ov-title">🎓 Set Up Profiles</h2>
-              <p className="ov-sub">
-                {profileCount === 1
-                  ? 'Tell us about yourself'
-                  : `Create a profile for each of the ${profileCount} students`}
-              </p>
+              <h2 className="ov-title">🎓 Your Profile</h2>
+              <p className="ov-sub">Tell us about the first student</p>
               {error && <div className="ov-error"><Shield size={14} />{error}</div>}
 
-              <div className="ov-profiles-scroll">
-                {profiles.map((p, i) => (
-                  <ProfileBuilder key={i} index={i} total={profileCount}
-                    profile={p} onChange={updated => updateProfile(i, updated)} />
-                ))}
+              <div className="ov-form-group">
+                <label className="ov-label">Choose avatar</label>
+                <div className="ov-avatar-row">
+                  {AVATARS.map(a => (
+                    <button key={a} className={`ov-avatar-opt ${avatar === a ? 'selected' : ''}`}
+                      onClick={() => setAvatar(a)}>{a}</button>
+                  ))}
+                </div>
               </div>
 
-              <button className="ov-submit" onClick={handleFinish} style={{ marginTop: '1rem' }}>
+              <div className="ov-form-group">
+                <label className="ov-label">Your Name</label>
+                <input className="ov-input" placeholder="e.g. Brian Otieno"
+                  value={username} onChange={e => { setUsername(e.target.value); setError(''); }} />
+              </div>
+
+              <div className="ov-form-group">
+                <label className="ov-label">Education Level</label>
+                <div className="ov-level-grid">
+                  {LEVEL_OPTIONS.map(opt => (
+                    <button key={opt.id}
+                      className={`ov-level-card ${level === opt.id ? 'selected' : ''}`}
+                      style={level === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
+                      onClick={() => { setLevel(opt.id); setError(''); }}>
+                      <span className="ov-level-emoji">{opt.emoji}</span>
+                      <div className="ov-level-info">
+                        <span className="ov-level-name">{opt.label}</span>
+                        <span className="ov-level-grades">{opt.grades}</span>
+                      </div>
+                      {level === opt.id && <CheckCircle size={16} color={opt.color} style={{ marginLeft: 'auto' }} />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <button className="ov-submit" onClick={handleFinish} style={{ marginTop: '0.5rem' }}>
                 <span>🚀 Create Account</span>
               </button>
               <button className="ov-back-btn" onClick={() => setStep(3)}>

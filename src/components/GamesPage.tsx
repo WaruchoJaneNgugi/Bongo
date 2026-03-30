@@ -115,9 +115,9 @@ const GamesPage: React.FC = () => {
           </div>
           <div className="mobile-categories-scroll">
             {FILTERS.map((category) => (
-                <button
+                <div
                     key={category.id}
-                    className={`mobile-category-chip ${activeFilter === category.id ? 'active' : ''}`}
+                    className={`mobile-category-chip ${activeFilter === category.id ? 'active-game-cat' : ''}`}
                     onClick={() => setFilter(category.id)}
                     style={{
                       '--chip-color': category.color,
@@ -127,7 +127,7 @@ const GamesPage: React.FC = () => {
                   <span className="chip-icon">{category.emoji}</span>
                   <span className="chip-label">{category.label}</span>
                   {category.id === 'popular' && <span className="chip-hot">🔥</span>}
-                </button>
+                </div>
             ))}
           </div>
         </div>

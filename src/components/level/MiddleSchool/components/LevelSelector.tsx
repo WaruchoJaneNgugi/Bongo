@@ -23,11 +23,11 @@ export default function LevelSelector({ onSelect }: Props) {
                 {/* Text + buttons below */}
                 <div className="landing-text-section">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tighter text-center" style={{ lineHeight: 1.1 }}>
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600 drop-shadow-sm animate-gradient-x">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 via-purple-600 to-fuchsia-600">
                             Welcome to
                         </span>
                         <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-600 drop-shadow-md animate-gradient-x" style={{ animationDelay: '1.5s' }}>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-600 to-pink-600">
                             Middle School
                         </span>
                     </h1>

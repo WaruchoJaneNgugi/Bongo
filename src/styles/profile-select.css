@@ -210,3 +210,96 @@
   .ps-avatar { width: 72px; height: 72px; font-size: 2.4rem; }
   .ps-profiles-grid { gap: 1rem; }
 }
+
+/* ── Add profile card ───────────────────────────────────── */
+.ps-add-card { opacity: 0.75; }
+.ps-add-card:hover { opacity: 1; border-color: #f59e0b !important; }
+
+.ps-add-avatar {
+  background: #2a2a2a;
+  color: #f59e0b;
+  border: 2px dashed #555;
+}
+
+/* ── Add profile screen ─────────────────────────────────── */
+.ps-add-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  max-width: 420px;
+  animation: ps-fade-in 0.3s ease;
+}
+
+.ps-add-error {
+  color: #ef4444;
+  font-size: 0.85rem;
+  background: #ef444415;
+  border: 1px solid #ef444430;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  width: 100%;
+  text-align: center;
+}
+
+.ps-add-avatars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.ps-avatar-opt {
+  font-size: 1.5rem;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  background: rgb(42 42 42 / 0.2);
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ps-avatar-opt:hover { border-color: #555; transform: scale(1.1); }
+.ps-avatar-opt.selected { border-color: #f59e0b; background: #f59e0b18; }
+
+.ps-add-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 2px solid #333;
+  background: #ffffff;
+  color: #000000;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.ps-add-input:focus { border-color: #f59e0b; }
+.ps-add-input::placeholder { color: #666; }
+
+.ps-add-levels {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.ps-level-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  border: 2px solid #333;
+  background: #ffffff;
+  color: #000000;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  font-size: 1.2rem;
+  text-align: left;
+}
+.ps-level-card:hover { border-color: #555; }
+.ps-level-card.selected-card { box-shadow: 0 4px 14px rgba(0,0,0,0.3); }
