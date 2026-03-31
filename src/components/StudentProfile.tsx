@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users } from 'lucide-react';
 import '../styles/profile.css';
 import { LEVEL_CONFIG } from '../hooks/LevelConfigs';
+import { avatarUrl } from '../hooks/Packages.ts';
 
 const LEVEL_OPTIONS = [
   { id: 'lower_primary' as EducationLevel, ...LEVEL_CONFIG.lower_primary },
@@ -67,7 +68,7 @@ const StudentProfile: React.FC = () => {
       <div className="pr-hero" style={{ background: lvl.bg }}>
         <div className="pr-hero-orb" />
         <div className="pr-hero-inner">
-          <div className="pr-hero-avatar">{activeProfile.avatar || '🧒'}</div>
+          <div className="pr-hero-avatar"><img src={avatarUrl(activeProfile.avatar || 'Zara')} alt="avatar" width={72} height={72} style={{borderRadius:'50%'}} /></div>
           <div className="pr-hero-info">
             <h1 className="pr-hero-name">{activeProfile.username}</h1>
             <span className="pr-hero-level">{lvl.emoji} {lvl.label} · {lvl.grades}</span>

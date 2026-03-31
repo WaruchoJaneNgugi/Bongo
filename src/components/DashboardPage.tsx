@@ -7,6 +7,7 @@ import {
     Flame, Award,
 } from 'lucide-react';
 import '../styles/dashboard.css';
+import { avatarUrl } from '../hooks/Packages.ts';
 
 /* SHARED CONSTANTS */
 const LEVEL_META: Record<string, { label: string; grades: string; emoji: string; color: string }> = {
@@ -60,7 +61,7 @@ const StudentDetail: React.FC<{
                     <ArrowLeft size={18} /> All Profiles
                 </button>
                 <div>
-                    <h1>{profile.avatar} {profile.username}</h1>
+                    <h1><img src={avatarUrl(profile.avatar)} alt="avatar" width={32} height={32} style={{borderRadius:'50%',verticalAlign:'middle',marginRight:'0.4rem'}} />{profile.username}</h1>
                     <p>
                         <span style={{ color: levelMeta.color, fontWeight: 600 }}>
                             {levelMeta.emoji} {levelMeta.label}
@@ -151,8 +152,8 @@ const ProfileCard: React.FC<{
             onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(-3px)'; (e.currentTarget as HTMLDivElement).style.boxShadow = 'var(--shadow-lg)'; }}
             onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.transform = 'translateY(0)'; (e.currentTarget as HTMLDivElement).style.boxShadow = ''; }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', marginBottom: '1rem' }}>
-                <div style={{ width: 52, height: 52, borderRadius: '50%', fontSize: '1.6rem', background: `${meta.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    {profile.avatar}
+                <div style={{ width: 52, height: 52, borderRadius: '50%', background: `${meta.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <img src={avatarUrl(profile.avatar)} alt="avatar" width={44} height={44} style={{borderRadius:'50%'}} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                     <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 700, color: 'var(--text)' }}>{profile.username}</h3>
@@ -213,7 +214,7 @@ const StudentDashboard: React.FC<{ profile: StudentProfile }> = ({ profile }) =>
                     <ArrowLeft size={18} /> Back
                 </button>
                 <div>
-                    <h1>{profile.avatar} {profile.username}'s Dashboard</h1>
+                    <h1><img src={avatarUrl(profile.avatar)} alt="avatar" width={32} height={32} style={{borderRadius:'50%',verticalAlign:'middle',marginRight:'0.4rem'}} />{profile.username}'s Dashboard</h1>
                     <p>
                         {LEVEL_META[profile.educationLevel]?.emoji}&nbsp;
                         {LEVEL_META[profile.educationLevel]?.label} · Track your progress across all subjects

@@ -36,12 +36,13 @@ export type Overlay = null | 'signup' | 'login' | 'profile-select';
 
 interface AppState {
   overlay: Overlay;
+  signupPackage: FamilyPackage | null;
   user: AppUser | null;
   allUsers: AppUser[];
   isLoggedIn: boolean;
   levelSelections: LevelSelections;
 
-  setOverlay: (overlay: Overlay) => void;
+  setOverlay: (overlay: Overlay, pkg?: FamilyPackage | null) => void;
   login: (user: AppUser) => void;
   logout: () => void;
   registerUser: (user: AppUser) => void;
@@ -55,12 +56,13 @@ export const useStore = create<AppState>()(
   persist(
     (set, get) => ({
       overlay: null,
+      signupPackage: null,
       user: null,
       allUsers: [],
       isLoggedIn: false,
       levelSelections: {},
 
-      setOverlay: (overlay) => set({ overlay }),
+      setOverlay: (overlay, pkg = null) => set({ overlay, signupPackage: pkg }),
 
       login: (user) => set({ user, isLoggedIn: true, overlay: null }),
 

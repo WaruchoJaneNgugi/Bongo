@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useStore, type StudentProfile, type EducationLevel, type FamilyPackage } from '../../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { Phone, ArrowRight, ArrowLeft, CheckCircle, Shield, Users, User, Star, Crown } from 'lucide-react';
+import { Phone, ArrowRight, ArrowLeft, CheckCircle, Shield } from 'lucide-react';
 import '../../styles/overlay.css';
+import {AVATARS, PACKAGES, avatarUrl} from "../../hooks/Packages.ts";
 
 const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji: string; color: string }[] = [
   { id: 'lower_primary', label: 'Lower Primary', grades: 'Grade 1–3', emoji: '🧒', color: '#10b981' },
@@ -10,17 +11,7 @@ const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji:
   { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓', color: '#a855f7' },
 ];
 
-const AVATARS = ['🧒🏿','👦🏿','👧🏿','🧑🏿','🤓','😎','🦸🏿','🧙🏿','🎓','🌟','🦁','🐯'];
 
-const PACKAGES: {
-  id: FamilyPackage; label: string; price: string; period: string;
-  maxStudents: number; icon: React.ElementType; color: string; popular?: boolean;
-}[] = [
-  { id: 'solo',   label: '1 Student',   price: 'KSh 140', period: '/month', maxStudents: 1, icon: User,   color: '#10b981' },
-  { id: 'trio',   label: '3 Students',  price: 'KSh 280', period: '/month', maxStudents: 3, icon: Users,  color: '#3b82f6', popular: true },
-  { id: 'quad',   label: '4 Students',  price: 'KSh 500', period: '/month', maxStudents: 4, icon: Crown,  color: '#f59e0b' },
-  { id: 'family', label: '5+ Students', price: 'KSh 900', period: '/month', maxStudents: 9, icon: Star,   color: '#a855f7' },
-];
 
 const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasError?: boolean }> = ({ value, onChange, hasError }) => {
   const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
@@ -55,18 +46,18 @@ const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasErro
 };
 
 const SignUpOverlay: React.FC = () => {
-  const { setOverlay, registerUser, login, allUsers } = useStore();
+  const { setOverlay, registerUser, login, allUsers, signupPackage } = useStore();
   const navigate = useNavigate();
 
   // steps: 1=phone+pin, 2=otp, 3=package, 4=first profile
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(signupPackage ? 1 : 1);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const [phone, setPhone] = useState('');
   const [accountPin, setAccountPin] = useState('');
   const [otp, setOtp] = useState('');
-  const [selectedPackage, setSelectedPackage] = useState<FamilyPackage | null>(null);
+  const [selectedPackage, setSelectedPackage] = useState<FamilyPackage | null>(signupPackage ?? null);
 
   // First profile (name + level only — PIN comes from account)
   const [username, setUsername] = useState('');
@@ -91,7 +82,7 @@ const SignUpOverlay: React.FC = () => {
 
   const handleVerifyOtp = () => {
     if (otp !== '1234') { setError('Invalid OTP. Use 1234 for demo.'); return; }
-    setError(''); setStep(3);
+    setError(''); setStep(signupPackage ? 4 : 3);
   };
 
   const handlePackageNext = () => {
@@ -253,7 +244,9 @@ const SignUpOverlay: React.FC = () => {
                 <div className="ov-avatar-row">
                   {AVATARS.map(a => (
                     <button key={a} className={`ov-avatar-opt ${avatar === a ? 'selected' : ''}`}
-                      onClick={() => setAvatar(a)}>{a}</button>
+                      onClick={() => setAvatar(a)}>
+                      <img src={avatarUrl(a)} alt={a} width={32} height={32} />
+                    </button>
                   ))}
                 </div>
               </div>
@@ -286,7 +279,7 @@ const SignUpOverlay: React.FC = () => {
               <button className="ov-submit" onClick={handleFinish} style={{ marginTop: '0.5rem' }}>
                 <span>🚀 Create Account</span>
               </button>
-              <button className="ov-back-btn" onClick={() => setStep(3)}>
+              <button className="ov-back-btn" onClick={() => setStep(signupPackage ? 2 : 3)}>
                 <ArrowLeft size={16} /> Back
               </button>
             </div>

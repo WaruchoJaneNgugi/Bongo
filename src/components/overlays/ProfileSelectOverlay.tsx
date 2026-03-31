@@ -3,6 +3,7 @@ import { useStore, type StudentProfile, type EducationLevel } from '../../store/
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle, Plus, LogOut, ArrowLeft, User } from 'lucide-react';
 import '../../styles/profile-select.css';
+import {AVATARS, avatarUrl} from "../../hooks/Packages.ts";
 
 const ROUTES: Record<EducationLevel, string> = {
   lower_primary: '/level/lower-primary',
@@ -16,7 +17,6 @@ const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji:
   { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓', color: '#a855f7', bg: 'rgba(168,85,247,0.12)' },
 ];
 
-const AVATARS = ['🧒🏿','👦🏿','👧🏿','🧑🏿','🤓','😎','🦸🏿','🧙🏿','🎓','🌟','🦁','🐯'];
 
 const MAX_STUDENTS: Record<string, number> = {
   solo: 1, trio: 3, quad: 4, family: 9,
@@ -82,7 +82,7 @@ const ProfileSelectOverlay: React.FC = () => {
           <div className="ps-profiles-grid">
             {user.profiles.map(profile => (
               <button key={profile.id} className="ps-profile-card" onClick={() => handleSelect(profile)}>
-                <div className="ps-avatar">{profile.avatar}</div>
+                <div className="ps-avatar"><img src={avatarUrl(profile.avatar)} alt={profile.username} width={40} height={40} /></div>
                 <span className="ps-profile-name">{profile.username}</span>
                 <span className="ps-profile-level">{levelLabel(profile.educationLevel)}</span>
               </button>
@@ -117,7 +117,9 @@ const ProfileSelectOverlay: React.FC = () => {
             <div className="ps-add-avatars">
               {AVATARS.map(a => (
                 <button key={a} className={`ps-avatar-opt ${newAvatar === a ? 'selected' : ''}`}
-                  onClick={() => setNewAvatar(a)}>{a}</button>
+                  onClick={() => setNewAvatar(a)}>
+                  <img src={avatarUrl(a)} alt={a} width={32} height={32} />
+                </button>
               ))}
             </div>
           </div>

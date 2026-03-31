@@ -6,6 +6,7 @@ import {
   GraduationCap, ChevronDown, BookOpen, Trophy,
 } from 'lucide-react';
 import '../styles/navbar.css';
+import { avatarUrl } from '../hooks/Packages.ts';
 
 const Navbar: React.FC = () => {
   const { isLoggedIn, user, setOverlay, logout } = useStore();
@@ -29,7 +30,7 @@ const Navbar: React.FC = () => {
 
   // const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
   const userAvatar = user?.profiles.find(p => p.id === user.activeProfileId)?.avatar
-    ?? user?.profiles[0]?.avatar ?? '🧒🏿';
+    ?? user?.profiles[0]?.avatar ?? 'Zara';
 
   const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };
 
@@ -93,7 +94,7 @@ const Navbar: React.FC = () => {
                   className="nb-user-btn"
                   onClick={() => setDropdownOpen(v => !v)}
                 >
-                  <span className="nb-user-avatar">{userAvatar}</span>
+                  <span className="nb-user-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={28} height={28} style={{borderRadius:'50%'}} /></span>
                   <span className="nb-user-name nb-desktop-only">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</span>
                   <ChevronDown size={15} className={`nb-chevron ${dropdownOpen ? 'open' : ''}`} />
                 </button>
@@ -103,7 +104,7 @@ const Navbar: React.FC = () => {
                     <div className="nb-dropdown-overlay" onClick={() => setDropdownOpen(false)} />
                     <div className="nb-dropdown">
                       <div className="nb-dropdown-header">
-                        <span className="nb-dd-avatar">{userAvatar}</span>
+                        <span className="nb-dd-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={36} height={36} style={{borderRadius:'50%'}} /></span>
                         <div>
                           <p className="nb-dd-name">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</p>
                           <p className="nb-dd-role">🎓 Student</p>
@@ -147,7 +148,7 @@ const Navbar: React.FC = () => {
 
             {isLoggedIn && (
               <div className="nb-drawer-profile">
-                <span className="nb-drawer-avatar">{userAvatar}</span>
+                <span className="nb-drawer-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={40} height={40} style={{borderRadius:'50%'}} /></span>
                 <div>
                   <p className="nb-drawer-name">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</p>
                   <p className="nb-drawer-role">🎓 Student</p>

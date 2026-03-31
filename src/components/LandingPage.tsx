@@ -9,58 +9,14 @@ import SeniorSchool from '../assets/banners/seniorschool.png';
 import {
   ChevronRight, ArrowRight, BarChart3, Clock, Users, Star, Shield, TrendingUp, Flame
 } from 'lucide-react';
-// import LowerPrimary from '../assets/lower-primary.jpg?url';   // adjust path as needed
-// import MiddleSchool from '../assets/middle-school.jpg?url';
-// import SeniorSchool from '../assets/senior-school.jpg?url';
-
 import Footer from './Footer';
 import '../styles/landing.css';
 import '../styles/exambrowser.css';
 import '../styles/landing-loggedin.css';
 import {ExamBrowser} from "./ExamBrowser.tsx";
 import {LEVEL_CONFIG} from "../hooks/LevelConfigs.ts";
-// import { useExamStore} from "../store/useExamStore.ts";
-// const CONTINUE_CARDS = [
-//   { id: 1, subject: 'Math',           progress: 65, color: '#7C3AED', emoji: '🧮', isNew: false },
-//   { id: 2, subject: 'CRE',            progress: 40, color: '#EA580C', emoji: '✝️',  isNew: false },
-//   { id: 3, subject: 'Science',        progress: 20, color: '#059669', emoji: '🔬', isNew: true  },
-//   { id: 4, subject: 'Kiswahili',      progress: 35, color: '#D97706', emoji: '🗣️', isNew: true  },
-//   { id: 5, subject: 'Social Studies', progress: 50, color: '#7C3AED', emoji: '🌍', isNew: true  },
-// ];
-// const STREAK = 5;
-// const LEVEL  = 3;
-// const POINTS = 1200;
-// const LAST_QUIZ = { name: 'Science Quiz', progress: 65 };
-//
-// const RECOMMENDED = [
-//   { id: 1, subject: 'Geography',         level: 2, xp: 650, pts: 400, emoji: '🌍', color: '#0891B2' },
-//   { id: 2, subject: 'Grammar Challenge',  level: 3, xp: 800, pts: 500, emoji: '📝', color: '#D97706' },
-// ];
+import {PACKAGES, avatarUrl} from "../hooks/Packages.ts";
 
-/* ─── Level config (for ExamBrowser) ───────────────────── */
-// const LEVEL_CONFIG = {
-//   lower_primary: {
-//     label: 'Lower Primary', grades: 'Grade 1–3', emoji: '🧒',
-//     color: '#10b981', bg: 'linear-gradient(135deg,#065f46,#10b981)',
-//     route: '/level/lower-primary',
-//     subjects: ['Mathematics','English','Kiswahili','Science','Art & Craft','Music'],
-//     subjectEmojis: ['🧮','📖','🗣️','🌿','🎨','🎵'],
-//   },
-//   middle_school: {
-//     label: 'Middle School', grades: 'Grade 4–9', emoji: '🧠',
-//     color: '#3b82f6', bg: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
-//     route: '/level/middle-school',
-//     subjects: ['Mathematics','English','Kiswahili','Science','Social Studies','History'],
-//     subjectEmojis: ['🧮','📖','🗣️','🔬','🌍','🏛️'],
-//   },
-//   senior_school: {
-//     label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓',
-//     color: '#a855f7', bg: 'linear-gradient(135deg,#4c1d95,#a855f7)',
-//     route: '/level/senior-school',
-//     subjects: ['Mathematics','English','Biology','Chemistry','Physics','History'],
-//     subjectEmojis: ['🧮','📖','🧬','🧪','⚡','🏛️'],
-//   },
-// };
 
 const FEATURES = [
   { icon: Shield,     title: 'CBC Aligned',       desc: 'Every question follows the official Kenyan CBC curriculum.',    color: '#a855f7' },
@@ -85,137 +41,6 @@ const SLIDES = [
     // bg: 'linear-gradient(135deg, #dc2626 0%, #ea580c 60%, #fb923c 100%)',
   },
 ];
-//
-// const GRADE_SECTIONS: { id: string,label: string; emoji: string }[] = [
-//   { id: 'grade1-3',   label: 'Grade 1–3',   emoji: '🧒' },
-//   { id: 'grade4-6',   label: 'Grade 4–6',   emoji: '📗' },
-//   { id: 'grade7-9',   label: 'Grade 7–9',   emoji: '🧠' },
-//   { id: 'grade10-12', label: 'Grade 10–12', emoji: '🎓' },
-// ];
-
-// const GradeRow: React.FC<{
-//   section: typeof GRADE_SECTIONS[number];
-//   onCardClick: () => void;
-// }> = ({ section, onCardClick }) => {
-//   const { exams } = useExamStore();
-//   const [expanded, setExpanded] = useState(false);
-//   const rowRef = useRef<HTMLDivElement>(null);
-//   const { setOverlay } = useStore();
-//
-//   const gradeExams = exams.filter(e => e.grade === section.id);
-//   const PREVIEW_COUNT = 8;
-//   const visible = expanded ? gradeExams : gradeExams.slice(0, PREVIEW_COUNT);
-//
-//   return (
-//       <div className="eb-row-section">
-//         <div className="eb-row-header">
-//           <h3 className="eb-row-title">
-//             <span className="eb-row-emoji">{section.emoji}</span>
-//             {section.label}
-//             <span className="eb-row-count">{gradeExams.length}</span>
-//           </h3>
-//           <button
-//               className="eb-show-all-btn"
-//               onClick={() => setOverlay("signup")}
-//           >
-//             {expanded ? 'Show less' : 'Show all'}
-//           </button>
-//         </div>
-//
-//         <div className="eb-card-track-wrap">
-//           <div
-//               className={`eb-card-track ${expanded ? 'eb-card-track--expanded' : ''}`}
-//               ref={rowRef}
-//           >
-//             {visible.map(exam => (
-//                 <div
-//                     key={exam.id}
-//                     className="exam-card game-card"
-//                     onClick={onCardClick}
-//                     role="button"
-//                     tabIndex={0}
-//                     onKeyDown={e => e.key === 'Enter' && onCardClick()}
-//                 >
-//                   <div className="exam-card-inner">
-//                     <img
-//                         className="exam-image"
-//                         src={exam.img}
-//                         alt={exam.title}
-//                     />
-//                     <div className="exam-overlay">
-//                       <div className="overlay-content">
-//                         <span className="exam-title">{exam.title}</span>
-//                         <button className="cta-button try-button">
-//                           Try Test
-//                         </button>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//   );
-// };
-// /* ─── Exam Browser Component ─────────────────────────────── */
-// const ExamBrowser: React.FC = () => {
-//   const { setOverlay } = useStore();
-//
-//   // const navigate = useNavigate();
-//   // const allSubjects = [
-//   //   ...LEVEL_CONFIG.lower_primary.subjects.map((s, i) => ({
-//   //     name: s,
-//   //     emoji: LEVEL_CONFIG.lower_primary.subjectEmojis[i],
-//   //     level: 'lower_primary'
-//   //   })),
-//   //   ...LEVEL_CONFIG.middle_school.subjects.map((s, i) => ({
-//   //     name: s,
-//   //     emoji: LEVEL_CONFIG.middle_school.subjectEmojis[i],
-//   //     level: 'middle_school'
-//   //   })),
-//   //   ...LEVEL_CONFIG.senior_school.subjects.map((s, i) => ({
-//   //     name: s,
-//   //     emoji: LEVEL_CONFIG.senior_school.subjectEmojis[i],
-//   //     level: 'senior_school'
-//   //   })),
-//   // ].slice(0, 12); // show top 12 for demo
-//
-//   return (
-//       <section className="gh-exam-browser">
-//         <div className="gh-section-header">
-//           <span className="gh-section-badge">📚 Browse Exams</span>
-//           <h2 className="gh-section-title">Choose your <span className="gh-text-gradient">subject</span></h2>
-//           <p className="gh-section-sub">Pick a topic and start practicing with our interactive quizzes.</p>
-//         </div>
-//         {GRADE_SECTIONS.map(section => (
-//             <GradeRow
-//                 key={section.id}
-//                 section={section}
-//                 onCardClick={() => setOverlay('signup')}
-//             />
-//         ))}
-//         {/*<div className="gh-subject-grid">*/}
-//         {/*  {allSubjects.map((sub) => (*/}
-//         {/*      <button*/}
-//         {/*          key={sub.name}*/}
-//         {/*          className="gh-subject-card"*/}
-//         {/*          onClick={() => setOverlay('signup')}*/}
-//         {/*      >*/}
-//         {/*        <span className="gh-subject-emoji">{sub.emoji}</span>*/}
-//         {/*        <span className="gh-subject-name">{sub.name}</span>*/}
-//         {/*      </button>*/}
-//         {/*  ))}*/}
-//         {/*</div>*/}
-//         {/*<div className="gh-exam-footer">*/}
-//         {/*  <button className="gh-view-all-btn" onClick={() => setOverlay('signup')}>*/}
-//         {/*    View All Subjects <ArrowRight size={16} />*/}
-//         {/*  </button>*/}
-//         {/*</div>*/}
-//       </section>
-//   );
-// };
-
 
 const GuestHero: React.FC = () => {
   const [slideIdx, setSlideIdx] = useState(0);
@@ -237,11 +62,9 @@ const GuestHero: React.FC = () => {
         <section className="gh-slider-full">
           <div className="gh-slider-bg-image">
             <img key={slideIdx} src={slide.img} alt={slide.grade} />
-            {/*<div className="gh-slider-overlay" style={{ background: slide.bg }} />*/}
           </div>
           <div className="gh-slider-content">
-            {/*<div className="gh-slider-tag">{slide.tag}</div>*/}
-            {/*<h2 className="gh-slider-title">Master {slide.grade}<br />with BongoQuiz</h2>*/}
+
             <button
                 className="gh-slider-cta"
                 onClick={() => setOverlay('signup')}
@@ -249,18 +72,7 @@ const GuestHero: React.FC = () => {
               Start Learning <ArrowRight size={18} />
             </button>
           </div>
-          {/*<button*/}
-          {/*    className="lp-slider-arrow lp-slider-arrow-left"*/}
-          {/*    onClick={() => goSlide((slideIdx - 1 + SLIDES.length) % SLIDES.length)}*/}
-          {/*>*/}
-          {/*  <ChevronLeft size={28} />*/}
-          {/*</button>*/}
-          {/*<button*/}
-          {/*    className="lp-slider-arrow lp-slider-arrow-right"*/}
-          {/*    onClick={() => goSlide((slideIdx + 1) % SLIDES.length)}*/}
-          {/*>*/}
-          {/*  <ChevronRight size={28} />*/}
-          {/*</button>*/}
+
           <div className="gh-dots">
             {SLIDES.map((_, i) => (
                 <button
@@ -295,6 +107,38 @@ const GuestHero: React.FC = () => {
 
         {/* Exam Browser */}
         <ExamBrowser />
+
+        {/* Pricing Section */}
+        <section className="gh-pricing-section reveal">
+          <div className="gh-section-header">
+            <span className="gh-section-badge">💳 Simple Pricing</span>
+            <h2 className="gh-section-title">Pick your <span className="gh-text-gradient">plan</span></h2>
+            <p className="gh-section-sub">One subscription covers the whole family. Cancel anytime.</p>
+          </div>
+          <div className="gh-pricing-grid">
+            {PACKAGES.map(pkg => {
+              const Icon = pkg.icon;
+              return (
+                <button
+                  key={pkg.id}
+                  className={`gh-pricing-card${pkg.popular ? ' gh-pricing-card--popular' : ''}`}
+                  onClick={() => setOverlay('signup', pkg.id)}
+                >
+                  {pkg.popular && <div className="gh-pricing-badge" style={{ background: pkg.color }}>POPULAR</div>}
+                  <div className="gh-pricing-icon" style={{ background: `${pkg.color}18`, color: pkg.color }}>
+                    <Icon size={26} />
+                  </div>
+                  <div className="gh-pricing-label">{pkg.label}</div>
+                  <div className="gh-pricing-price">
+                    <span className="gh-pricing-amount">{pkg.price}</span>
+                    <span className="gh-pricing-period">{pkg.period}</span>
+                  </div>
+                  <div className="gh-pricing-cta" style={{ background: pkg.color }}>Get Started</div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
 
         {/* Features Section */}
         <section className="gh-features-section reveal">
@@ -363,7 +207,7 @@ const LoggedInHero: React.FC = () => {
       <div className="lp-home-hero" style={{ background: level.bg }}>
         <div className="lp-home-hero-orb" />
         <div className="lp-home-hero-top">
-          <div className="lp-home-avatar">{activeProfile.avatar || '🧒'}</div>
+          <div className="lp-home-avatar"><img src={avatarUrl(activeProfile.avatar || 'Zara')} alt="avatar" width={48} height={48} style={{borderRadius:'50%'}} /></div>
           <div className="lp-home-hero-info">
             <p className="lp-home-greeting">{greeting} 👋</p>
             <h1 className="lp-home-name">{activeProfile.username}</h1>
