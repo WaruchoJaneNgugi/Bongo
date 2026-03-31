@@ -67,6 +67,7 @@ const Navbar: React.FC = () => {
               <span>Bongo<strong>Quiz</strong></span>
             </button>
 
+
             {/* Desktop nav links */}
             <div className="nb-links">
               <Link to="/" className={`nb-link ${location.pathname === '/' || isActive('/level') ? 'active' : ''}`}>
@@ -75,9 +76,11 @@ const Navbar: React.FC = () => {
               <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={17} /> Games
               </Link>
+              {isLoggedIn && (
               <Link to="/profile" className={`nb-link ${isActive('/profile') ? 'active' : ''}`} onClick={() => setDropdownOpen(false)}>
                 <User size={16} /> Profile
               </Link>
+              )}
               {isLoggedIn && <></>}
             </div>
           </div>
