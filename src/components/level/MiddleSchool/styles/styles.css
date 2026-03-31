@@ -122,8 +122,8 @@ h1, h2, h3, h4 {
 
 @media (min-width: 1024px) {
   .app-container {
-    max-width: 1024px;
-    margin: 0 auto;
+    /*max-width: 1024px;*/
+    /*margin: 0 auto;*/
     border-left: 1px solid var(--border-color);
     border-right: 1px solid var(--border-color);
     box-shadow: 0 0 40px rgba(0,0,0,0.03);
@@ -134,7 +134,7 @@ h1, h2, h3, h4 {
 
   .app-container.landing-mode-bg {
     background-color: #ffffff;
-    height: 100vh;
+    /*height: 100vh;*/
     height: 100dvh;
     overflow: hidden;
   }
