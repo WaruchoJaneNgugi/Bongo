@@ -18,6 +18,26 @@ import {LEVEL_CONFIG} from "../hooks/LevelConfigs.ts";
 import {PACKAGES, avatarUrl} from "../hooks/Packages.ts";
 
 
+const HOW_IT_WORKS = [
+  { step: '1', emoji: '📱', title: 'Sign Up Free', desc: 'Create your account in 30 seconds with just a phone number.' },
+  { step: '2', emoji: '🎯', title: 'Pick Your Level', desc: 'Choose Lower Primary, Middle School, or Senior School.' },
+  { step: '3', emoji: '📝', title: 'Practice & Play', desc: 'Take quizzes, mock exams, and fun games — all CBC aligned.' },
+  { step: '4', emoji: '🏆', title: 'Track Progress', desc: 'Earn XP, badges, and watch your grades improve.' },
+];
+
+const TESTIMONIALS = [
+  { name: 'Amina W.', grade: 'Grade 8 · Nairobi', text: 'My daughter went from a C to a B+ in Maths in just one term. BongoQuiz makes revision feel like a game!', avatar: 'Amina' },
+  { name: 'Peter K.', grade: 'Grade 11 · Kisumu', text: 'The mock exams are exactly like the real thing. I feel so much more confident going into my finals.', avatar: 'Kofi' },
+  { name: 'Grace M.', grade: 'Grade 4 · Mombasa', text: 'My son actually asks to do his homework now. The streaks and badges keep him motivated every day.', avatar: 'Zawadi' },
+];
+
+const FAQS = [
+  { q: 'Is BongoQuiz really free?', a: 'BongoQuiz offers affordable family plans starting from KSh 240/month. One subscription covers multiple student profiles under one account.' },
+  { q: 'Which curriculum does it follow?', a: 'All content is aligned to the Kenyan CBC (Competency Based Curriculum) for Grade 1–12.' },
+  { q: 'Can multiple children use one account?', a: 'Yes. Our family plans support up to 5+ student profiles under one subscription.' },
+  { q: 'Does it work on mobile?', a: 'Absolutely. BongoQuiz is fully optimised for phones, tablets, and desktops.' },
+];
+
 const FEATURES = [
   { icon: Shield,     title: 'CBC Aligned',       desc: 'Every question follows the official Kenyan CBC curriculum.',    color: '#a855f7' },
   { icon: BarChart3,  title: 'Track Progress',     desc: 'Detailed analytics show exactly where you excel.',              color: '#3b82f6' },
@@ -64,8 +84,7 @@ const GuestHero: React.FC = () => {
             <div className="gh-slider-bg-image">
               <img key={slideIdx} src={slide.img} alt={slide.grade} />
             </div>
-            <div className="gh-slider-content">
-
+            <div className="gh-slider-content" key={slideIdx}>
               <button
                   className="gh-slider-cta"
                   onClick={() => setOverlay('signup')}
@@ -102,8 +121,8 @@ const GuestHero: React.FC = () => {
                 <span className="gh-stat-label">Aligned</span>
               </div>
               <div className="gh-stat-item">
-                <span className="gh-stat-num">Free</span>
-                <span className="gh-stat-label">To Join</span>
+                <span className="gh-stat-num">KSh 240</span>
+                <span className="gh-stat-label">From/month</span>
               </div>
             </div>
           </div>
@@ -144,6 +163,24 @@ const GuestHero: React.FC = () => {
             </div>
           </section>
 
+          {/* How it works */}
+          <section className="gh-how-section reveal">
+            <div className="gh-section-header">
+              <span className="gh-section-badge">🚀 How It Works</span>
+              <h2 className="gh-section-title">Up and running in <span className="gh-text-gradient">minutes</span></h2>
+            </div>
+            <div className="gh-how-grid">
+              {HOW_IT_WORKS.map(item => (
+                <div key={item.step} className="gh-how-card reveal">
+                  <div className="gh-how-step">{item.step}</div>
+                  <div className="gh-how-emoji">{item.emoji}</div>
+                  <h3 className="gh-how-title">{item.title}</h3>
+                  <p className="gh-how-desc">{item.desc}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
           {/* Features Section */}
           <section className="gh-features-section reveal">
             <div className="gh-section-header">
@@ -166,17 +203,45 @@ const GuestHero: React.FC = () => {
             </div>
           </section>
 
-          {/* Final CTA */}
-          <div className="gh-cta-banner reveal">
-            <div className="gh-cta-orb" />
-            <h2>🏆 Ready to ace your exams?</h2>
-            <p>Join 50,000+ students already using BongoQuiz.</p>
-            <button className="gh-cta-btn" onClick={() => setOverlay('signup')}>
-              🎮 Join Free Today
-            </button>
-          </div>
+          {/* Testimonials */}
+          <section className="gh-testimonials-section reveal">
+            <div className="gh-section-header">
+              <span className="gh-section-badge">💬 What Parents Say</span>
+              <h2 className="gh-section-title">Trusted by <span className="gh-text-gradient">50,000+ families</span></h2>
+            </div>
+            <div className="gh-testimonials-grid">
+              {TESTIMONIALS.map(t => (
+                <div key={t.name} className="gh-testimonial-card reveal">
+                  <p className="gh-testimonial-text">"{t.text}"</p>
+                  <div className="gh-testimonial-author">
+                    <img src={avatarUrl(t.avatar)} alt={t.name} width={40} height={40} className="gh-testimonial-avatar" />
+                    <div>
+                      <span className="gh-testimonial-name">{t.name}</span>
+                      <span className="gh-testimonial-grade">{t.grade}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
 
-        </div>
+          {/* FAQ */}
+          <section className="gh-faq-section reveal">
+            <div className="gh-section-header">
+              <span className="gh-section-badge">❓ FAQ</span>
+              <h2 className="gh-section-title">Common <span className="gh-text-gradient">questions</span></h2>
+            </div>
+            <div className="gh-faq-list">
+              {FAQS.map(f => (
+                <details key={f.q} className="gh-faq-item">
+                  <summary className="gh-faq-q">{f.q}</summary>
+                  <p className="gh-faq-a">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+
+                 </div>
 
       </div>
   );
