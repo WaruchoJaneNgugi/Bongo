@@ -88,7 +88,7 @@
 .gh-slider-cta   { animation: fade-up 0.5s 0.28s cubic-bezier(0.22,1,0.36,1) both; }
 
 /* Stats strip */
-.gh-stats-strip  { animation: fade-up 0.5s 0.2s cubic-bezier(0.22,1,0.36,1) both; }
+.gh-stats-strip  {  animation: fade-up 0.5s 0.2s cubic-bezier(0.22,1,0.36,1) both; }
 .gh-stat-item    { transition: background 0.2s, transform 0.2s; }
 .gh-stat-item:hover { transform: translateY(-2px); }
 

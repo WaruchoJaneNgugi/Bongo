@@ -12,15 +12,16 @@
     border-top: 1px solid #ede9fe;
     border-bottom: 1px solid #ede9fe;
     width: 100%;
-    max-width: 100vw;
+    max-width: 1800px;
     overflow-x: hidden;
+    border-radius: 10px;
 }
 
 /* ── One grade row ───────────────────────────────────────── */
 .lpeb-row-section {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    /*gap: 0.5rem;*/
     width: 100%;
     background: rgba(30, 27, 75, 0.05);
     min-width: 0;
@@ -268,7 +269,7 @@
     .lpeb-exam-card  { width: 170px; }
     .lpeb-row-title  { font-size: 1.1rem; }
     .lpeb-row-header { padding: 0 1.5rem; }
-    .lpeb-card-track { padding: 1.5rem 0.5rem; gap: 0.75rem; }
+    .lpeb-card-track { padding: 0.5rem; gap: 0.75rem; }
 }
 
 @media (min-width: 1200px) {

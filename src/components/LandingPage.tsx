@@ -59,118 +59,125 @@ const GuestHero: React.FC = () => {
   return (
       <div className="gh-guest">
         {/* Slider Section */}
-        <section className="gh-slider-full">
-          <div className="gh-slider-bg-image">
-            <img key={slideIdx} src={slide.img} alt={slide.grade} />
-          </div>
-          <div className="gh-slider-content">
+        <div className="slider-section-cta">
+          <section className="gh-slider-full">
+            <div className="gh-slider-bg-image">
+              <img key={slideIdx} src={slide.img} alt={slide.grade} />
+            </div>
+            <div className="gh-slider-content">
 
-            <button
-                className="gh-slider-cta"
-                onClick={() => setOverlay('signup')}
-            >
-              Start Learning <ArrowRight size={18} />
+              <button
+                  className="gh-slider-cta"
+                  onClick={() => setOverlay('signup')}
+              >
+                Start Learning <ArrowRight size={18} />
+              </button>
+            </div>
+
+            <div className="gh-dots">
+              {SLIDES.map((_, i) => (
+                  <button
+                      key={i}
+                      className={`gh-dot ${i === slideIdx ? 'gh-dot-active' : ''}`}
+                      onClick={() => goSlide(i)}
+                      aria-label={`Slide ${i + 1}`}
+                  />
+              ))}
+            </div>
+          </section>
+
+          {/* Stats Strip */}
+          <div>
+            <div className="gh-stats-strip reveal">
+              <div className="gh-stat-item">
+                <span className="gh-stat-num">50K+</span>
+                <span className="gh-stat-label">Students</span>
+              </div>
+              <div className="gh-stat-item">
+                <span className="gh-stat-num">1,200+</span>
+                <span className="gh-stat-label">Exams</span>
+              </div>
+              <div className="gh-stat-item">
+                <span className="gh-stat-num">CBC</span>
+                <span className="gh-stat-label">Aligned</span>
+              </div>
+              <div className="gh-stat-item">
+                <span className="gh-stat-num">Free</span>
+                <span className="gh-stat-label">To Join</span>
+              </div>
+            </div>
+          </div>
+
+
+          {/* Exam Browser */}
+          <ExamBrowser />
+
+          {/* Pricing Section */}
+          <section className="gh-pricing-section reveal">
+            <div className="gh-section-header">
+              <span className="gh-section-badge">💳 Simple Pricing</span>
+              <h2 className="gh-section-title">Pick your <span className="gh-text-gradient">plan</span></h2>
+              <p className="gh-section-sub">One subscription covers the whole family. Cancel anytime.</p>
+            </div>
+            <div className="gh-pricing-grid">
+              {PACKAGES.map(pkg => {
+                const Icon = pkg.icon;
+                return (
+                    <button
+                        key={pkg.id}
+                        className={`gh-pricing-card${pkg.popular ? ' gh-pricing-card--popular' : ''}`}
+                        onClick={() => setOverlay('signup', pkg.id)}
+                    >
+                      {pkg.popular && <div className="gh-pricing-badge" style={{ background: pkg.color }}>POPULAR</div>}
+                      <div className="gh-pricing-icon" style={{ background: `${pkg.color}18`, color: pkg.color }}>
+                        <Icon size={26} />
+                      </div>
+                      <div className="gh-pricing-label">{pkg.label}</div>
+                      <div className="gh-pricing-price">
+                        <span className="gh-pricing-amount">{pkg.price}</span>
+                        <span className="gh-pricing-period">{pkg.period}</span>
+                      </div>
+                      <div className="gh-pricing-cta" style={{ background: pkg.color }}>Get Started</div>
+                    </button>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* Features Section */}
+          <section className="gh-features-section reveal">
+            <div className="gh-section-header">
+              <span className="gh-section-badge">Why Choose Us</span>
+              <h2 className="gh-section-title">
+                Everything you need to <span className="gh-text-gradient">succeed</span>
+              </h2>
+              <p className="gh-section-sub">Built specifically for Kenyan CBC students, teachers, and parents.</p>
+            </div>
+            <div className="gh-features-grid">
+              {FEATURES.map(({ icon: Icon, title, desc, color }) => (
+                  <div key={title} className="gh-feature-card reveal">
+                    <div className="gh-feature-icon" style={{ background: `${color}15`, color }}>
+                      <Icon size={26} />
+                    </div>
+                    <h3 className="gh-feature-title">{title}</h3>
+                    <p className="gh-feature-desc">{desc}</p>
+                  </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Final CTA */}
+          <div className="gh-cta-banner reveal">
+            <div className="gh-cta-orb" />
+            <h2>🏆 Ready to ace your exams?</h2>
+            <p>Join 50,000+ students already using BongoQuiz.</p>
+            <button className="gh-cta-btn" onClick={() => setOverlay('signup')}>
+              🎮 Join Free Today
             </button>
           </div>
 
-          <div className="gh-dots">
-            {SLIDES.map((_, i) => (
-                <button
-                    key={i}
-                    className={`gh-dot ${i === slideIdx ? 'gh-dot-active' : ''}`}
-                    onClick={() => goSlide(i)}
-                    aria-label={`Slide ${i + 1}`}
-                />
-            ))}
-          </div>
-        </section>
-
-        {/* Stats Strip */}
-        <div className="gh-stats-strip reveal">
-          <div className="gh-stat-item">
-            <span className="gh-stat-num">50K+</span>
-            <span className="gh-stat-label">Students</span>
-          </div>
-          <div className="gh-stat-item">
-            <span className="gh-stat-num">1,200+</span>
-            <span className="gh-stat-label">Exams</span>
-          </div>
-          <div className="gh-stat-item">
-            <span className="gh-stat-num">CBC</span>
-            <span className="gh-stat-label">Aligned</span>
-          </div>
-          <div className="gh-stat-item">
-            <span className="gh-stat-num">Free</span>
-            <span className="gh-stat-label">To Join</span>
-          </div>
         </div>
 
-        {/* Exam Browser */}
-        <ExamBrowser />
-
-        {/* Pricing Section */}
-        <section className="gh-pricing-section reveal">
-          <div className="gh-section-header">
-            <span className="gh-section-badge">💳 Simple Pricing</span>
-            <h2 className="gh-section-title">Pick your <span className="gh-text-gradient">plan</span></h2>
-            <p className="gh-section-sub">One subscription covers the whole family. Cancel anytime.</p>
-          </div>
-          <div className="gh-pricing-grid">
-            {PACKAGES.map(pkg => {
-              const Icon = pkg.icon;
-              return (
-                <button
-                  key={pkg.id}
-                  className={`gh-pricing-card${pkg.popular ? ' gh-pricing-card--popular' : ''}`}
-                  onClick={() => setOverlay('signup', pkg.id)}
-                >
-                  {pkg.popular && <div className="gh-pricing-badge" style={{ background: pkg.color }}>POPULAR</div>}
-                  <div className="gh-pricing-icon" style={{ background: `${pkg.color}18`, color: pkg.color }}>
-                    <Icon size={26} />
-                  </div>
-                  <div className="gh-pricing-label">{pkg.label}</div>
-                  <div className="gh-pricing-price">
-                    <span className="gh-pricing-amount">{pkg.price}</span>
-                    <span className="gh-pricing-period">{pkg.period}</span>
-                  </div>
-                  <div className="gh-pricing-cta" style={{ background: pkg.color }}>Get Started</div>
-                </button>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="gh-features-section reveal">
-          <div className="gh-section-header">
-            <span className="gh-section-badge">Why Choose Us</span>
-            <h2 className="gh-section-title">
-              Everything you need to <span className="gh-text-gradient">succeed</span>
-            </h2>
-            <p className="gh-section-sub">Built specifically for Kenyan CBC students, teachers, and parents.</p>
-          </div>
-          <div className="gh-features-grid">
-            {FEATURES.map(({ icon: Icon, title, desc, color }) => (
-                <div key={title} className="gh-feature-card reveal">
-                  <div className="gh-feature-icon" style={{ background: `${color}15`, color }}>
-                    <Icon size={26} />
-                  </div>
-                  <h3 className="gh-feature-title">{title}</h3>
-                  <p className="gh-feature-desc">{desc}</p>
-                </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <div className="gh-cta-banner reveal">
-          <div className="gh-cta-orb" />
-          <h2>🏆 Ready to ace your exams?</h2>
-          <p>Join 50,000+ students already using BongoQuiz.</p>
-          <button className="gh-cta-btn" onClick={() => setOverlay('signup')}>
-            🎮 Join Free Today
-          </button>
-        </div>
       </div>
   );
 };
