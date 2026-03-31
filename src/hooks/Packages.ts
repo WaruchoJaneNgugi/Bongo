@@ -3,7 +3,7 @@ import {Crown, Star, User, Users} from "lucide-react";
 import  {type ElementType} from "react";
 
 const DICEBEAR = (seed: string) =>
-  `https://api.dicebear.com/9.x/adventurer/svg?seed=${seed}&backgroundColor=b6e3f4,c0aede,d1d4f9,ffd5dc,ffdfbf`;
+  `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${seed}`;
 
 export const AVATARS = [
   'Zara','Kofi','Amara','Jabari','Nia','Kwame','Aisha','Tendai',

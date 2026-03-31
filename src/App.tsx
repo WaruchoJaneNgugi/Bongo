@@ -32,7 +32,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 const AppContent: React.FC = () => {
-  const { overlay, user } = useStore();
+  const { overlay, user, isLoggedIn } = useStore();
 
   const levelRoute = () => {
     if (user?.type !== 'student') return '/';
@@ -51,7 +51,7 @@ const AppContent: React.FC = () => {
       <Navbar />
 
       <Routes>
-        <Route path="/"        element={<LandingPage />} />
+        <Route path="/"        element={isLoggedIn ? <Navigate to={levelRoute()} replace /> : <LandingPage />} />
         <Route path="/about"   element={<AboutPage />} />
         <Route path="/games"   element={<GamesPage />} />
         <Route path="/profile" element={<StudentProfile />} />

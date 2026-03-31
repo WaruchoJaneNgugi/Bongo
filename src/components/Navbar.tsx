@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import {
   Home, Gamepad2, User, LogOut, Menu, X,
-  GraduationCap, ChevronDown, BookOpen, Trophy,
+  GraduationCap, ChevronDown,
 } from 'lucide-react';
 import '../styles/navbar.css';
 import { avatarUrl } from '../hooks/Packages.ts';
@@ -22,8 +22,16 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // Close menu on route change
-  useEffect(() => { setMenuOpen(false); setDropdownOpen(false); }, [location]);
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      const wrap = document.querySelector('.nb-user-wrap');
+      if (wrap && !wrap.contains(e.target as Node)) setDropdownOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [dropdownOpen]);
 
   // const isMobile = window.innerWidth <= 768;
   const isActive = (p: string) => location.pathname === p || location.pathname.startsWith(p + '/');
@@ -34,18 +42,12 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };
 
-  const activeProfile = user?.profiles.find(p => p.id === user.activeProfileId) ?? user?.profiles[0];
-  const levelRoute = activeProfile
-    ? ({ lower_primary: '/level/lower-primary', middle_school: '/level/middle-school', senior_school: '/level/senior-school' } as Record<string, string>)[activeProfile.educationLevel]
-    : '/';
 
   /* ── Bottom nav items (logged in) ──────────────────────── */
   const bottomItems = [
-    { path: '/',                        icon: Home,      label: 'Home',      exact: true },
-    { path: levelRoute || '/level',     icon: BookOpen,  label: 'Learn',     exact: false },
-    { path: '/games',                   icon: Gamepad2,  label: 'Games',     exact: false },
-    { path: '/profile',                 icon: User,      label: 'Profile',   exact: false },
-    { path: '/dashboard',               icon: Trophy,    label: 'Progress',  exact: false },
+    { path: '/',          icon: Home,     label: 'Home',    exact: true },
+    { path: '/games',     icon: Gamepad2, label: 'Games',   exact: false },
+    { path: '/profile',   icon: User,     label: 'Profile', exact: false },
   ];
 
   return (
@@ -67,22 +69,16 @@ const Navbar: React.FC = () => {
 
             {/* Desktop nav links */}
             <div className="nb-links">
-              <Link to="/" className={`nb-link ${location.pathname === '/' ? 'active' : ''}`}>
+              <Link to="/" className={`nb-link ${location.pathname === '/' || isActive('/level') ? 'active' : ''}`}>
                 <Home size={17} /> Home
               </Link>
               <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={17} /> Games
               </Link>
-              {isLoggedIn && (
-                <>
-                  <Link to={levelRoute || '/level'} className={`nb-link ${isActive('/level') ? 'active' : ''}`}>
-                    <BookOpen size={17} /> Learn
-                  </Link>
-                  <Link to="/dashboard" className={`nb-link ${isActive('/dashboard') ? 'active' : ''}`}>
-                    <Trophy size={17} /> Progress
-                  </Link>
-                </>
-              )}
+              <Link to="/profile" className={`nb-link ${isActive('/profile') ? 'active' : ''}`} onClick={() => setDropdownOpen(false)}>
+                <User size={16} /> Profile
+              </Link>
+              {isLoggedIn && <></>}
             </div>
           </div>
 
@@ -110,13 +106,10 @@ const Navbar: React.FC = () => {
                           <p className="nb-dd-role">🎓 Student</p>
                         </div>
                       </div>
-                      <div className="nb-dropdown-divider" />
-                      <Link to="/profile" className="nb-dd-item" onClick={() => setDropdownOpen(false)}>
-                        <User size={16} /> Profile
-                      </Link>
-                      <Link to="/dashboard" className="nb-dd-item" onClick={() => setDropdownOpen(false)}>
-                        <Trophy size={16} /> Dashboard
-                      </Link>
+                      {/*<div className="nb-dropdown-divider" />*/}
+                      {/*<Link to="/profile" className="nb-dd-item" onClick={() => setDropdownOpen(false)}>*/}
+                      {/*  <User size={16} /> Profile*/}
+                      {/*</Link>*/}
                       <div className="nb-dropdown-divider" />
                       <button className="nb-dd-item nb-dd-logout" onClick={handleLogout}>
                         <LogOut size={16} /> Log Out
@@ -157,7 +150,7 @@ const Navbar: React.FC = () => {
             )}
 
             <nav className="nb-drawer-nav">
-              <Link to="/" className={`nb-drawer-item ${location.pathname === '/' ? 'active' : ''}`}>
+              <Link to="/" className={`nb-drawer-item ${location.pathname === '/' || isActive('/level') ? 'active' : ''}`}>
                 <Home size={20} /> Home
               </Link>
               <Link to="/games" className={`nb-drawer-item ${isActive('/games') ? 'active' : ''}`}>
@@ -165,14 +158,8 @@ const Navbar: React.FC = () => {
               </Link>
               {isLoggedIn && (
                 <>
-                  <Link to={levelRoute || '/level'} className={`nb-drawer-item ${isActive('/level') ? 'active' : ''}`}>
-                    <BookOpen size={20} /> My Level
-                  </Link>
                   <Link to="/profile" className={`nb-drawer-item ${isActive('/profile') ? 'active' : ''}`}>
                     <User size={20} /> Profile
-                  </Link>
-                  <Link to="/dashboard" className={`nb-drawer-item ${isActive('/dashboard') ? 'active' : ''}`}>
-                    <Trophy size={20} /> Dashboard
                   </Link>
                   <button className="nb-drawer-item nb-drawer-logout" onClick={handleLogout}>
                     <LogOut size={20} /> Log Out
@@ -203,10 +190,12 @@ const Navbar: React.FC = () => {
               key={item.path}
               to={item.path}
               className={`nb-bottom-item ${
-                (item.exact
-                  ? location.pathname === item.path
-                  : location.pathname === item.path || location.pathname.startsWith(item.path + '/'))
-                    ? 'active' : ''
+                (item.path === '/'
+                  ? location.pathname === '/' || isActive('/level')
+                  : item.exact
+                    ? location.pathname === item.path
+                    : isActive(item.path))
+                      ? 'active' : ''
               }`}
             >
               <item.icon size={22} />

@@ -203,25 +203,27 @@
 
 .nb-dropdown-divider { height: 1px; background: #f3f4f6; margin: 0.25rem 0; }
 
-.nb-dd-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0.6rem 0.75rem;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: #374151;
-  text-decoration: none;
-  cursor: pointer;
-  background: none;
-  border: none;
-  width: 100%;
-  text-align: left;
-  transition: background 0.15s, color 0.15s;
-  font-family: 'Nunito', sans-serif;
-}
-.nb-dd-item:hover { background: #f4f0ff; color: #7c3aed; }
+  .nb-dd-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.6rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #374151;
+    text-decoration: none;
+    cursor: pointer;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .nb-dd-item:hover { background: #f4f0ff; color: #7c3aed; }
+
+
 
 .nb-dd-logout { color: #dc2626; }
 .nb-dd-logout:hover { background: #fee2e2; color: #dc2626; }
