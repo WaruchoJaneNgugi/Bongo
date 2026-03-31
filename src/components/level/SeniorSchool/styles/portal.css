@@ -22,7 +22,7 @@
   --surface-3: #f1f5f9;
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
-  --text-primary: #ffffff;
+  --text-primary1: #0c0c0c;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
@@ -48,7 +48,7 @@
 /*    radial-gradient(ellipse at 20% 10%, rgba(79,70,229,0.08) 0%, transparent 50%),*/
 /*    radial-gradient(ellipse at 80% 90%, rgba(129,140,248,0.06) 0%, transparent 50%);*/
 /*  min-height: 100vh;*/
-/*  color: var(--text-primary);*/
+/*  color: var(--text-primary1);*/
 /*  -webkit-font-smoothing: antialiased;*/
 /*}*/
 
@@ -60,7 +60,53 @@
   display: flex;
   flex-direction: column;
 }
+.ep-top-bar {
+  width: 100%;
+  height: 60px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--ep-border);
+  /*position: fixed; !* Keeps it at the top while scrolling *!*/
+  /*top: 0;*/
+  left: 0;
+  z-index: 1000; /* Ensures it stays above all other elements */
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
 
+.ep-top-bar-content {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.ep-school-name {
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--ep-primary-dark);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* --- Adjustments for existing containers --- */
+
+/* Add padding to the top of your screens so the bar doesn't cover them */
+.ep-grade-screen-wrap {
+  padding-top: 80px !important; /* Adjust based on bar height */
+}
+
+.ep-portal-container {
+  padding-top: 100px !important;
+}
+
+/* If you are on a mobile device, make the text slightly smaller */
+@media (max-width: 600px) {
+  .ep-school-name {
+    font-size: 0.9rem;
+  }
+}
 /* --- Portal Container --- */
 .portal-container {
   max-width: 900px;
@@ -89,7 +135,7 @@
 .selection-screen h1 {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   margin: 24px 0 8px;
   letter-spacing: -0.5px;
 }
@@ -123,7 +169,7 @@
   width: 100%;
   padding: 18px 24px;
   background: var(--surface);
-  color: var(--text-primary);
+  color: var(--text-primary1);
   border: 2px solid var(--border);
   border-radius: var(--radius-lg);
   font-size: 1rem;
@@ -216,7 +262,7 @@
 .subject-screen-title {
   font-size: 1.6rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   margin: 0 0 4px;
   letter-spacing: -0.4px;
 }
@@ -287,7 +333,7 @@
 
 .subject-name {
   font-weight: 700;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   font-size: 0.9rem;
   text-align: center;
   line-height: 1.3;
@@ -340,7 +386,7 @@
 
 .instr-title {
   font-size: 1.8rem;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   margin: 0;
   font-weight: 800;
   letter-spacing: -0.5px;
@@ -401,7 +447,7 @@
 
 .stat-text strong {
   font-size: 0.95rem;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   font-weight: 700;
 }
 
@@ -467,7 +513,7 @@
   transition: all 0.2s;
 }
 
-.cancel-btn:hover { border-color: var(--border-strong); color: var(--text-primary); }
+.cancel-btn:hover { border-color: var(--border-strong); color: var(--text-primary1); }
 
 .start-exam-btn {
   flex: 2;
@@ -524,7 +570,7 @@
 
 .subject-title {
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   font-size: 0.95rem;
   letter-spacing: 0.3px;
 }
@@ -549,7 +595,7 @@
   align-items: center;
   gap: 8px;
   background: var(--surface-2);
-  color: var(--text-primary);
+  color: var(--text-primary1);
   padding: 10px 18px;
   border-radius: var(--radius-md);
   font-family: 'Courier New', monospace;
@@ -605,7 +651,7 @@
 .question-text {
   font-size: 1.45rem;
   line-height: 1.5;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   margin: 0 0 32px;
   font-weight: 700;
   letter-spacing: -0.2px;
@@ -664,7 +710,7 @@
 }
 
 .option-text {
-  color: var(--text-primary);
+  color: var(--text-primary1);
   font-weight: 500;
   font-size: 0.95rem;
   line-height: 1.4;
@@ -722,7 +768,7 @@
 
 .nav-btn.prev:hover:not(:disabled) {
   border-color: var(--border-strong);
-  color: var(--text-primary);
+  color: var(--text-primary1);
 }
 
 .nav-btn.next {
@@ -793,7 +839,7 @@
 .results-card h1 {
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   margin: 0 0 6px;
   letter-spacing: -0.5px;
 }
@@ -849,7 +895,7 @@
 .score-big-text {
   font-size: 2rem;
   font-weight: 900;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   line-height: 1;
 }
 
@@ -926,7 +972,7 @@
   padding: 16px;
   border-radius: var(--radius-md);
   background: var(--surface);
-  color: var(--text-primary);
+  color: var(--text-primary1);
   border: 2px solid var(--border);
   font-weight: 700;
   font-family: var(--font);
@@ -941,7 +987,7 @@
 .review-card-container { padding: 32px 36px; }
 
 .review-title {
-  color: var(--text-primary);
+  color: var(--text-primary1);
   font-size: 1.1rem;
   margin: 0 0 20px;
   font-weight: 800;
@@ -966,7 +1012,7 @@
 .review-box p {
   margin: 0;
   font-size: 0.9rem;
-  color: var(--text-primary);
+  color: var(--text-primary1);
   font-weight: 500;
   line-height: 1.5;
   display: flex;
@@ -1031,7 +1077,7 @@
 
 .subject-card--empty:hover::before { opacity: 0; }
 .subject-card--empty:hover .subject-icon-box { background: var(--primary-bg); transform: none; }
-.subject-card--empty:hover .subject-name { color: var(--text-primary); }
+.subject-card--empty:hover .subject-name { color: var(--text-primary1); }
 
 .subject-card--empty .subject-q-count {
   color: var(--warning);

@@ -7,7 +7,7 @@ import LowerPrimary from '../assets/banners/LowerPrimaryb.png';
 import MiddleSchool from '../assets/banners/middle-school.png';
 import SeniorSchool from '../assets/banners/seniorschool.png';
 import {
-   ChevronRight, ArrowRight, BarChart3, Clock, Users, Star, Shield, Flame, TrendingUp, Target
+  ChevronRight, ArrowRight, BarChart3, Clock, Users, Star, Shield, TrendingUp, Flame
 } from 'lucide-react';
 // import LowerPrimary from '../assets/lower-primary.jpg?url';   // adjust path as needed
 // import MiddleSchool from '../assets/middle-school.jpg?url';
@@ -18,6 +18,7 @@ import '../styles/landing.css';
 import '../styles/exambrowser.css';
 import '../styles/landing-loggedin.css';
 import {ExamBrowser} from "./ExamBrowser.tsx";
+import {LEVEL_CONFIG} from "../hooks/LevelConfigs.ts";
 // import { useExamStore} from "../store/useExamStore.ts";
 // const CONTINUE_CARDS = [
 //   { id: 1, subject: 'Math',           progress: 65, color: '#7C3AED', emoji: '🧮', isNew: false },
@@ -273,7 +274,7 @@ const GuestHero: React.FC = () => {
         </section>
 
         {/* Stats Strip */}
-        <div className="gh-stats-strip">
+        <div className="gh-stats-strip reveal">
           <div className="gh-stat-item">
             <span className="gh-stat-num">50K+</span>
             <span className="gh-stat-label">Students</span>
@@ -296,7 +297,7 @@ const GuestHero: React.FC = () => {
         <ExamBrowser />
 
         {/* Features Section */}
-        <section className="gh-features-section">
+        <section className="gh-features-section reveal">
           <div className="gh-section-header">
             <span className="gh-section-badge">Why Choose Us</span>
             <h2 className="gh-section-title">
@@ -306,7 +307,7 @@ const GuestHero: React.FC = () => {
           </div>
           <div className="gh-features-grid">
             {FEATURES.map(({ icon: Icon, title, desc, color }) => (
-                <div key={title} className="gh-feature-card">
+                <div key={title} className="gh-feature-card reveal">
                   <div className="gh-feature-icon" style={{ background: `${color}15`, color }}>
                     <Icon size={26} />
                   </div>
@@ -318,7 +319,7 @@ const GuestHero: React.FC = () => {
         </section>
 
         {/* Final CTA */}
-        <div className="gh-cta-banner">
+        <div className="gh-cta-banner reveal">
           <div className="gh-cta-orb" />
           <h2>🏆 Ready to ace your exams?</h2>
           <p>Join 50,000+ students already using BongoQuiz.</p>
@@ -330,137 +331,155 @@ const GuestHero: React.FC = () => {
   );
 };
 
-const LEVEL_CONFIG = {
-  lower_primary: {
-    label: 'Lower Primary', grades: 'Grade 1–3', emoji: '🧒',
-    color: '#10b981', bg: 'linear-gradient(135deg,#065f46,#10b981)',
-    route: '/level/lower-primary',
-    subjects: ['Mathematics','English','Kiswahili','Science','Art & Craft','Music'],
-    subjectEmojis: ['🧮','📖','🗣️','🌿','🎨','🎵'],
-  },
-  middle_school: {
-    label: 'Middle School', grades: 'Grade 4–9', emoji: '🧠',
-    color: '#3b82f6', bg: 'linear-gradient(135deg,#1e3a8a,#3b82f6)',
-    route: '/level/middle-school',
-    subjects: ['Mathematics','English','Kiswahili','Science','Social Studies','History'],
-    subjectEmojis: ['🧮','📖','🗣️','🔬','🌍','🏛️'],
-  },
-  senior_school: {
-    label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓',
-    color: '#a855f7', bg: 'linear-gradient(135deg,#4c1d95,#a855f7)',
-    route: '/level/senior-school',
-    subjects: ['Mathematics','English','Biology','Chemistry','Physics','History'],
-    subjectEmojis: ['🧮','📖','🧬','🧪','⚡','🏛️'],
-  },
-};
-/* ── LoggedInHero (Refined Professional Design) ── */
+const TIPS = [
+  '📌 Revise one topic daily — consistency beats cramming!',
+  '🧠 Teaching others is the best way to remember what you learned.',
+  '⏱️ Take a 5-minute break every 25 minutes of study.',
+  '🎯 Set a small goal before each session — it keeps you focused.',
+  '🌟 Mistakes are proof you are trying. Keep going!',
+];
+
+const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/* ── LoggedInHero ── */
 const LoggedInHero: React.FC = () => {
   const { user, setOverlay } = useStore();
   const navigate = useNavigate();
 
-  if (!user) return null;
+  const tip = TIPS[new Date().getDay() % TIPS.length];
+  const todayIdx = new Date().getDay() === 0 ? 6 : new Date().getDay() - 1;
 
+  if (!user) return null;
   const activeProfile = user.profiles.find(p => p.id === user.activeProfileId) ?? user.profiles[0];
   if (!activeProfile) return null;
 
   const level = LEVEL_CONFIG[activeProfile.educationLevel];
-  const xpInLevel = activeProfile.xp % 1000;
-  const xpPercent = (xpInLevel / 1000) * 100;
+  const xpPercent = Math.min((activeProfile.xp % 1000) / 10, 100);
+  const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-      <div className="lp-student-dashboard">
-        <div className="lp-student-header" style={{ background: level.bg }}>
-          <div className="lp-student-header-content">
-            <div className="lp-student-avatar-large">{activeProfile.avatar || '🧒'}</div>
-            <div className="lp-student-header-info">
-              <h1>{activeProfile.username}</h1>
-              <div className="lp-student-badges">
-                <span className="lp-badge">{level.emoji} {level.label}</span>
-                <span className="lp-badge lp-streak-badge">
-                  <Flame size={12} /> {activeProfile.streak} day streak
-                </span>
-                <span className="lp-badge">Level {activeProfile.level}</span>
+    <div className="lp-home">
+
+      {/* ── Hero greeting card ── */}
+      <div className="lp-home-hero" style={{ background: level.bg }}>
+        <div className="lp-home-hero-orb" />
+        <div className="lp-home-hero-top">
+          <div className="lp-home-avatar">{activeProfile.avatar || '🧒'}</div>
+          <div className="lp-home-hero-info">
+            <p className="lp-home-greeting">{greeting} 👋</p>
+            <h1 className="lp-home-name">{activeProfile.username}</h1>
+            <div className="lp-home-badges">
+              <span className="lp-home-badge">{level.emoji} {level.label}</span>
+              <span className="lp-home-badge lp-home-badge-fire">🔥 {activeProfile.streak}d streak</span>
+              <span className="lp-home-badge">Lv {activeProfile.level}</span>
+            </div>
+          </div>
+          <div className="lp-home-pts">
+            <Star size={14} />
+            {activeProfile.points.toLocaleString()}
+            <span>pts</span>
+          </div>
+        </div>
+        {/* XP bar */}
+        <div className="lp-home-xp">
+          <div className="lp-home-xp-label">
+            <span>XP to Level {activeProfile.level + 1}</span>
+            <span>{activeProfile.xp % 1000} / 1000</span>
+          </div>
+          <div className="lp-home-xp-track">
+            <div className="lp-home-xp-fill" style={{ width: `${xpPercent}%` }} />
+          </div>
+        </div>
+        {user.profiles.length > 1 && (
+          <button className="lp-home-switch" onClick={() => setOverlay('profile-select')}>
+            Switch Profile
+          </button>
+        )}
+      </div>
+
+      {/* ── Quick actions ── */}
+      <div className="lp-home-section">
+        <div className="lp-home-section-hd"><h3>Quick actions</h3></div>
+        <div className="lp-home-actions">
+          <button className="lp-home-action lp-action-quiz" onClick={() => navigate(level.route)}>
+            <span className="lp-action-icon">📝</span>
+            <span>Start Quiz</span>
+          </button>
+          <button className="lp-home-action lp-action-exam" onClick={() => navigate(level.route)}>
+            <span className="lp-action-icon">📋</span>
+            <span>Mock Exam</span>
+          </button>
+          <button className="lp-home-action lp-action-games" onClick={() => navigate('/games')}>
+            <span className="lp-action-icon">🎮</span>
+            <span>Games</span>
+          </button>
+          <button className="lp-home-action lp-action-dash" onClick={() => navigate('/dashboard')}>
+            <span className="lp-action-icon">📊</span>
+            <span>Progress</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ── Weekly streak ── */}
+      <div className="lp-home-section">
+        <div className="lp-home-section-hd"><h3>This week</h3></div>
+        <div className="lp-home-week">
+          {WEEK_DAYS.map((day, i) => (
+            <div key={day} className="lp-home-day">
+              <div className={`lp-home-day-dot ${i < todayIdx ? 'done' : i === todayIdx ? 'today' : 'future'}`}>
+                {i < todayIdx ? '✓' : i === todayIdx ? '⚡' : ''}
               </div>
+              <span className="lp-home-day-label">{day}</span>
             </div>
-            <div className="lp-student-points">
-              <Star size={18} /> {activeProfile.points.toLocaleString()} pts
-            </div>
-          </div>
-          <div className="lp-xp-section">
-            <div className="lp-xp-label">{xpInLevel} / 1000 XP to level {activeProfile.level + 1}</div>
-            <div className="lp-xp-bar">
-              <div className="lp-xp-fill" style={{ width: `${xpPercent}%` }}></div>
-            </div>
-          </div>
-          {user.profiles.length > 1 && (
-            <button className="lp-switch-profile-btn" onClick={() => setOverlay('profile-select')}>
-              Switch Profile
-            </button>
-          )}
-        </div>
-
-        <div className="lp-stats-grid">
-          <div className="lp-stat-card">
-            <Target size={20} className="lp-stat-icon" />
-            <div className="lp-stat-value">3/5</div>
-            <div className="lp-stat-label">Today's goal</div>
-          </div>
-          <div className="lp-stat-card">
-            <BarChart3 size={20} className="lp-stat-icon" />
-            <div className="lp-stat-value">78%</div>
-            <div className="lp-stat-label">Avg score</div>
-          </div>
-          <div className="lp-stat-card">
-            <Clock size={20} className="lp-stat-icon" />
-            <div className="lp-stat-value">2h 15m</div>
-            <div className="lp-stat-label">Study time</div>
-          </div>
-        </div>
-
-        <div className="lp-section-header">
-          <h2>Your subjects</h2>
-          <button className="lp-text-link" onClick={() => navigate(level.route)}>See all</button>
-        </div>
-        <div className="lp-subjects-grid">
-          {level.subjects.map((sub, i) => (
-              <button key={sub} className="lp-subject-card" onClick={() => navigate(level.route)}>
-                <span className="lp-subject-emoji">{level.subjectEmojis[i]}</span>
-                <span className="lp-subject-name">{sub}</span>
-              </button>
           ))}
         </div>
+      </div>
 
-        <div className="lp-section-header">
-          <h2>Continue learning</h2>
-          <button className="lp-text-link" onClick={() => navigate(level.route)}>View all</button>
+      {/* ── Continue learning ── */}
+      <div className="lp-home-section">
+        <div className="lp-home-section-hd">
+          <h3>Continue learning</h3>
+          <button className="lp-home-see-all" onClick={() => navigate(level.route)}>See all</button>
         </div>
-        <div className="lp-continue-list">
-          {[
-            { subject: 'Mathematics', progress: 65, emoji: '🧮' },
-            { subject: 'Science', progress: 40, emoji: '🔬' },
-            { subject: 'Kiswahili', progress: 80, emoji: '🗣️' },
-          ].map((quiz) => (
-              <div key={quiz.subject} className="lp-continue-item" onClick={() => navigate(level.route)}>
-                <div className="lp-continue-emoji">{quiz.emoji}</div>
-                <div className="lp-continue-details">
-                  <div className="lp-continue-name">{quiz.subject}</div>
-                  <div className="lp-continue-progress">
-                    <div className="lp-progress-bar">
-                      <div className="lp-progress-fill" style={{ width: `${quiz.progress}%` }}></div>
-                    </div>
-                    <span>{quiz.progress}%</span>
-                  </div>
+        <div className="lp-home-continue">
+          {level.subjects.slice(0, 3).map((sub, i) => (
+            <button key={sub} className="lp-home-continue-item" onClick={() => navigate(level.route)}>
+              <span className="lp-home-ci-emoji">{level.subjectEmojis[i]}</span>
+              <div className="lp-home-ci-info">
+                <span className="lp-home-ci-name">{sub}</span>
+                <div className="lp-home-ci-bar">
+                  <div className="lp-home-ci-fill" style={{ width: `${[65, 40, 80][i]}%`, background: level.bg }} />
                 </div>
               </div>
+              <span className="lp-home-ci-pct">{[65, 40, 80][i]}%</span>
+              <ChevronRight size={14} color="#9ca3af" />
+            </button>
           ))}
         </div>
-
-        <button className="lp-dashboard-btn" onClick={() => navigate('/dashboard')}>
-          <BarChart3 size={20} />
-          Go to full dashboard
-          <ChevronRight size={18} />
-        </button>
       </div>
+
+      {/* ── Subjects ── */}
+      <div className="lp-home-section">
+        <div className="lp-home-section-hd">
+          <h3>Your subjects</h3>
+          <button className="lp-home-see-all" onClick={() => navigate(level.route)}>See all</button>
+        </div>
+        <div className="lp-home-subjects">
+          {level.subjects.map((sub, i) => (
+            <button key={sub} className="lp-home-subject-chip" onClick={() => navigate(level.route)}>
+              <span>{level.subjectEmojis[i]}</span> {sub}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Tip of the day ── */}
+      <div className="lp-home-tip">
+        <span className="lp-home-tip-label">Tip of the day</span>
+        <p>{tip}</p>
+      </div>
+
+    </div>
   );
 };
 

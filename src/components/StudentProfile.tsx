@@ -3,15 +3,16 @@ import { useStore, type EducationLevel } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users } from 'lucide-react';
 import '../styles/profile.css';
+import { LEVEL_CONFIG } from '../hooks/LevelConfigs';
 
-const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji: string; color: string }[] = [
-  { id: 'lower_primary', label: 'Lower Primary', grades: 'Grade 1–3',  emoji: '🧒', color: '#10b981' },
-  { id: 'middle_school', label: 'Middle School', grades: 'Grade 4–9',  emoji: '🧠', color: '#3b82f6' },
-  { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12',emoji: '🎓', color: '#a855f7' },
+const LEVEL_OPTIONS = [
+  { id: 'lower_primary' as EducationLevel, ...LEVEL_CONFIG.lower_primary },
+  { id: 'middle_school' as EducationLevel, ...LEVEL_CONFIG.middle_school },
+  { id: 'senior_school' as EducationLevel, ...LEVEL_CONFIG.senior_school },
 ];
 
 const ACHIEVEMENTS = [
-  { emoji: '🔥', title: 'First Streak',   desc: '7 days in a row',        pts: 50,  earned: true  },
+  { emoji: '🔥', title: 'First Streak',   desc: '7 days in a row',         pts: 50,  earned: true  },
   { emoji: '🏆', title: 'Quiz Master',    desc: 'Score 100% on 5 quizzes', pts: 200, earned: true  },
   { emoji: '🧮', title: 'Math Wizard',    desc: 'Complete all math topics', pts: 150, earned: false },
   { emoji: '⚡', title: 'Speed Demon',    desc: 'Finish a quiz < 2 min',    pts: 100, earned: true  },
@@ -31,8 +32,9 @@ const StudentProfile: React.FC = () => {
   if (!isLoggedIn || !user) {
     return (
       <div className="pr-guest">
-        <Shield size={48} color="#3b82f6" />
+        <div className="pr-guest-icon"><Shield size={32} /></div>
         <h2>Sign in to view your profile</h2>
+        <p>Track your progress, badges, and achievements.</p>
         <button onClick={() => navigate('/')} className="pr-guest-btn">Go Home</button>
       </div>
     );
@@ -44,6 +46,7 @@ const StudentProfile: React.FC = () => {
   const lvl = LEVEL_OPTIONS.find(l => l.id === activeProfile.educationLevel)!;
   const xpPercent = (activeProfile.xp % 1000) / 10;
   const earnedAch = ACHIEVEMENTS.filter(a => a.earned).length;
+  const earnedXP   = ACHIEVEMENTS.filter(a => a.earned).reduce((s, a) => s + a.pts, 0);
 
   const handleSave = () => {
     setError('');
@@ -55,128 +58,135 @@ const StudentProfile: React.FC = () => {
     setTimeout(() => setSaveMsg(''), 2000);
   };
 
-  // init editName lazily
-  if (editName === '' && activeProfile.username) {
-    setEditName(activeProfile.username);
-  }
+  if (editName === '' && activeProfile.username) setEditName(activeProfile.username);
 
   return (
     <div className="pr-root">
 
-      {/* ── Profile Card ── */}
-      <div className="pr-card-hero">
-        <div className="pr-card-hero-bg" style={{ background: `linear-gradient(135deg, ${lvl.color}22 0%, ${lvl.color}08 100%)` }} />
-        <div className="pr-card-hero-inner">
-          <div className="pr-big-avatar">{activeProfile.avatar || '🧒'}</div>
-          <div className="pr-card-info">
-            <h1 className="pr-card-name">{activeProfile.username}</h1>
-            <span className="pr-level-badge" style={{ background: `${lvl.color}18`, color: lvl.color, border: `1px solid ${lvl.color}30` }}>
-              {lvl.emoji} {lvl.label} · {lvl.grades}
-            </span>
-            <div className="pr-stats-row">
-              <div className="pr-stat-pill">
-                <Flame size={14} color="#f97316" />
-                <span>{activeProfile.streak} streak</span>
-              </div>
-              <div className="pr-stat-pill">
-                <Zap size={14} color="#a855f7" />
-                <span>{activeProfile.xp} XP</span>
-              </div>
-              <div className="pr-stat-pill">
-                <Star size={14} color="#f59e0b" />
-                <span>{activeProfile.points.toLocaleString()} pts</span>
-              </div>
+      {/* ── Hero banner ── */}
+      <div className="pr-hero" style={{ background: lvl.bg }}>
+        <div className="pr-hero-orb" />
+        <div className="pr-hero-inner">
+          <div className="pr-hero-avatar">{activeProfile.avatar || '🧒'}</div>
+          <div className="pr-hero-info">
+            <h1 className="pr-hero-name">{activeProfile.username}</h1>
+            <span className="pr-hero-level">{lvl.emoji} {lvl.label} · {lvl.grades}</span>
+            <div className="pr-hero-pills">
+              <span className="pr-pill"><Flame size={12} /> {activeProfile.streak}d streak</span>
+              <span className="pr-pill"><Zap size={12} /> {activeProfile.xp} XP</span>
+              <span className="pr-pill"><Star size={12} /> {activeProfile.points.toLocaleString()} pts</span>
             </div>
-            {/* XP bar */}
-            <div className="pr-xp-row">
-              <span className="pr-xp-txt">Level {activeProfile.level}</span>
-              <div className="pr-xp-bar">
-                <div className="pr-xp-fill" style={{ width: `${xpPercent}%`, background: lvl.color }} />
-              </div>
-              <span className="pr-xp-txt">{activeProfile.xp % 1000}/1000</span>
-            </div>
+          </div>
+        </div>
+
+        {/* XP progress */}
+        <div className="pr-hero-xp">
+          <div className="pr-hero-xp-labels">
+            <span>Level {activeProfile.level}</span>
+            <span>{activeProfile.xp % 1000} / 1000 XP</span>
+          </div>
+          <div className="pr-hero-xp-track">
+            <div className="pr-hero-xp-fill" style={{ width: `${xpPercent}%` }} />
           </div>
         </div>
 
         {user.profiles.length > 1 && (
           <button className="pr-switch-btn" onClick={() => setOverlay('profile-select')}>
-            <Users size={14} /> Switch Profile
+            <Users size={13} /> Switch Profile
           </button>
         )}
       </div>
 
+      {/* ── Quick stats ── */}
+      <div className="pr-stats-row">
+        <div className="pr-stat-card">
+          <span className="pr-stat-icon">🏅</span>
+          <span className="pr-stat-val">{earnedAch}</span>
+          <span className="pr-stat-lbl">Badges</span>
+        </div>
+        <div className="pr-stat-card">
+          <span className="pr-stat-icon">⚡</span>
+          <span className="pr-stat-val">{earnedXP}</span>
+          <span className="pr-stat-lbl">XP Earned</span>
+        </div>
+        <div className="pr-stat-card">
+          <span className="pr-stat-icon">🔥</span>
+          <span className="pr-stat-val">{activeProfile.streak}</span>
+          <span className="pr-stat-lbl">Day Streak</span>
+        </div>
+        <div className="pr-stat-card">
+          <span className="pr-stat-icon">🎯</span>
+          <span className="pr-stat-val">Lv {activeProfile.level}</span>
+          <span className="pr-stat-lbl">Level</span>
+        </div>
+      </div>
+
       {/* ── Tabs ── */}
-      <div className="pr-tabs-bar">
-        <button className={`pr-tab-btn ${tab === 'badges' ? 'active' : ''}`} onClick={() => setTab('badges')}>
+      <div className="pr-tabs">
+        <button className={`pr-tab ${tab === 'badges' ? 'active' : ''}`} onClick={() => setTab('badges')}>
           <Trophy size={15} /> Badges
         </button>
-        <button className={`pr-tab-btn ${tab === 'account' ? 'active' : ''}`} onClick={() => setTab('account')}>
+        <button className={`pr-tab ${tab === 'account' ? 'active' : ''}`} onClick={() => setTab('account')}>
           <Settings size={15} /> Account
         </button>
       </div>
 
-      <div className="pr-tab-content">
+      <div className="pr-content">
 
-        {/* Badges */}
+        {/* ── Badges tab ── */}
         {tab === 'badges' && (
-          <>
-            <div className="pr-ach-summary">
-              <div className="pr-ach-sum-item">
-                <span className="pr-ach-sum-val">{earnedAch}</span>
-                <span className="pr-ach-sum-lbl">Earned</span>
-              </div>
-              <div className="pr-ach-sum-div" />
-              <div className="pr-ach-sum-item">
-                <span className="pr-ach-sum-val">{ACHIEVEMENTS.length - earnedAch}</span>
-                <span className="pr-ach-sum-lbl">Locked</span>
-              </div>
-              <div className="pr-ach-sum-div" />
-              <div className="pr-ach-sum-item">
-                <span className="pr-ach-sum-val">{ACHIEVEMENTS.filter(a => a.earned).reduce((s, a) => s + a.pts, 0)}</span>
-                <span className="pr-ach-sum-lbl">XP Earned</span>
-              </div>
+          <div className="pr-badges">
+            <div className="pr-badges-summary">
+              <span className="pr-bs-text">🏆 {earnedAch} of {ACHIEVEMENTS.length} badges earned</span>
+              <span className="pr-bs-xp">+{earnedXP} XP</span>
             </div>
-
-            <div className="pr-ach-grid">
+            <div className="pr-ach-list">
               {ACHIEVEMENTS.map((a, i) => (
-                <div key={i} className={`pr-ach-card ${a.earned ? 'earned' : 'locked'}`}>
+                <div key={i} className={`pr-ach-item ${a.earned ? 'earned' : 'locked'}`}>
                   <div className="pr-ach-emoji-wrap">
                     <span className="pr-ach-emoji">{a.emoji}</span>
                     {!a.earned && <span className="pr-ach-lock">🔒</span>}
                   </div>
-                  <div className="pr-ach-info">
+                  <div className="pr-ach-body">
                     <span className="pr-ach-title">{a.title}</span>
                     <span className="pr-ach-desc">{a.desc}</span>
                   </div>
-                  <span className={`pr-ach-pts ${a.earned ? 'earned' : ''}`}>{a.pts} XP</span>
+                  <span className={`pr-ach-xp ${a.earned ? 'earned' : ''}`}>+{a.pts} XP</span>
+                  {a.earned && <CheckCircle size={16} color="#10b981" />}
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
-        {/* Account */}
+        {/* ── Account tab ── */}
         {tab === 'account' && (
-          <div className="pr-account-card">
-            {error   && <div className="pr-error"><Shield size={14} />{error}</div>}
-            {saveMsg && <div className="pr-success"><CheckCircle size={14} />{saveMsg}</div>}
+          <div className="pr-account">
+            {error   && <div className="pr-msg pr-msg-error"><Shield size={14} /> {error}</div>}
+            {saveMsg && <div className="pr-msg pr-msg-success"><CheckCircle size={14} /> {saveMsg}</div>}
 
-            <div className="pr-form-group">
+            <div className="pr-field">
               <label className="pr-label">Display Name</label>
               <input className="pr-input" value={editName} onChange={e => setEditName(e.target.value)} />
             </div>
-            <div className="pr-form-group">
+            <div className="pr-field">
               <label className="pr-label">Phone Number</label>
-              <input className="pr-input" value={user.phone} disabled style={{ opacity: 0.5 }} />
+              <input className="pr-input pr-input-disabled" value={user.phone} disabled />
               <span className="pr-hint">Cannot be changed</span>
             </div>
+
             <button className="pr-save-btn" onClick={handleSave}>
               <CheckCircle size={16} /> Save Changes
             </button>
 
-            <div className="pr-danger-zone">
-              <h4>⚠️ Danger Zone</h4>
-              <p>Once deleted, your account cannot be recovered.</p>
+            <div className="pr-danger">
+              <div className="pr-danger-header">
+                <span>⚠️</span>
+                <div>
+                  <p className="pr-danger-title">Danger Zone</p>
+                  <p className="pr-danger-sub">This action is permanent and cannot be undone.</p>
+                </div>
+              </div>
               <button className="pr-delete-btn">Delete Account</button>
             </div>
           </div>

@@ -4,6 +4,12 @@ import { persist } from 'zustand/middleware';
 export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
 export type FamilyPackage = 'solo' | 'trio' | 'quad' | 'family';
 
+export interface LevelSelections {
+  lower_primary?: { grade: number };
+  middle_school?: { level: string | null; className: string | null };
+  senior_school?: { grade: string };
+}
+
 export interface StudentProfile {
   id: string;           // unique id within the account
   username: string;
@@ -33,6 +39,7 @@ interface AppState {
   user: AppUser | null;
   allUsers: AppUser[];
   isLoggedIn: boolean;
+  levelSelections: LevelSelections;
 
   setOverlay: (overlay: Overlay) => void;
   login: (user: AppUser) => void;
@@ -41,6 +48,7 @@ interface AppState {
   setActiveProfile: (profileId: string) => void;
   updateUser: (updates: Partial<AppUser>) => void;
   findUserByPhone: (phone: string) => AppUser | undefined;
+  setLevelSelection: (level: keyof LevelSelections, value: LevelSelections[keyof LevelSelections]) => void;
 }
 
 export const useStore = create<AppState>()(
@@ -50,6 +58,7 @@ export const useStore = create<AppState>()(
       user: null,
       allUsers: [],
       isLoggedIn: false,
+      levelSelections: {},
 
       setOverlay: (overlay) => set({ overlay }),
 
@@ -84,6 +93,11 @@ export const useStore = create<AppState>()(
 
       findUserByPhone: (phone) =>
         get().allUsers.find((u) => u.phone === phone),
+
+      setLevelSelection: (level, value) =>
+        set((state) => ({
+          levelSelections: { ...state.levelSelections, [level]: value },
+        })),
     }),
     {
       name: 'bongoquiz-v3',
@@ -91,6 +105,7 @@ export const useStore = create<AppState>()(
         user: state.user,
         allUsers: state.allUsers,
         isLoggedIn: state.isLoggedIn,
+        levelSelections: state.levelSelections,
       }),
     }
   )

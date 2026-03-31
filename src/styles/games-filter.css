@@ -10,7 +10,7 @@
     --bg-secondary: #12142a;
     --bg-tertiary: #1a1d3a;
     --text-primary: #ffffff;
-    --text-secondary: rgba(255,255,255,0.7);
+    --text-secondary: rgb(0 0 0 / 0.26);
     --text-dim: rgba(255,255,255,0.4);
     --border-color: rgba(255,255,255,0.08);
     --accent-cyan: #00f5d4;

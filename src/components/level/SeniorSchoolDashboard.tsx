@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { EXAM_DATA } from './SeniorSchool/data/paperDb';
 import type { AppView, Grade, Subject } from './SeniorSchool/types/school';
 import './SeniorSchool/styles/portal.css';
+import { useStore } from '../../store/useStore';
 
 import heroImg from './SeniorSchool/assets/chuoimage3.jpeg';
 
@@ -17,8 +18,11 @@ const SUBJECT_ICONS: Record<string, string> = {
 const getIcon = (name: string) => SUBJECT_ICONS[name] ?? '📖';
 
 export const SeniorSchoolDashboard =() =>{
-  const [view, setView] = useState<ExtendedView>('GRADES');
-  const [selectedGrade, setSelectedGrade] = useState<Grade | null>(null);
+  const { levelSelections, setLevelSelection } = useStore();
+  const savedGrade = levelSelections.senior_school?.grade as Grade | undefined;
+
+  const [view, setView] = useState<ExtendedView>(savedGrade ? 'TERMS' : 'GRADES');
+  const [selectedGrade, setSelectedGrade] = useState<Grade | null>(savedGrade ?? null);
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -73,7 +77,7 @@ export const SeniorSchoolDashboard =() =>{
                       <button
                           key={g}
                           className={`grade-list-btn ${selectedGrade === g ? 'grade-list-btn--active' : ''}`}
-                          onClick={() => setSelectedGrade(g)}
+                          onClick={() => { setSelectedGrade(g); setLevelSelection('senior_school', { grade: g }); }}
                       >
                         <span className="grade-list-label">{gradeInfo[g].label}</span>
                         {selectedGrade === g && <span className="grade-list-check">✓</span>}
@@ -95,6 +99,11 @@ export const SeniorSchoolDashboard =() =>{
         {/* ── TERM SELECTION ── */}
         {view === 'TERMS' && (
             <div className="selection-screen">
+              <header className="ep-top-bar">
+                <div className="ep-top-bar-content">
+                  <span className="ep-school-name">SENIOR SECONDARY SCHOOL</span>
+                </div>
+              </header>
               <span className="back-link" onClick={() => setView('GRADES')}>← Back</span>
               <h1>Select Term</h1>
               <p className="portal-tagline">Grade {selectedGrade} · Choose an academic term</p>

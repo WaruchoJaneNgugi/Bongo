@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import type {SchoolLevel, ClassName, Term, Subject, Question} from './MiddleSchool/types';
 import { getQuestions } from './MiddleSchool/data/questions';
 import LevelSelector from './MiddleSchool/components/LevelSelector';
@@ -11,6 +11,7 @@ import ExamManager from './MiddleSchool/components/ExamManager';
 import ResultsView from './MiddleSchool/components/ResultsView';
 import './MiddleSchool/styles/styles.css';
 import { BookOpen, ChevronLeft } from 'lucide-react';
+import { useStore } from '../../store/useStore';
 
 type AppState = 'level' | 'class' | 'term' | 'subject' | 'timer' | 'exam' | 'results';
 
@@ -23,60 +24,21 @@ const SUBJECT_DURATIONS: Record<string, number> = {
 };
 
 export const MiddleSchoolDashboard=()=> {
-  const getInitialState = () => {
-    if (typeof window !== 'undefined' && window.history.state && window.history.state.appState) {
-      return window.history.state;
-    }
-    return {};
-  };
+  const { levelSelections, setLevelSelection } = useStore();
+  const saved = levelSelections.middle_school;
 
-  const initialState = getInitialState();
+  // If level saved → skip level selector, land on class picker
+  // If both level + className saved → skip both, land on term picker
+  const initialState: AppState = saved?.className ? 'term' : saved?.level ? 'class' : 'level';
 
-  const [appState, setAppState] = useState<AppState>(initialState.appState || 'level');
-  const [level, setLevel] = useState<SchoolLevel>(initialState.level || null);
-  const [className, setClassName] = useState<ClassName>(initialState.className || null);
-  const [term, setTerm] = useState<Term>(initialState.term || null);
-  const [subject, setSubject] = useState<Subject>(initialState.subject || null);
-  const [questions, setQuestions] = useState<Question[]>(initialState.questions || []);
-  const [answers, setAnswers] = useState<Record<number, string>>(initialState.answers || {});
+  const [appState, setAppState] = useState<AppState>(initialState);
+  const [level, setLevel] = useState<SchoolLevel>((saved?.level as SchoolLevel) || null);
+  const [className, setClassName] = useState<ClassName>((saved?.className as ClassName) || null);
+  const [term, setTerm] = useState<Term>(null);
+  const [subject, setSubject] = useState<Subject>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [answers, setAnswers] = useState<Record<number, string>>({});
   const [forceSubmit, setForceSubmit] = useState(false);
-
-  useEffect(() => {
-    if (!window.history.state || !window.history.state.appState) {
-      window.history.replaceState({
-        appState: 'level',
-        level: null,
-        className: null,
-        term: null,
-        subject: null,
-        questions: [],
-        answers: {}
-      }, '');
-    }
-
-    const handlePopState = (event: PopStateEvent) => {
-      if (event.state) {
-        setAppState(event.state.appState || 'level');
-        setLevel(event.state.level || null);
-        setClassName(event.state.className || null);
-        setTerm(event.state.term || null);
-        setSubject(event.state.subject || null);
-        setQuestions(event.state.questions || []);
-        setAnswers(event.state.answers || {});
-      } else {
-        setAppState('level');
-        setLevel(null);
-        setClassName(null);
-        setTerm(null);
-        setSubject(null);
-        setQuestions([]);
-        setAnswers({});
-      }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
 
   const navigate = (
       newState: AppState,
@@ -96,23 +58,15 @@ export const MiddleSchoolDashboard=()=> {
     if ('subject' in updates) setSubject(updates.subject!);
     if ('questions' in updates) setQuestions(updates.questions!);
     if ('answers' in updates) setAnswers(updates.answers!);
-
-    window.history.pushState({
-      appState: newState,
-      level: 'level' in updates ? updates.level : level,
-      className: 'className' in updates ? updates.className : className,
-      term: 'term' in updates ? updates.term : term,
-      subject: 'subject' in updates ? updates.subject : subject,
-      questions: 'questions' in updates ? updates.questions : questions,
-      answers: 'answers' in updates ? updates.answers : answers,
-    }, '');
   };
 
   const handleSelectLevel = (selectedLevel: SchoolLevel) => {
+    setLevelSelection('middle_school', { level: selectedLevel, className: '' });
     navigate('class', { level: selectedLevel });
   };
 
   const handleSelectClass = (selectedClass: ClassName) => {
+    setLevelSelection('middle_school', { level: level as string, className: selectedClass });
     navigate('term', { className: selectedClass });
   };
 
@@ -143,27 +97,29 @@ export const MiddleSchoolDashboard=()=> {
 
   const handleRestart = () => {
     setForceSubmit(false);
-    navigate('level', {
-      level: null,
-      className: null,
-      term: null,
-      subject: null,
-      questions: [],
-      answers: {}
-    });
+    setLevelSelection('middle_school', undefined as any);
+    navigate('level', { level: null, className: null, term: null, subject: null, questions: [], answers: {} });
   };
 
   const handleTakeAnotherExam = () => {
     setForceSubmit(false);
-    navigate('subject', {
-      subject: null,
-      questions: [],
-      answers: {}
-    });
+    navigate('subject', { subject: null, questions: [], answers: {} });
   };
 
   const handleBack = () => {
-    window.history.back();
+    const backMap: Partial<Record<AppState, AppState>> = {
+      class: 'level', term: 'class', subject: 'term', timer: 'subject', exam: 'timer',
+    };
+    const prev = backMap[appState];
+    if (prev === 'level') {
+      setLevelSelection('middle_school', undefined as any);
+      navigate('level', { level: null, className: null });
+    } else if (prev === 'class') {
+      setLevelSelection('middle_school', { level: level as string, className: '' });
+      navigate('class', { className: null });
+    } else if (prev) {
+      navigate(prev);
+    }
   };
 
   return (
