@@ -359,7 +359,6 @@ const LoggedInHero: React.FC = () => {
 
   return (
     <div className="lp-home">
-
       {/* ── Hero greeting card ── */}
       <div className="lp-home-hero" style={{ background: level.bg }}>
         <div className="lp-home-hero-orb" />
