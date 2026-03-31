@@ -62,6 +62,7 @@ const StudentProfile: React.FC = () => {
   if (editName === '' && activeProfile.username) setEditName(activeProfile.username);
 
   return (
+      <div className="main-profile-student-main">
     <div className="pr-root">
 
       {/* ── Hero banner ── */}
@@ -194,6 +195,8 @@ const StudentProfile: React.FC = () => {
         )}
       </div>
     </div>
+      </div>
+
   );
 };
 

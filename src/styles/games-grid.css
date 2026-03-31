@@ -3,7 +3,7 @@
     display: grid;
     gap: 10px;
     width: 100%;
-    margin: 8px 0;
+    /*margin: 8px 0;*/
     border-radius: 16px;
     align-items: center;
     padding: 8px;
@@ -26,9 +26,10 @@
 @media (min-width: 1281px) {
     .games-grid-card { grid-template-columns: repeat(8, 1fr); gap: 14px; max-width: 1600px; }
 }
-@media (min-width: 1600px) {
-    .games-grid-card { grid-template-columns: repeat(12, 1fr); gap: 16px; margin: 0 30px; }
-}
+
+/*@media (min-width: 1600px) {*/
+/*    .games-grid-card { grid-template-columns: repeat(12, 1fr); gap: 16px; margin: 0 30px; }*/
+/*}*/
 
 /* Game Card */
 .main-game-card {
@@ -325,54 +326,54 @@
 
 /* Small tablets: 4 columns */
 @media (min-width: 481px) and (max-width: 660px) {
-    .games-grid-card {
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-    }
+    /*.games-grid-card {*/
+    /*    grid-template-columns: repeat(2, 1fr);*/
+    /*    gap: 8px;*/
+    /*}*/
 }
 
 /* Tablets: 5 columns */
 @media (min-width: 661px) and (max-width: 800px) {
-    .games-grid-card {
-        grid-template-columns: repeat(5, 1fr);
-        gap: 8px;
-    }
+    /*.games-grid-card {*/
+    /*    grid-template-columns: repeat(5, 1fr);*/
+    /*    gap: 8px;*/
+    /*}*/
 }
 
 /* Small desktop: 6 columns */
-@media (min-width: 801px) and (max-width: 1024px) {
-    .games-grid-card {
-        grid-template-columns: repeat(6, 1fr);
-        gap: 10px;
-    }
+@media (min-width: 801px)  {
+    /*.games-grid-card {*/
+    /*    grid-template-columns: repeat(6, 1fr);*/
+    /*    gap: 10px;*/
+    /*}*/
 }
 
 /* Desktop: 7 columns */
-@media (min-width: 1025px) and (max-width: 1280px) {
-    .games-grid-card {
-        margin: 5px 1rem;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 12px;
-    }
-}
+/*@media (min-width: 1025px) and (max-width: 1280px) {*/
+/*    .games-grid-card {*/
+/*        margin: 5px 1rem;*/
+/*        grid-template-columns: repeat(7, 1fr);*/
+/*        gap: 12px;*/
+/*    }*/
+/*}*/
 
-/* Large desktop: 8 columns */
-@media (min-width: 1281px) {
-    .games-grid-card {
-        grid-template-columns: repeat(8, 1fr);
-        gap: 15px;
-        max-width: 1600px;
-    }
-}
+/*!* Large desktop: 8 columns *!*/
+/*@media (min-width: 1281px) {*/
+/*    .games-grid-card {*/
+/*        grid-template-columns: repeat(8, 1fr);*/
+/*        gap: 15px;*/
+/*        max-width: 1600px;*/
+/*    }*/
+/*}*/
 
-/* Extra large: 9 columns */
-@media (min-width: 1600px) {
-    .games-grid-card {
-        grid-template-columns: repeat(12, 1fr);
-        gap: 18px;
-        margin: 0 30px;
-    }
-}
+/*!* Extra large: 9 columns *!*/
+/*@media (min-width: 1600px) {*/
+/*    .games-grid-card {*/
+/*        grid-template-columns: repeat(12, 1fr);*/
+/*        gap: 18px;*/
+/*        margin: 0 30px;*/
+/*    }*/
+/*}*/
 
 /* Game Card Styles */
 .main-game-card {

@@ -73,6 +73,7 @@ const GamesPage: React.FC = () => {
   };
 
   return (
+      <div className="gp-main-div">
       <div className="gp-root">
         {/* Hero Section */}
         <div className="gp-hero">
@@ -241,6 +242,7 @@ const GamesPage: React.FC = () => {
               </div>
           )}
         </div>
+      </div>
       </div>
   );
 };
