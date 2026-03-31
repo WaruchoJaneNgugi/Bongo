@@ -1,8 +1,9 @@
-/* ── Grade Select Screen ── */
+/* ── Grade / Term Select Screen — CBC Lower Primary ── */
 
-.gs-wrapper {
+.lower-gs-wrapper {
     min-height: 100vh;
     background: var(--bg);
+    background-image: radial-gradient(rgba(167,139,250,0.2) 1.5px, transparent 1.5px);
     background-size: 22px 22px;
     display: flex;
     align-items: center;
@@ -11,9 +12,9 @@
     font-family: var(--font-body);
 }
 
-.gs-card {
+.lower-gs-card {
     width: 100%;
-    max-width: 480px;          /* compact on all sizes — grows only on xl */
+    max-width: 420px;
     background: var(--surface);
     border-radius: 28px;
     padding: 24px 20px 28px;
@@ -21,8 +22,9 @@
     border: var(--border);
 }
 
-.gs-back {
-    background: var(--bg-card, var(--bg));
+/* ── Back button (used on Term screen, not Home) ── */
+.lower-gs-back {
+    background: var(--bg);
     border: var(--border);
     color: var(--text-muted);
     font-weight: 700;
@@ -37,18 +39,30 @@
     gap: 0.3rem;
     transition: var(--transition);
 }
-.gs-back:hover { background: var(--purple-ghost); color: var(--purple); border-color: var(--purple-light); }
+.lower-gs-back:hover { background: var(--purple-ghost); color: var(--purple); border-color: var(--purple-light); }
 
-.gs-title {
+/* ── Title ── */
+.lower-gs-app-title {
     font-family: var(--font-display);
-    font-size: clamp(1.6rem, 5vw, 1.9rem);
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    font-weight: 900;
+    color: var(--purple);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+    opacity: 0.75;
+}
+
+.lower-gs-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.1rem, 3.5vw, 1.4rem);
     font-weight: 900;
     color: var(--text-heading);
     margin-bottom: 4px;
     line-height: 1.15;
 }
 
-.gs-subtitle {
+.lower-gs-subtitle {
     color: var(--text-muted);
     font-size: 0.92rem;
     font-weight: 700;
@@ -56,26 +70,26 @@
 }
 
 /* ── Hero Image ── */
-.gs-hero {
+.lower-gs-hero {
     width: 100%;
-    height: 200px;
+    height: 155px;
     border-radius: 20px;
     overflow: hidden;
     margin-bottom: 22px;
     background: linear-gradient(180deg, #c4aef0 0%, #8b5cf6 100%);
     position: relative;
 }
-.gs-hero img {
+.lower-gs-hero img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     object-position: center 20%;
 }
 
-/* ── Grade Buttons ── */
-.gs-grades { display: flex; flex-direction: column; gap: 11px; }
+/* ── Option Buttons (grades / terms) ── */
+.lower-gs-options { display: flex; flex-direction: column; gap: 11px; }
 
-.gs-grade {
+.lower-gs-option {
     width: 100%;
     padding: 15px 16px;
     border-radius: var(--radius-md);
@@ -92,13 +106,13 @@
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
 }
-.gs-grade:hover {
+.lower-gs-option:hover {
     transform: translateY(-2px);
     background: var(--purple-pale);
     box-shadow: var(--shadow-md);
     border-color: var(--purple-light);
 }
-.gs-grade.active {
+.lower-gs-option.active {
     background: linear-gradient(135deg, var(--purple-mid), var(--purple));
     color: white;
     border-color: transparent;
@@ -106,7 +120,7 @@
     transform: translateY(-1px);
 }
 
-.gs-check-circle {
+.lower-gs-check {
     width: 28px;
     height: 28px;
     background: rgba(255,255,255,0.25);
@@ -121,7 +135,7 @@
 }
 
 /* ── Continue Button ── */
-.gs-continue {
+.lower-gs-continue {
     width: 100%;
     margin-top: 22px;
     padding: 15px;
@@ -136,12 +150,12 @@
     transition: var(--transition);
     box-shadow: var(--shadow-md);
 }
-.gs-continue:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-.gs-continue:active:not(:disabled) { transform: translateY(1px); }
-.gs-continue:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; transform: none; }
+.lower-gs-continue:hover:not(:disabled) { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.lower-gs-continue:active:not(:disabled) { transform: translateY(1px); }
+.lower-gs-continue:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; transform: none; }
 
-/* ── Term Select extras ── */
-.ts-grade-pill {
+/* ── Term extras ── */
+.lower-ts-grade-pill {
     display: inline-flex;
     align-items: center;
     gap: 6px;
@@ -154,57 +168,64 @@
     color: var(--purple);
     margin-bottom: 14px;
 }
-.ts-grade-btn { padding: 14px 16px; align-items: center; }
-.ts-btn-left  { display: flex; align-items: center; gap: 12px; text-align: left; }
-.ts-emoji     { font-size: 1.6rem; flex-shrink: 0; }
-.ts-label     { font-family: var(--font-display); font-size: 1rem; color: inherit; line-height: 1.2; }
-.ts-desc      { font-family: var(--font-body); font-size: 0.76rem; font-weight: 700; color: var(--text-muted); line-height: 1.3; margin-top: 1px; }
-.gs-grade.active .ts-desc { color: rgba(255,255,255,0.7); }
 
-/* ════════════════════════════════════════
-   RESPONSIVE BREAKPOINTS
-   ════════════════════════════════════════ */
+.lower-ts-option-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
 
-/* ── Mobile small (< 420px) ── */
+.lower-ts-emoji { font-size: 1.6rem; flex-shrink: 0; }
+
+.lower-ts-label {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    color: inherit;
+    line-height: 1.2;
+}
+
+.lower-ts-desc {
+    font-family: var(--font-body);
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    line-height: 1.3;
+    margin-top: 1px;
+}
+.lower-gs-option.active .lower-ts-desc { color: rgba(255,255,255,0.7); }
+
+/* ── Responsive ── */
 @media (max-width: 420px) {
-    .gs-card    { border-radius: 22px; padding: 18px 16px 22px; }
-    .gs-hero    { height: 160px; }
-    .gs-title   { font-size: 1.5rem; }
+    .lower-gs-card { border-radius: 22px; padding: 18px 16px 22px; }
+    .lower-gs-hero { height: 130px; }
 }
 
-/* ── Tablet (768px – 1024px) ── */
 @media (min-width: 768px) {
-    .gs-card  { max-width: 520px; padding: 32px 28px 36px; border-radius: 32px; }
-    .gs-hero  { height: 220px; }
-    .gs-title { font-size: 2.1rem; }
-
-    .gs-grade { padding: 18px 20px; font-size: 1.1rem; }
-
-    .gs-continue { padding: 17px; font-size: 1.15rem; margin-top: 26px; }
+    .lower-gs-card  { max-width: 520px; padding: 32px 28px 36px; border-radius: 32px; }
+    .lower-gs-hero  { height: 220px; }
+    .lower-gs-title { font-size: 2.1rem; }
+    .lower-gs-option   { padding: 18px 20px; font-size: 1.1rem; }
+    .lower-gs-continue { padding: 17px; font-size: 1.15rem; margin-top: 26px; }
 }
 
-/* ── Desktop (1024px – 1440px) ── */
 @media (min-width: 1024px) {
-    .gs-wrapper { padding: 32px; }
-
-    .gs-card { max-width: 560px; padding: 36px 32px 40px; border-radius: 36px; }
-    .gs-hero  { height: 240px; }
-    .gs-title { font-size: 2.2rem; }
-
-    .gs-grades { gap: 13px; }
-    .gs-grade  { padding: 20px 22px; font-size: 1.15rem; }
+    .lower-gs-wrapper { padding: 32px; }
+    .lower-gs-card  { max-width: 560px; padding: 36px 32px 40px; border-radius: 36px; }
+    .lower-gs-hero  { height: 240px; }
+    .lower-gs-title { font-size: 2.2rem; }
+    .lower-gs-options  { gap: 13px; }
+    .lower-gs-option   { padding: 20px 22px; font-size: 1.15rem; }
 }
 
-/* ── Large desktop (> 1440px) ── */
 @media (min-width: 1440px) {
-    .gs-card  { max-width: 600px; padding: 40px 36px 44px; }
-    .gs-hero  { height: 260px; }
-    .gs-title { font-size: 2.4rem; }
-
-    .gs-subtitle  { font-size: 1rem; }
-    .gs-grade     { padding: 22px 24px; font-size: 1.2rem; }
-    .gs-continue  { padding: 19px; font-size: 1.2rem; }
-    .ts-emoji     { font-size: 1.9rem; }
-    .ts-label     { font-size: 1.1rem; }
-    .ts-desc      { font-size: 0.82rem; }
+    .lower-gs-card     { max-width: 600px; padding: 40px 36px 44px; }
+    .lower-gs-hero     { height: 260px; }
+    .lower-gs-title    { font-size: 2.4rem; }
+    .lower-gs-subtitle { font-size: 1rem; }
+    .lower-gs-option   { padding: 22px 24px; font-size: 1.2rem; }
+    .lower-gs-continue { padding: 19px; font-size: 1.2rem; }
+    .lower-ts-emoji    { font-size: 1.9rem; }
+    .lower-ts-label    { font-size: 1.1rem; }
+    .lower-ts-desc     { font-size: 0.82rem; }
 }

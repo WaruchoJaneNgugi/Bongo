@@ -111,36 +111,36 @@ export function QuizScreen({ grade, term, subject, onFinish, onBack }: QuizScree
     };
 
     const getOptClass = (idx: number): string => {
-        if (selThis === idx) return "opt-btn opt-selected";
-        return "opt-btn";
+        if (selThis === idx) return "lower-opt-btn lower-opt-selected";
+        return "lower-opt-btn";
     };
 
     return (
-        <div className="screen quiz-screen">
-            <div className="quiz-inner">
+        <div className="screen lower-quiz-screen">
+            <div className="lower-quiz-inner">
 
                 {/* ── Global Timer Bar ── */}
-                <div className={`quiz-global-timer ${isUrgent ? "urgent" : ""}`}>
-                    <div className="quiz-timer-row">
-                        <span className="quiz-timer-label">⏱ Time Remaining</span>
-                        <span className={`quiz-timer-count ${isUrgent ? "urgent" : ""}`}>
+                <div className={`lower-quiz-global-timer ${isUrgent ? "urgent" : ""}`}>
+                    <div className="lower-quiz-timer-row">
+                        <span className="lower-quiz-timer-label">⏱ Time Remaining</span>
+                        <span className={`lower-quiz-timer-count ${isUrgent ? "urgent" : ""}`}>
               {formatTime(timeLeft)}
             </span>
                     </div>
-                    <div className="quiz-timer-track">
+                    <div className="lower-quiz-timer-track">
                         <div
-                            className={`quiz-timer-fill ${isUrgent ? "urgent" : ""}`}
+                            className={`lower-quiz-timer-fill ${isUrgent ? "urgent" : ""}`}
                             style={{ width: `${timerPct}%` }}
                         />
                     </div>
                 </div>
 
                 {/* ── Top Bar ── */}
-                <div className="quiz-topbar">
+                <div className="lower-quiz-topbar">
                     <button className="btn btn-ghost" onClick={onBack}>← Back</button>
 
-                    <div className="quiz-progress-group">
-                        <div className="quiz-progress-label">
+                    <div className="lower-quiz-progress-group">
+                        <div className="lower-quiz-progress-label">
                             <span>{subject.icon} {subject.label}</span>
                             <span>{answeredCount}/{total} answered</span>
                         </div>
@@ -149,11 +149,11 @@ export function QuizScreen({ grade, term, subject, onFinish, onBack }: QuizScree
                 </div>
 
                 {/* ── Question Dots ── */}
-                <div className="quiz-dots">
+                <div className="lower-quiz-dots">
                     {questions.map((_, i) => (
                         <button
                             key={i}
-                            className={`quiz-dot ${i === current ? "active" : ""} ${selected[i] !== null ? "answered" : ""}`}
+                            className={`lower-quiz-dot ${i === current ? "active" : ""} ${selected[i] !== null ? "answered" : ""}`}
                             onClick={() => { setCurrent(i); setAnimKey((k) => k + 1); }}
                             aria-label={`Question ${i + 1}`}
                         />
@@ -161,13 +161,13 @@ export function QuizScreen({ grade, term, subject, onFinish, onBack }: QuizScree
                 </div>
 
                 {/* ── Question Card ── */}
-                <div className="quiz-question-card" key={animKey}>
-                    <div className="quiz-question-big-num">{current + 1}</div>
-                    <p className="quiz-question-text">{q.q}</p>
+                <div className="lower-quiz-question-card" key={animKey}>
+                    <div className="lower-quiz-question-big-num">{current + 1}</div>
+                    <p className="lower-quiz-question-text">{q.q}</p>
                 </div>
 
                 {/* ── Options ── */}
-                <div className="quiz-options" key={animKey + 100}>
+                <div className="lower-quiz-options" key={animKey + 100}>
                     {q.opts.map((opt, idx) => (
                         <button
                             key={idx}
@@ -175,16 +175,16 @@ export function QuizScreen({ grade, term, subject, onFinish, onBack }: QuizScree
                             onClick={() => handleSelect(idx)}
                             aria-label={`Option ${LABELS[idx]}: ${opt}`}
                         >
-                            <span className="opt-letter">{LABELS[idx]}</span>
-                            <span className="opt-text">{opt}</span>
+                            <span className="lower-opt-letter">{LABELS[idx]}</span>
+                            <span className="lower-opt-text">{opt}</span>
                         </button>
                     ))}
                 </div>
 
                 {/* ── Navigation ── */}
-                <div className="quiz-nav-btns">
+                <div className="lower-quiz-nav-btns">
                     <button
-                        className="btn btn-outline quiz-nav-prev"
+                        className="btn btn-outline lower-quiz-nav-prev"
                         onClick={handlePrev}
                         disabled={current === 0}
                     >
@@ -192,31 +192,31 @@ export function QuizScreen({ grade, term, subject, onFinish, onBack }: QuizScree
                     </button>
 
                     {current < total - 1 ? (
-                        <button className="btn btn-primary quiz-nav-next" onClick={handleNext}>
+                        <button className="btn btn-primary lower-quiz-nav-next" onClick={handleNext}>
                             Next →
                         </button>
                     ) : (
-                        <button className="btn btn-primary quiz-nav-finish" onClick={handleFinish}>
+                        <button className="btn btn-primary lower-quiz-nav-finish" onClick={handleFinish}>
                             Finish 🏆
                         </button>
                     )}
                 </div>
 
                 {/* ── Hint ── */}
-                <p className="quiz-hint">You can go back and change any answer before finishing ✦</p>
+                <p className="lower-quiz-hint">You can go back and change any answer before finishing ✦</p>
 
             </div>
 
             {/* ── Time's Up Overlay ── */}
             {timedOut && (
-                <div className="quiz-timeout-overlay">
-                    <div className="quiz-timeout-card">
-                        <div className="quiz-timeout-emoji">⏰</div>
-                        <h2 className="quiz-timeout-title">Time's Up!</h2>
-                        <p className="quiz-timeout-msg">
+                <div className="lower-quiz-timeout-overlay">
+                    <div className="lower-quiz-timeout-card">
+                        <div className="lower-quiz-timeout-emoji">⏰</div>
+                        <h2 className="lower-quiz-timeout-title">Time's Up!</h2>
+                        <p className="lower-quiz-timeout-msg">
                             Calculating your results…
                         </p>
-                        <div className="quiz-timeout-dots">
+                        <div className="lower-quiz-timeout-dots">
                             <span /><span /><span />
                         </div>
                     </div>

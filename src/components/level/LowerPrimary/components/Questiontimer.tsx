@@ -63,23 +63,23 @@ export function QuestionTimer({
     const size        = 36; // svg viewBox size
 
     return (
-        <div className="timer-wrap" aria-label={`${remaining} seconds remaining`}>
+        <div className="lower-timer-wrap" aria-label={`${remaining} seconds remaining`}>
             <svg
-                className="timer-ring-svg"
+                className="lower-timer-ring-svg"
                 width={size}
                 height={size}
                 viewBox={`0 0 ${size} ${size}`}
             >
                 {/* Background track */}
                 <circle
-                    className="timer-track"
+                    className="lower-timer-track"
                     cx={size / 2}
                     cy={size / 2}
                     r={RADIUS}
                 />
                 {/* Animated fill */}
                 <circle
-                    className={`timer-fill${isUrgent ? " urgent" : ""}`}
+                    className={`lower-timer-fill${isUrgent ? " urgent" : ""}`}
                     cx={size / 2}
                     cy={size / 2}
                     r={RADIUS}
@@ -88,7 +88,7 @@ export function QuestionTimer({
                 />
             </svg>
 
-            <span className={`timer-count${isUrgent ? " urgent" : ""}`}>
+            <span className={`lower-timer-count${isUrgent ? " urgent" : ""}`}>
         {remaining}s
       </span>
         </div>

@@ -27,40 +27,40 @@ export default function TermSelectScreen({ grade, onContinue, onBack }: TermSele
     const [selected, setSelected] = useState<Term | null>(null);
 
     return (
-        <div className="gs-wrapper">
-            <div className="gs-card">
+        <div className="lower-gs-wrapper">
+            <div className="lower-gs-card">
 
                 {/* Back */}
-                <button className="gs-back" onClick={onBack}>← Back</button>
+                <button className="lower-gs-back" onClick={onBack}>← Back</button>
 
                 {/* Grade pill */}
-                <div className="ts-grade-pill">
+                <div className="lower-ts-grade-pill">
                     <span>{GRADE_EMOJI[grade]}</span>
                     <span>Grade {grade}</span>
                 </div>
 
                 {/* Heading */}
-                <h1 className="gs-title">Select Your Term</h1>
-                <p className="gs-subtitle">Which school term are you studying?</p>
+                <h1 className="lower-gs-title">Select Your Term</h1>
+                <p className="lower-gs-subtitle">Which school term are you studying?</p>
 
                 {/* Term buttons */}
-                <div className="gs-grades">
+                <div className="lower-gs-options">
                     {TERM_OPTIONS.map(({ term, label, emoji, desc }) => {
                         const isSelected = selected === term;
                         return (
                             <button
                                 key={term}
-                                className={`gs-grade ts-grade-btn ${isSelected ? "active" : ""}`}
+                                className={`lower-gs-option ${isSelected ? "active" : ""}`}
                                 onClick={() => setSelected(term)}
                             >
-                                <div className="ts-btn-left">
-                                    <span className="ts-emoji">{emoji}</span>
+                                <div className="lower-ts-option-inner">
+                                    <span className="lower-ts-emoji">{emoji}</span>
                                     <div>
-                                        <div className="ts-label">{label}</div>
-                                        <div className="ts-desc">{desc}</div>
+                                        <div className="lower-ts-label">{label}</div>
+                                        <div className="lower-ts-desc">{desc}</div>
                                     </div>
                                 </div>
-                                {isSelected && <div className="gs-check-circle">✓</div>}
+                                {isSelected && <div className="lower-gs-check">✓</div>}
                             </button>
                         );
                     })}
@@ -68,7 +68,7 @@ export default function TermSelectScreen({ grade, onContinue, onBack }: TermSele
 
                 {/* Continue */}
                 <button
-                    className="gs-continue"
+                    className="lower-gs-continue"
                     disabled={!selected}
                     onClick={() => selected && onContinue(selected)}
                 >

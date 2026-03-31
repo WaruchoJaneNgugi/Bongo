@@ -19,7 +19,7 @@ export function ProgressBar({
 
     return (
         <div
-            className={`progress-wrap ${className}`}
+            className={`lower-progress-wrap ${className}`}
             style={{ height, ...style }}
             role="progressbar"
             aria-valuenow={clamped}
@@ -27,7 +27,7 @@ export function ProgressBar({
             aria-valuemax={100}
         >
             <div
-                className="progress-fill"
+                className="lower-progress-fill"
                 style={{ width: `${clamped}%` }}
             />
         </div>

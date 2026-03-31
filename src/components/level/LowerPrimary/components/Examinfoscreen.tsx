@@ -54,61 +54,61 @@ export default function ExamInfoScreen({
     const marks     = QUESTIONS_PER_TERM; // 1 mark per question
 
     return (
-        <div className="ei-wrapper">
-            <div className="ei-card">
+        <div className="lower-ei-wrapper">
+            <div className="lower-ei-card">
 
                 {/* Back */}
-                <button className="ei-back" onClick={onBack}>← Back</button>
+                <button className="lower-ei-back" onClick={onBack}>← Back</button>
 
                 {/* ── Title block ── */}
-                <div className="ei-header">
-                    <div className="ei-subject-icon">{subject.icon}</div>
-                    <div className="ei-title-group">
-                        <h1 className="ei-title">{subject.label}</h1>
-                        <p className="ei-subtitle">
+                <div className="lower-ei-header">
+                    <div className="lower-ei-subject-icon">{subject.icon}</div>
+                    <div className="lower-ei-title-group">
+                        <h1 className="lower-ei-title">{subject.label}</h1>
+                        <p className="lower-ei-subtitle">
                             {GRADE_LABEL[grade]} · {TERM_LABEL[term]}
                         </p>
                     </div>
                 </div>
 
-                <div className="ei-divider" />
+                <div className="lower-ei-divider" />
 
                 {/* ── Meta row: time + marks ── */}
-                <div className="ei-meta-row">
-                    <div className="ei-meta-box">
-                        <span className="ei-meta-icon">⏱</span>
+                <div className="lower-ei-meta-row">
+                    <div className="lower-ei-meta-box">
+                        <span className="lower-ei-meta-icon">⏱</span>
                         <div>
-                            <div className="ei-meta-label">Time Allowed</div>
-                            <div className="ei-meta-value">{formatTime(totalSecs)}</div>
+                            <div className="lower-ei-meta-label">Time Allowed</div>
+                            <div className="lower-ei-meta-value">{formatTime(totalSecs)}</div>
                         </div>
                     </div>
-                    <div className="ei-meta-divider" />
-                    <div className="ei-meta-box">
-                        <span className="ei-meta-icon">📝</span>
+                    <div className="lower-ei-meta-divider" />
+                    <div className="lower-ei-meta-box">
+                        <span className="lower-ei-meta-icon">📝</span>
                         <div>
-                            <div className="ei-meta-label">Total Marks</div>
-                            <div className="ei-meta-value">{marks} Marks</div>
+                            <div className="lower-ei-meta-label">Total Marks</div>
+                            <div className="lower-ei-meta-value">{marks} Marks</div>
                         </div>
                     </div>
-                    <div className="ei-meta-divider" />
-                    <div className="ei-meta-box">
-                        <span className="ei-meta-icon">❓</span>
+                    <div className="lower-ei-meta-divider" />
+                    <div className="lower-ei-meta-box">
+                        <span className="lower-ei-meta-icon">❓</span>
                         <div>
-                            <div className="ei-meta-label">Questions</div>
-                            <div className="ei-meta-value">{QUESTIONS_PER_TERM}</div>
+                            <div className="lower-ei-meta-label">Questions</div>
+                            <div className="lower-ei-meta-value">{QUESTIONS_PER_TERM}</div>
                         </div>
                     </div>
                 </div>
 
-                <div className="ei-divider" />
+                <div className="lower-ei-divider" />
 
                 {/* ── Instructions ── */}
-                <div className="ei-instructions">
-                    <h2 className="ei-instructions-title">📋 Instructions</h2>
-                    <ol className="ei-instructions-list">
+                <div className="lower-ei-instructions">
+                    <h2 className="lower-ei-instructions-title">📋 Instructions</h2>
+                    <ol className="lower-ei-instructions-list">
                         {INSTRUCTIONS.map((item, i) => (
-                            <li key={i} className="ei-instruction-item">
-                                <span className="ei-instruction-num">{i + 1}</span>
+                            <li key={i} className="lower-ei-instruction-item">
+                                <span className="lower-ei-instruction-num">{i + 1}</span>
                                 <span>{item}</span>
                             </li>
                         ))}
@@ -116,11 +116,11 @@ export default function ExamInfoScreen({
                 </div>
 
                 {/* ── Start button ── */}
-                <button className="ei-start-btn" onClick={onStart}>
+                <button className="lower-ei-start-btn" onClick={onStart}>
                     Start {subject.label} Exam 🚀
                 </button>
 
-                <p className="ei-start-hint">
+                <p className="lower-ei-start-hint">
                     The timer begins the moment you press Start
                 </p>
 

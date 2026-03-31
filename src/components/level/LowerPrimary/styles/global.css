@@ -47,13 +47,13 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 
-/*:root { color-scheme: light; color: var(--text-body); background-color: var(--bg); }*/
+:root { color-scheme: light; color: var(--text-body); background-color: var(--bg); }
 
 #root { min-height: 100vh; display: flex; flex-direction: column; }
 
 /*body {*/
 /*    font-family: var(--font-body);*/
-/*    !*background: var(--bg);*!*/
+/*    background: var(--bg);*/
 /*    color: var(--text-body);*/
 /*    -webkit-font-smoothing: antialiased;*/
 /*    min-height: 100vh;*/
@@ -117,7 +117,7 @@ button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
 .btn-ghost:hover { background: var(--purple-ghost); color: var(--purple); border-color: var(--purple-light); }
 
 /* ── Progress Bar ── */
-.progress-wrap {
+.lower-progress-wrap {
     width: 100%;
     background: var(--purple-pale);
     border: var(--border-thin);
@@ -125,7 +125,7 @@ button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
     height: 10px;
     overflow: hidden;
 }
-.progress-fill {
+.lower-progress-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--purple-mid), var(--purple));
     border-radius: var(--radius-pill);
@@ -168,9 +168,23 @@ button:focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
     background: var(--bg);
 }
 
+/* ── Chip ── */
+.chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--purple-ghost);
+    border: var(--border-thin);
+    border-radius: var(--radius-pill);
+    padding: 3px 12px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: var(--purple);
+}
+
 /* ── Background textures ── */
-/*.bg-dots { background-color: var(--bg); background-image: radial-gradient(rgba(167,139,250,0.25) 1.5px, transparent 1.5px); background-size: 22px 22px; }*/
-.bg-grid { background-color: var(--bg); background-image: linear-gradient(rgba(167,139,250,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.12) 1px, transparent 1px); background-size: 28px 28px; }
+.bg-dots    { background-color: var(--bg); background-image: radial-gradient(rgba(167,139,250,0.25) 1.5px, transparent 1.5px); background-size: 22px 22px; }
+.bg-checker { background-color: var(--bg); background-image: radial-gradient(rgba(167,139,250,0.2) 1.5px, transparent 1.5px); background-size: 22px 22px; }
+.bg-grid    { background-color: var(--bg); background-image: linear-gradient(rgba(167,139,250,0.12) 1px, transparent 1px), linear-gradient(90deg, rgba(167,139,250,0.12) 1px, transparent 1px); background-size: 28px 28px; }
 
 @media (max-width: 480px) {
     .screen { padding: 1rem 0.75rem 2.5rem; }

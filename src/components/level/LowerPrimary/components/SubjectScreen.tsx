@@ -11,37 +11,37 @@ export interface SubjectScreenProps {
 
 export function SubjectScreen({ onSubjectSelect, onBack }: SubjectScreenProps) {
     return (
-        <div className="screen bg-dots subjects-screen">
-            <div className="subjects-inner">
+        <div className="screen bg-dots lower-subjects-screen">
+            <div className="lower-subjects-inner">
 
                 {/* Header — Back + title only, no grade badge */}
-                <div className="subjects-header">
+                <div className="lower-subjects-header">
                     <button className="btn btn-ghost" onClick={onBack}>← Back</button>
 
-                    <div className="subjects-title-group">
-                        <h2 className="display subjects-heading">Pick a Subject</h2>
-                        <p className="subjects-heading-sub">Tap any card to begin!</p>
+                    <div className="lower-subjects-title-group">
+                        <h2 className="display lower-subjects-heading">Pick a Subject</h2>
+                        <p className="lower-subjects-heading-sub">Tap any card to begin!</p>
                     </div>
                 </div>
 
                 {/* Subject Grid */}
-                <div className="subject-grid">
+                <div className="lower-subject-grid">
                     {SUBJECTS.map((subject, idx) => (
                         <button
                             key={subject.id}
-                            className="subject-card"
+                            className="lower-subject-card"
                             data-subject={subject.id}
                             onClick={() => onSubjectSelect(subject)}
                             aria-label={`${subject.label} — ${subject.desc}`}
                         >
-                            <div className="subject-card-top">
-                                <span className="subject-icon">{subject.icon}</span>
-                                <span className="subject-num">{idx + 1}</span>
+                            <div className="lower-subject-card-top">
+                                <span className="lower-subject-icon">{subject.icon}</span>
+                                <span className="lower-subject-num">{idx + 1}</span>
                             </div>
-                            <div className="subject-card-body">
-                                <span className="display subject-name">{subject.label}</span>
-                                <span className="subject-desc">{subject.desc}</span>
-                                <span className="subject-arrow">→</span>
+                            <div className="lower-subject-card-body">
+                                <span className="display lower-subject-name">{subject.label}</span>
+                                <span className="lower-subject-desc">{subject.desc}</span>
+                                <span className="lower-subject-arrow">→</span>
                             </div>
                         </button>
                     ))}

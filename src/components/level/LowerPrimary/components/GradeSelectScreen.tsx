@@ -7,64 +7,47 @@ interface GradeSelectScreenProps {
     onContinue: (grade: Grade) => void;
 }
 
-interface GradeOption {
-    grade: Grade;
-    label: string;
-}
-
-const GRADE_OPTIONS: GradeOption[] = [
-    { grade: 1, label: "Grade 1" },
-    { grade: 2, label: "Grade 2" },
-    { grade: 3, label: "Grade 3" },
+const GRADE_OPTIONS = [
+    { grade: 1 as Grade, label: "Grade 1" },
+    { grade: 2 as Grade, label: "Grade 2" },
+    { grade: 3 as Grade, label: "Grade 3" },
 ];
 
 export default function GradeSelectScreen({ onContinue }: GradeSelectScreenProps) {
     const [selected, setSelected] = useState<Grade | null>(null);
 
     return (
-        <div className="gs-wrapper">
-            <div className="gs-card">
+        <div className="lower-gs-wrapper">
+            <div className="lower-gs-card">
 
-                {/* Back */}
-                <button className="gs-back">
-                    ← Back
-                </button>
+                {/* No back button on home screen */}
 
-                {/* Heading */}
-                <h1 className="gs-title">Select Your Grade Level</h1>
-                <p className="gs-subtitle">
-                    Please select your current grade level.
-                </p>
+                <p className="lower-gs-app-title">Lower Primary</p>
+                <h1 className="lower-gs-title">Select Your Grade Level</h1>
+                <p className="lower-gs-subtitle">Please select your current grade level.</p>
 
-                {/* HERO IMAGE */}
-                <div className="gs-hero">
+                <div className="lower-gs-hero">
                     <img src={heroImage} alt="Two children waving with learning toys" />
                 </div>
 
-                {/* Grade buttons */}
-                <div className="gs-grades">
+                <div className="lower-gs-options">
                     {GRADE_OPTIONS.map(({ grade, label }) => {
                         const isSelected = selected === grade;
-
                         return (
                             <button
                                 key={grade}
-                                className={`gs-grade ${isSelected ? "active" : ""}`}
+                                className={`lower-gs-option ${isSelected ? "active" : ""}`}
                                 onClick={() => setSelected(grade)}
                             >
                                 <span>{label}</span>
-
-                                {isSelected && (
-                                    <div className="gs-check-circle">✓</div>
-                                )}
+                                {isSelected && <div className="lower-gs-check">✓</div>}
                             </button>
                         );
                     })}
                 </div>
 
-                {/* Continue */}
                 <button
-                    className="gs-continue"
+                    className="lower-gs-continue"
                     disabled={!selected}
                     onClick={() => selected && onContinue(selected)}
                 >
