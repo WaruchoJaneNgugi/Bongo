@@ -17,7 +17,7 @@ export const PACKAGES: {
     icon: ElementType; color: string; popular?: boolean;
 }[] = [
     { id: 'solo',   label: '2 Students',   price: 'KSh 240', period: '/month', icon: User,   color: '#10b981' },
-    { id: 'trio',   label: '3 Students',  price: 'KSh 380', period: '/month', icon: Users,  color: '#3b82f6', popular: true },
-    { id: 'quad',   label: '4 Students',  price: 'KSh 600', period: '/month', icon: Crown,  color: '#f59e0b' },
-    { id: 'family', label: '4+ Students', price: 'KSh 1000', period: '/month', icon: Star,   color: '#a855f7' },
+    { id: 'trio',   label: '3 Students',  price: 'KSh 360', period: '/month', icon: Users,  color: '#3b82f6', popular: true },
+    { id: 'quad',   label: '4 Students',  price: 'KSh 480', period: '/month', icon: Crown,  color: '#f59e0b' },
+    { id: 'family', label: '4+ Students', price: 'KSh 1080', period: '/month', icon: Star,   color: '#a855f7' },
 ];
