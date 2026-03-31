@@ -1,0 +1,256 @@
+/* ═══════════════════════════════════════════════════════════
+   animations.css — BongoQuiz Global Animations & Transitions
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Keyframes ──────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.88); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(124,58,237,0.4); }
+  70%  { box-shadow: 0 0 0 10px rgba(124,58,237,0); }
+  100% { box-shadow: 0 0 0 0 rgba(124,58,237,0); }
+}
+
+@keyframes shimmer-slide {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes bounce-subtle {
+  0%, 100% { transform: translateY(0); }
+  40%       { transform: translateY(-6px); }
+  60%       { transform: translateY(-3px); }
+}
+
+@keyframes pop-in {
+  0%   { opacity: 0; transform: scale(0.7); }
+  70%  { transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ── Utility animation classes ──────────────────────────── */
+.anim-fade-up   { animation: fade-up   0.45s cubic-bezier(0.22,1,0.36,1) both; }
+.anim-fade-in   { animation: fade-in   0.35s ease both; }
+.anim-scale-in  { animation: scale-in  0.35s cubic-bezier(0.34,1.56,0.64,1) both; }
+.anim-slide-left  { animation: slide-in-left  0.4s cubic-bezier(0.22,1,0.36,1) both; }
+.anim-slide-right { animation: slide-in-right 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+.anim-float     { animation: float 3.5s ease-in-out infinite; }
+.anim-pop-in    { animation: pop-in 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+
+/* Stagger delays */
+.delay-1 { animation-delay: 0.08s; }
+.delay-2 { animation-delay: 0.16s; }
+.delay-3 { animation-delay: 0.24s; }
+.delay-4 { animation-delay: 0.32s; }
+.delay-5 { animation-delay: 0.40s; }
+
+/* ── Page-level enter animations ────────────────────────── */
+
+/* Landing guest hero */
+.lp-hero-content,
+.gh-slider-content { animation: fade-up 0.6s cubic-bezier(0.22,1,0.36,1) both; }
+
+.gh-slider-tag   { animation: fade-up 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both; }
+.gh-slider-title { animation: fade-up 0.55s 0.18s cubic-bezier(0.22,1,0.36,1) both; }
+.gh-slider-cta   { animation: fade-up 0.5s 0.28s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* Stats strip */
+.gh-stats-strip  { animation: fade-up 0.5s 0.2s cubic-bezier(0.22,1,0.36,1) both; }
+.gh-stat-item    { transition: background 0.2s, transform 0.2s; }
+.gh-stat-item:hover { transform: translateY(-2px); }
+
+/* Section headers */
+.gh-section-header { animation: fade-up 0.5s cubic-bezier(0.22,1,0.36,1) both; }
+
+/* Subject cards stagger */
+.gh-subject-card {
+  animation: fade-up 0.4s cubic-bezier(0.22,1,0.36,1) both;
+  transition: all 0.22s cubic-bezier(0.22,1,0.36,1);
+}
+.gh-subject-card:nth-child(1) { animation-delay: 0.05s; }
+.gh-subject-card:nth-child(2) { animation-delay: 0.10s; }
+.gh-subject-card:nth-child(3) { animation-delay: 0.15s; }
+.gh-subject-card:nth-child(4) { animation-delay: 0.20s; }
+.gh-subject-card:nth-child(5) { animation-delay: 0.25s; }
+.gh-subject-card:nth-child(6) { animation-delay: 0.30s; }
+.gh-subject-card:nth-child(7) { animation-delay: 0.35s; }
+.gh-subject-card:nth-child(8) { animation-delay: 0.40s; }
+
+/* Feature cards stagger */
+.gh-feature-card {
+  animation: fade-up 0.45s cubic-bezier(0.22,1,0.36,1) both;
+  transition: all 0.25s cubic-bezier(0.22,1,0.36,1);
+}
+.gh-feature-card:nth-child(1) { animation-delay: 0.05s; }
+.gh-feature-card:nth-child(2) { animation-delay: 0.12s; }
+.gh-feature-card:nth-child(3) { animation-delay: 0.19s; }
+
+/* CTA banner */
+.gh-cta-banner { animation: fade-up 0.5s 0.1s cubic-bezier(0.22,1,0.36,1) both; }
+.gh-cta-btn    { transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+.gh-cta-btn:hover { transform: translateY(-3px) scale(1.05); }
+
+/* ── Navbar ──────────────────────────────────────────────── */
+.nb-root { transition: box-shadow 0.25s, background 0.25s; }
+
+.nb-logo { transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+.nb-logo:hover { transform: scale(1.05); }
+
+.nb-link {
+  transition: background 0.18s, color 0.18s, transform 0.18s;
+  position: relative;
+}
+.nb-link:hover { transform: translateY(-1px); }
+
+/* Navbar CTA button pulse on load */
+.nb-cta-btn {
+  animation: pulse-ring 2.5s 1.5s ease-out 2;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+.nb-cta-btn:hover { transform: translateY(-2px) scale(1.04); }
+
+/* ── Auth Overlays ───────────────────────────────────────── */
+.ov-card { transition: box-shadow 0.2s; }
+
+.ov-input {
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.ov-submit {
+  transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.18s, opacity 0.15s;
+}
+.ov-submit:hover:not(:disabled) { transform: translateY(-2px) scale(1.02); }
+
+.ov-level-card {
+  transition: all 0.2s cubic-bezier(0.22,1,0.36,1);
+}
+.ov-level-card:hover { transform: translateX(4px); }
+
+.ov-plan-card {
+  transition: all 0.22s cubic-bezier(0.22,1,0.36,1);
+}
+
+.ov-avatar-opt {
+  transition: all 0.15s cubic-bezier(0.34,1.56,0.64,1);
+}
+.ov-avatar-opt:hover { transform: scale(1.15) rotate(-3deg); }
+.ov-avatar-opt.selected { animation: pop-in 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+
+.ov-step-dot { transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+.ov-step-dot.current { animation: pulse-ring 1.8s ease-out infinite; }
+
+.ov-mode-btn { transition: all 0.18s cubic-bezier(0.22,1,0.36,1); }
+.ov-mode-btn.active { animation: scale-in 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+
+/* ── Dashboard ───────────────────────────────────────────── */
+.db-root { animation: fade-up 0.4s cubic-bezier(0.22,1,0.36,1) both; }
+
+.db-stat-card {
+  transition: transform 0.2s cubic-bezier(0.22,1,0.36,1), box-shadow 0.2s;
+  animation: fade-up 0.4s cubic-bezier(0.22,1,0.36,1) both;
+}
+.db-stat-card:nth-child(1) { animation-delay: 0.05s; }
+.db-stat-card:nth-child(2) { animation-delay: 0.10s; }
+.db-stat-card:nth-child(3) { animation-delay: 0.15s; }
+.db-stat-card:nth-child(4) { animation-delay: 0.20s; }
+.db-stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+
+/* ── Exam Browser ────────────────────────────────────────── */
+.eb-card, .eb-paper-card {
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s, border-color 0.2s;
+}
+.eb-card:hover, .eb-paper-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(124,58,237,0.15);
+}
+
+/* ── Games page ──────────────────────────────────────────── */
+.game-card, .gp-card {
+  transition: transform 0.22s cubic-bezier(0.22,1,0.36,1), box-shadow 0.22s;
+}
+.game-card:hover, .gp-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+
+/* ── Buttons — global upgrade ────────────────────────────── */
+button:not([class]) {
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+/* Smooth focus rings everywhere */
+:focus-visible {
+  outline: 2px solid #7c3aed;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ── Scroll-reveal helper (JS-driven) ───────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s cubic-bezier(0.22,1,0.36,1),
+              transform 0.55s cubic-bezier(0.22,1,0.36,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Shimmer loading skeleton ────────────────────────────── */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer-slide 1.4s infinite;
+  border-radius: 8px;
+}
+
+/* ── Floating emoji decoration ───────────────────────────── */
+.float-emoji {
+  display: inline-block;
+  animation: float 3s ease-in-out infinite;
+}
+.float-emoji:nth-child(2) { animation-delay: 0.5s; }
+.float-emoji:nth-child(3) { animation-delay: 1s; }
+
+/* ── Reduce motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
