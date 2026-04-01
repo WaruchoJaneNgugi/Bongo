@@ -15,7 +15,7 @@ import '../styles/exambrowser.css';
 import '../styles/landing-loggedin.css';
 import {ExamBrowser} from "./ExamBrowser.tsx";
 import {LEVEL_CONFIG} from "../hooks/LevelConfigs.ts";
-import {PACKAGES, avatarUrl} from "../hooks/Packages.ts";
+import {PACKAGES, avatarUrl, AVATARS} from "../hooks/Packages.ts";
 
 
 const HOW_IT_WORKS = [
@@ -279,7 +279,7 @@ const LoggedInHero: React.FC = () => {
       <div className="lp-home-hero" style={{ background: level.bg }}>
         <div className="lp-home-hero-orb" />
         <div className="lp-home-hero-top">
-          <div className="lp-home-avatar"><img src={avatarUrl(activeProfile.avatar || 'Zara')} alt="avatar" width={48} height={48} style={{borderRadius:'50%'}} /></div>
+          <div className="lp-home-avatar"><img src={avatarUrl(activeProfile.avatar || AVATARS[0])} alt="avatar" width={48} height={48} style={{borderRadius:'50%'}} /></div>
           <div className="lp-home-hero-info">
             <p className="lp-home-greeting">{greeting} 👋</p>
             <h1 className="lp-home-name">{activeProfile.username}</h1>

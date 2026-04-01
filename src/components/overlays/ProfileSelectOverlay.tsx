@@ -161,9 +161,11 @@ const ProfileSelectOverlay: React.FC = () => {
           <button className="ps-pin-submit" onClick={handleAddProfile}>
             Create Profile
           </button>
-          <button className="ps-back-link" onClick={() => { setAdding(false); setAddError(''); }}>
-            <ArrowLeft size={14} /> Back to profiles
-          </button>
+          {user.profiles.length > 0 && (
+            <button className="ps-back-link" onClick={() => { setAdding(false); setAddError(''); }}>
+              <ArrowLeft size={14} /> Back to profiles
+            </button>
+          )}
         </div>
       )}
     </div>

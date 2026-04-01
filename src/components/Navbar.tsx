@@ -6,7 +6,7 @@ import {
   GraduationCap, ChevronDown,
 } from 'lucide-react';
 import '../styles/navbar.css';
-import { avatarUrl } from '../hooks/Packages.ts';
+import { avatarUrl, AVATARS } from '../hooks/Packages.ts';
 
 const Navbar: React.FC = () => {
   const { isLoggedIn, user, setOverlay, logout } = useStore();
@@ -38,7 +38,7 @@ const Navbar: React.FC = () => {
 
   // const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
   const userAvatar = user?.profiles.find(p => p.id === user.activeProfileId)?.avatar
-    ?? user?.profiles[0]?.avatar ?? 'Zara';
+    ?? user?.profiles[0]?.avatar ?? AVATARS[0];
 
   const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };
 

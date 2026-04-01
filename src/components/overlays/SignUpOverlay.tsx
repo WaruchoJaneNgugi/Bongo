@@ -1,17 +1,9 @@
 import React, { useState, useRef } from 'react';
-import { useStore, type StudentProfile, type EducationLevel, type FamilyPackage } from '../../store/useStore';
+import { useStore, type FamilyPackage } from '../../store/useStore';
 import { useNavigate } from 'react-router-dom';
 import { Phone, ArrowRight, ArrowLeft, CheckCircle, Shield } from 'lucide-react';
 import '../../styles/overlay.css';
-import {AVATARS, PACKAGES, avatarUrl} from "../../hooks/Packages.ts";
-
-const LEVEL_OPTIONS: { id: EducationLevel; label: string; grades: string; emoji: string; color: string }[] = [
-  { id: 'lower_primary', label: 'Lower Primary', grades: 'Grade 1–3', emoji: '🧒', color: '#10b981' },
-  { id: 'middle_school', label: 'Middle School', grades: 'Grade 4–9', emoji: '🧠', color: '#3b82f6' },
-  { id: 'senior_school', label: 'Senior School', grades: 'Grade 10–12', emoji: '🎓', color: '#a855f7' },
-];
-
-
+import { PACKAGES } from "../../hooks/Packages.ts";
 
 const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasError?: boolean }> = ({ value, onChange, hasError }) => {
   const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
@@ -49,8 +41,8 @@ const SignUpOverlay: React.FC = () => {
   const { setOverlay, registerUser, login, allUsers, signupPackage } = useStore();
   const navigate = useNavigate();
 
-  // steps: 1=phone+pin, 2=otp, 3=package, 4=first profile
-  const [step, setStep] = useState(signupPackage ? 1 : 1);
+  // steps: 1=phone+pin, 2=otp, 3=package
+  const [step, setStep] = useState(1);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -58,11 +50,6 @@ const SignUpOverlay: React.FC = () => {
   const [accountPin, setAccountPin] = useState('');
   const [otp, setOtp] = useState('');
   const [selectedPackage, setSelectedPackage] = useState<FamilyPackage | null>(signupPackage ?? null);
-
-  // First profile (name + level only — PIN comes from account)
-  const [username, setUsername] = useState('');
-  const [avatar, setAvatar] = useState(AVATARS[0]);
-  const [level, setLevel] = useState<EducationLevel | null>(null);
 
   const cleanPhone = phone.replace(/\s/g, '');
 
@@ -82,52 +69,34 @@ const SignUpOverlay: React.FC = () => {
 
   const handleVerifyOtp = () => {
     if (otp !== '1234') { setError('Invalid OTP. Use 1234 for demo.'); return; }
-    setError(''); setStep(signupPackage ? 4 : 3);
+    setError('');
+    // If package was pre-selected from landing page, skip step 3
+    if (signupPackage) {
+      handleFinish(signupPackage);
+    } else {
+      setStep(3);
+    }
   };
 
   const handlePackageNext = () => {
     if (!selectedPackage) { setError('Please select a package'); return; }
-    setError(''); setStep(4);
+    setError('');
+    handleFinish(selectedPackage);
   };
 
-  const handleFinish = () => {
-    setError('');
-    if (!username.trim()) { setError('Enter your name'); return; }
-    if (!level) { setError('Select your education level'); return; }
-
-    const firstProfile: StudentProfile = {
-      id: `${cleanPhone}-0`,
-      username: username.trim(),
-      educationLevel: level,
-      pin: accountPin,   // all profiles share the account PIN
-      avatar,
-      xp: 0, level: 1, streak: 0, points: 0,
-    };
-
+  const handleFinish = (pkg: FamilyPackage) => {
     const newUser = {
       type: 'student' as const,
       phone: cleanPhone,
       pin: accountPin,
-      package: selectedPackage!,
-      profiles: [firstProfile],
-      activeProfileId: selectedPackage === 'solo' ? firstProfile.id : null,
+      package: pkg,
+      profiles: [],
+      activeProfileId: null,
     };
-
     registerUser(newUser);
     login(newUser);
     setOverlay(null);
-
-    if (selectedPackage === 'solo') {
-      const routes: Record<EducationLevel, string> = {
-        lower_primary: '/level/lower-primary',
-        middle_school: '/level/middle-school',
-        senior_school: '/level/senior-school',
-      };
-      navigate(routes[level]);
-    } else {
-      // Go to profile select where they can add more profiles
-      setOverlay('profile-select');
-    }
+    navigate('/profile-select');
   };
 
   return (
@@ -138,12 +107,12 @@ const SignUpOverlay: React.FC = () => {
           <div className="ov-logo">Bongo<span>Quiz</span></div>
 
           <div className="ov-steps">
-            {[1,2,3,4].map(n => (
+            {[1,2,3].map(n => (
               <React.Fragment key={n}>
                 <div className={`ov-step-dot ${step === n ? 'current' : step > n ? 'done' : ''}`}>
                   {step > n ? <CheckCircle size={14} /> : n}
                 </div>
-                {n < 4 && <div className={`ov-step-line ${step > n ? 'done' : ''}`} />}
+                {n < 3 && <div className={`ov-step-line ${step > n ? 'done' : ''}`} />}
               </React.Fragment>
             ))}
           </div>
@@ -194,7 +163,7 @@ const SignUpOverlay: React.FC = () => {
             </div>
           )}
 
-          {/* Step 3: Package */}
+          {/* Step 3: Package (only shown when no pre-selected package) */}
           {step === 3 && (
             <div className="ov-step-body">
               <h2 className="ov-title">📦 Choose a Package</h2>
@@ -227,59 +196,6 @@ const SignUpOverlay: React.FC = () => {
                 <span>Continue</span><ArrowRight size={18} />
               </button>
               <button className="ov-back-btn" onClick={() => setStep(2)}>
-                <ArrowLeft size={16} /> Back
-              </button>
-            </div>
-          )}
-
-          {/* Step 4: First profile */}
-          {step === 4 && (
-            <div className="ov-step-body">
-              <h2 className="ov-title">🎓 Your Profile</h2>
-              <p className="ov-sub">Tell us about the first student</p>
-              {error && <div className="ov-error"><Shield size={14} />{error}</div>}
-
-              <div className="ov-form-group">
-                <label className="ov-label">Choose avatar</label>
-                <div className="ov-avatar-row">
-                  {AVATARS.map(a => (
-                    <button key={a} className={`ov-avatar-opt ${avatar === a ? 'selected' : ''}`}
-                      onClick={() => setAvatar(a)}>
-                      <img src={avatarUrl(a)} alt={a} width={32} height={32} />
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="ov-form-group">
-                <label className="ov-label">Your Name</label>
-                <input className="ov-input" placeholder="e.g. Brian Otieno"
-                  value={username} onChange={e => { setUsername(e.target.value); setError(''); }} />
-              </div>
-
-              <div className="ov-form-group">
-                <label className="ov-label">Education Level</label>
-                <div className="ov-level-grid">
-                  {LEVEL_OPTIONS.map(opt => (
-                    <button key={opt.id}
-                      className={`ov-level-card ${level === opt.id ? 'selected' : ''}`}
-                      style={level === opt.id ? { borderColor: opt.color, background: `${opt.color}12` } : {}}
-                      onClick={() => { setLevel(opt.id); setError(''); }}>
-                      <span className="ov-level-emoji">{opt.emoji}</span>
-                      <div className="ov-level-info">
-                        <span className="ov-level-name">{opt.label}</span>
-                        <span className="ov-level-grades">{opt.grades}</span>
-                      </div>
-                      {level === opt.id && <CheckCircle size={16} color={opt.color} style={{ marginLeft: 'auto' }} />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button className="ov-submit" onClick={handleFinish} style={{ marginTop: '0.5rem' }}>
-                <span>🚀 Create Account</span>
-              </button>
-              <button className="ov-back-btn" onClick={() => setStep(signupPackage ? 2 : 3)}>
                 <ArrowLeft size={16} /> Back
               </button>
             </div>
