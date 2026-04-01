@@ -2,7 +2,7 @@
 import { useState } from "react";
 import type { Grade, Term, Subject, QuizResult, Screen } from "../types";
 
-import GradeSelectScreen from "./GradeSelectScreen";
+// import GradeSelectScreen from "./GradeSelectScreen";
 import TermSelectScreen  from "../components/Termselectscreen";
 import SubjectScreen     from "../components/SubjectScreen";
 import ExamInfoScreen    from "../components/Examinfoscreen.tsx";
@@ -22,11 +22,11 @@ export function LowerPrimary() {
     const [subject, setSubject] = useState<Subject | null>(null);
     const [result,  setResult]  = useState<QuizResult | null>(null);
 
-    const handleGradeContinue = (g: Grade): void => {
-        setGrade(g);
-        setLevelSelection('lower_primary', { grade: g });
-        setScreen("term");
-    };
+    // const handleGradeContinue = (g: Grade): void => {
+    //     setGrade(g);
+    //     setLevelSelection('lower_primary', { grade: g });
+    //     setScreen("term");
+    // };
 
     const handleTermContinue = (t: Term): void => {
         setTerm(t);
@@ -59,10 +59,10 @@ export function LowerPrimary() {
 
     return (
         <>
-            {screen === "landing" && <GradeSelectScreen onContinue={handleGradeContinue} />}
+            {/*{screen === "landing" && <GradeSelectScreen onContinue={handleGradeContinue} />}*/}
 
             {screen === "term" && grade !== null && (
-                <TermSelectScreen grade={grade} onContinue={handleTermContinue} onBack={handleChangeGrade} />
+                <TermSelectScreen grade={grade} onContinue={handleTermContinue}  />
             )}
 
             {screen === "subjects" && grade !== null && term !== null && (

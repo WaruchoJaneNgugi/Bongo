@@ -14,6 +14,7 @@ export interface StudentProfile {
   id: string;           // unique id within the account
   username: string;
   educationLevel: EducationLevel;
+  grade: number;        // 1–12
   pin: string;          // 4-digit profile PIN
   avatar: string;
   xp: number;

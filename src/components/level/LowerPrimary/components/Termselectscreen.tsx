@@ -5,7 +5,7 @@ import "../styles/gradeSelectScreen.css";
 interface TermSelectScreenProps {
     grade: Grade;
     onContinue: (term: Term) => void;
-    onBack: () => void;
+    // onBack: () => void;
 }
 
 interface TermOption {
@@ -23,7 +23,7 @@ const TERM_OPTIONS: TermOption[] = [
 
 const GRADE_EMOJI: Record<Grade, string> = { 1: "🐣", 2: "🐥", 3: "🐓" };
 
-export default function TermSelectScreen({ grade, onContinue, onBack }: TermSelectScreenProps) {
+export default function TermSelectScreen({ grade, onContinue }: TermSelectScreenProps) {
     const [selected, setSelected] = useState<Term | null>(null);
 
     return (
@@ -31,7 +31,7 @@ export default function TermSelectScreen({ grade, onContinue, onBack }: TermSele
             <div className="lower-gs-card">
 
                 {/* Back */}
-                <button className="lower-gs-back" onClick={onBack}>← Back</button>
+                {/*<button className="lower-gs-back" onClick={onBack}>← Back</button>*/}
 
                 {/* Grade pill */}
                 <div className="lower-ts-grade-pill">

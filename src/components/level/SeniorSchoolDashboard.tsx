@@ -104,7 +104,7 @@ export const SeniorSchoolDashboard =() =>{
                   <span className="ep-school-name">SENIOR SECONDARY SCHOOL</span>
                 </div>
               </header>
-              <span className="back-link" onClick={() => setView('GRADES')}>← Back</span>
+              {/*<span className="back-link" onClick={() => setView('GRADES')}>← Back</span>*/}
               <h1>Select Term</h1>
               <p className="portal-tagline">Grade {selectedGrade} · Choose an academic term</p>
               <div className="button-group">

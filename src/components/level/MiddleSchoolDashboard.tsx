@@ -1,8 +1,6 @@
 import { useState, useCallback } from 'react';
-import type {SchoolLevel, ClassName, Term, Subject, Question} from './MiddleSchool/types';
+import type {ClassName, Term, Subject, Question} from './MiddleSchool/types';
 import { getQuestions } from './MiddleSchool/data/questions';
-import LevelSelector from './MiddleSchool/components/LevelSelector';
-import ClassSelector from './MiddleSchool/components/ClassSelector';
 import TermSelector from './MiddleSchool/components/TermSelector';
 import SubjectList from './MiddleSchool/components/SubjectList';
 import PreExam from './MiddleSchool/components/PreExam';
@@ -13,7 +11,7 @@ import './MiddleSchool/styles/styles.css';
 import { BookOpen, ChevronLeft } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
-type AppState = 'level' | 'class' | 'term' | 'subject' | 'timer' | 'exam' | 'results';
+type AppState = 'term' | 'subject' | 'timer' | 'exam' | 'results';
 
 const SUBJECT_DURATIONS: Record<string, number> = {
   'Mathematics': 3,
@@ -27,12 +25,7 @@ export const MiddleSchoolDashboard=()=> {
   const { levelSelections, setLevelSelection } = useStore();
   const saved = levelSelections.middle_school;
 
-  // If level saved → skip level selector, land on class picker
-  // If both level + className saved → skip both, land on term picker
-  const initialState: AppState = saved?.className ? 'term' : saved?.level ? 'class' : 'level';
-
-  const [appState, setAppState] = useState<AppState>(initialState);
-  const [level, setLevel] = useState<SchoolLevel>((saved?.level as SchoolLevel) || null);
+  const [appState, setAppState] = useState<AppState>('term');
   const [className, setClassName] = useState<ClassName>((saved?.className as ClassName) || null);
   const [term, setTerm] = useState<Term>(null);
   const [subject, setSubject] = useState<Subject>(null);
@@ -43,7 +36,6 @@ export const MiddleSchoolDashboard=()=> {
   const navigate = (
       newState: AppState,
       updates: {
-        level?: SchoolLevel | null,
         className?: ClassName | null,
         term?: Term | null,
         subject?: Subject | null,
@@ -52,22 +44,11 @@ export const MiddleSchoolDashboard=()=> {
       } = {}
   ) => {
     setAppState(newState);
-    if ('level' in updates) setLevel(updates.level!);
     if ('className' in updates) setClassName(updates.className!);
     if ('term' in updates) setTerm(updates.term!);
     if ('subject' in updates) setSubject(updates.subject!);
     if ('questions' in updates) setQuestions(updates.questions!);
     if ('answers' in updates) setAnswers(updates.answers!);
-  };
-
-  const handleSelectLevel = (selectedLevel: SchoolLevel) => {
-    setLevelSelection('middle_school', { level: selectedLevel, className: '' });
-    navigate('class', { level: selectedLevel });
-  };
-
-  const handleSelectClass = (selectedClass: ClassName) => {
-    setLevelSelection('middle_school', { level: level as string, className: selectedClass });
-    navigate('term', { className: selectedClass });
   };
 
   const handleSelectTerm = (selectedTerm: Term) => {
@@ -98,7 +79,6 @@ export const MiddleSchoolDashboard=()=> {
   const handleRestart = () => {
     setForceSubmit(false);
     setLevelSelection('middle_school', undefined as any);
-    navigate('level', { level: null, className: null, term: null, subject: null, questions: [], answers: {} });
   };
 
   const handleTakeAnotherExam = () => {
@@ -108,25 +88,17 @@ export const MiddleSchoolDashboard=()=> {
 
   const handleBack = () => {
     const backMap: Partial<Record<AppState, AppState>> = {
-      class: 'level', term: 'class', subject: 'term', timer: 'subject', exam: 'timer',
+      subject: 'term', timer: 'subject', exam: 'timer',
     };
     const prev = backMap[appState];
-    if (prev === 'level') {
-      setLevelSelection('middle_school', undefined as any);
-      navigate('level', { level: null, className: null });
-    } else if (prev === 'class') {
-      setLevelSelection('middle_school', { level: level as string, className: '' });
-      navigate('class', { className: null });
-    } else if (prev) {
-      navigate(prev);
-    }
+    if (prev) navigate(prev);
   };
 
   return (
-      <div className={`app-container ${appState === 'level' ? 'landing-mode-bg' : ''} ${appState === 'exam' ? 'exam-mode-container' : ''}`}>
+      <div className={`app-container ${appState === 'exam' ? 'exam-mode-container' : ''}`}>
         <header className="header">
           <div className="header-content">
-            {appState !== 'level' && appState !== 'results' && appState !== 'exam' ? (
+            {appState !== 'results' && appState !== 'exam' && appState !== 'term' ? (
                 <button onClick={handleBack} className="btn-back-mobile" style={{ color: '#4f7396', padding: 0 }}>
                   <ChevronLeft size={24} />
                   <span>Back</span>
@@ -153,20 +125,12 @@ export const MiddleSchoolDashboard=()=> {
           </div>
         </header>
 
-        <main className={`main-content ${appState === 'exam' ? 'exam-mode' : ''} ${appState === 'level' ? 'landing-mode' : ''} ${appState === 'timer' ? 'timer-mode' : ''}`}>
-          {appState === 'level' && <LevelSelector onSelect={handleSelectLevel} />}
-          {appState === 'class' && level && (
-              <ClassSelector
-                  level={level}
-                  onSelect={handleSelectClass}
-                  onBack={() => setAppState('level')}
-              />
-          )}
+        <main className={`main-content ${appState === 'exam' ? 'exam-mode' : ''} ${appState === 'timer' ? 'timer-mode' : ''}`}>
           {appState === 'term' && className && (
               <TermSelector
                   className={className}
                   onSelect={handleSelectTerm}
-                  onBack={() => setAppState('class')}
+                  onBack={() => {}}
               />
           )}
           {appState === 'subject' && className && term && (

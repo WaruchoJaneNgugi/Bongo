@@ -11,52 +11,28 @@ const ROUTES: Record<EducationLevel, string> = {
     senior_school: '/level/senior-school',
 };
 
-const LEVEL_OPTIONS: {
-    id: EducationLevel;
-    label: string;
-    grades: string;
-    emoji: string;
-    color: string;
-    bg: string
-}[] = [
-    {
-        id: 'lower_primary',
-        label: 'Lower Primary',
-        grades: 'Grade 1–3',
-        emoji: '🧒',
-        color: '#10b981',
-        bg: 'rgba(16,185,129,0.12)'
-    },
-    {
-        id: 'middle_school',
-        label: 'Middle School',
-        grades: 'Grade 4–9',
-        emoji: '🧠',
-        color: '#3b82f6',
-        bg: 'rgba(59,130,246,0.12)'
-    },
-    {
-        id: 'senior_school',
-        label: 'Senior School',
-        grades: 'Grade 10–12',
-        emoji: '🎓',
-        color: '#a855f7',
-        bg: 'rgba(168,85,247,0.12)'
-    },
-];
+const gradeToLevel = (grade: number): EducationLevel =>
+    grade <= 3 ? 'lower_primary' : grade <= 9 ? 'middle_school' : 'senior_school';
 
+const GRADES = Array.from({ length: 12 }, (_, i) => i + 1);
+
+const GRADE_COLORS: Record<EducationLevel, { color: string; bg: string }> = {
+    lower_primary: { color: '#10b981', bg: 'rgba(16,185,129,0.12)' },
+    middle_school: { color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
+    senior_school: { color: '#a855f7', bg: 'rgba(168,85,247,0.12)' },
+};
 
 const MAX_STUDENTS: Record<string, number> = {
     solo: 1, trio: 3, quad: 4, family: 9,
 };
 
 const ProfileSelectOverlay: React.FC = () => {
-    const {user, setOverlay, setActiveProfile, updateUser, logout} = useStore();
+    const {user, setOverlay, setActiveProfile, updateUser, logout, setLevelSelection} = useStore();
     const navigate = useNavigate();
 
     const [adding, setAdding] = useState(false);
     const [newName, setNewName] = useState('');
-    const [newLevel, setNewLevel] = useState<EducationLevel | null>(null);
+    const [newGrade, setNewGrade] = useState<number | null>(null);
     const [addError, setAddError] = useState('');
 
     if (!user) return null;
@@ -67,41 +43,41 @@ const ProfileSelectOverlay: React.FC = () => {
     const handleSelect = (profile: StudentProfile) => {
         setActiveProfile(profile.id);
         setOverlay(null);
+        const g = profile.grade;
+        if (profile.educationLevel === 'lower_primary') {
+            setLevelSelection('lower_primary', { grade: g });
+        } else if (profile.educationLevel === 'senior_school') {
+            setLevelSelection('senior_school', { grade: String(g) });
+        } else if (profile.educationLevel === 'middle_school') {
+            const schoolLevel = g <= 6 ? 'Upper Primary' : 'Junior Secondary School';
+            setLevelSelection('middle_school', { level: schoolLevel, className: `Grade ${g}` });
+        }
         navigate(ROUTES[profile.educationLevel]);
     };
 
     const handleAddProfile = () => {
         setAddError('');
-        if (!newName.trim()) {
-            setAddError('Please enter a name');
-            return;
-        }
-        if (!newLevel) {
-            setAddError('Please select an education level');
-            return;
-        }
+        if (!newName.trim()) { setAddError('Please enter a name'); return; }
+        if (!newGrade) { setAddError('Please select a grade'); return; }
 
         const newProfile: StudentProfile = {
             id: `${user.phone}-${user.profiles.length}`,
             username: newName.trim(),
-            educationLevel: newLevel,
+            educationLevel: gradeToLevel(newGrade),
+            grade: newGrade,
             pin: user.pin,
-            avatar: AVATARS[0],
+            avatar: AVATARS[8],
             xp: 0, level: 1, streak: 0, points: 0,
         };
 
         updateUser({profiles: [...user.profiles, newProfile]});
         setAdding(false);
         setNewName('');
-        setNewLevel(null);
+        setNewGrade(null);
     };
-
-    const levelLabel = (l: EducationLevel) =>
-        l === 'lower_primary' ? 'Grade 1–3' : l === 'middle_school' ? 'Grade 4–9' : 'Grade 10–12';
 
     return (
         <div className="ps-backdrop">
-            {/* Logo */}
             <div className="ps-logo">Bongo<span>Quiz</span></div>
 
             {!adding ? (
@@ -114,10 +90,9 @@ const ProfileSelectOverlay: React.FC = () => {
                     <div className="ps-profiles-grid">
                         {user.profiles.map(profile => (
                             <button key={profile.id} className="ps-profile-card" onClick={() => handleSelect(profile)}>
-                                <div className="ps-avatar"><img src={avatarUrl(profile.avatar)} alt={profile.username}
-                                                                width={40} height={40}/></div>
+                                <div className="ps-avatar"><img src={avatarUrl(profile.avatar)} alt={profile.username} width={40} height={40}/></div>
                                 <span className="ps-profile-name">{profile.username}</span>
-                                <span className="ps-profile-level">{levelLabel(profile.educationLevel)}</span>
+                                <span className="ps-profile-level">Grade {profile.grade}</span>
                             </button>
                         ))}
 
@@ -125,23 +100,17 @@ const ProfileSelectOverlay: React.FC = () => {
                             <button className="ps-profile-card ps-add-card" onClick={() => setAdding(true)}>
                                 <div className="ps-avatar ps-add-avatar"><Plus size={30}/></div>
                                 <span className="ps-profile-name">Add Profile</span>
-                                <span
-                                    className="ps-profile-level">{user.profiles.length}/{maxProfiles} slots used</span>
+                                <span className="ps-profile-level">{user.profiles.length}/{maxProfiles} slots used</span>
                             </button>
                         )}
                     </div>
 
-                    <button className="ps-logout-btn" onClick={() => {
-                        logout();
-                        setOverlay(null);
-                        navigate('/');
-                    }}>
+                    <button className="ps-logout-btn" onClick={() => { logout(); setOverlay(null); navigate('/'); }}>
                         <LogOut size={15}/> Sign Out
                     </button>
                 </div>
             ) : (
                 <div className="pas-add-screen-container">
-
                     <div className="ps-add-screen">
                         <div className="ps-add-header">
                             <div className="ps-add-icon"><User size={22}/></div>
@@ -151,7 +120,6 @@ const ProfileSelectOverlay: React.FC = () => {
 
                         {addError && <p className="ps-add-error">{addError}</p>}
 
-                        {/* Name input */}
                         <div className="ps-section" style={{width: '100%'}}>
                             <label className="ps-section-label">Student name</label>
                             <input
@@ -159,49 +127,35 @@ const ProfileSelectOverlay: React.FC = () => {
                                 placeholder="e.g. Amara, Kofi, Zuri…"
                                 autoFocus
                                 value={newName}
-                                onChange={e => {
-                                    setNewName(e.target.value);
-                                    setAddError('');
-                                }}
+                                onChange={e => { setNewName(e.target.value); setAddError(''); }}
                             />
                         </div>
 
-                        {/* Level picker */}
                         <div className="ps-section" style={{width: '100%'}}>
                             <label className="ps-section-label">Education level</label>
-                            <div className="ps-add-levels">
-                                {LEVEL_OPTIONS.map(opt => (
-                                    <button
-                                        key={opt.id}
-                                        className={`ps-level-card ${newLevel === opt.id ? 'selected-card' : ''}`}
-                                        style={newLevel === opt.id ? {borderColor: opt.color, background: opt.bg} : {}}
-                                        onClick={() => {
-                                            setNewLevel(opt.id);
-                                            setAddError('');
-                                        }}
-                                    >
-                                        <span className="ps-level-emoji">{opt.emoji}</span>
-                                        <div className="ps-level-info">
-                                            <div className="ps-level-name">{opt.label}</div>
-                                            <div className="ps-level-grades">{opt.grades}</div>
-                                        </div>
-                                        {newLevel === opt.id && <CheckCircle size={18} color={opt.color} style={{
-                                            marginLeft: 'auto',
-                                            flexShrink: 0
-                                        }}/>}
-                                    </button>
-                                ))}
+                            <div className="ps-grade-grid">
+                                {GRADES.map(g => {
+                                    const lvl = gradeToLevel(g);
+                                    const { color, bg } = GRADE_COLORS[lvl];
+                                    const selected = newGrade === g;
+                                    return (
+                                        <button
+                                            key={g}
+                                            className={`ps-grade-cell ${selected ? 'selected' : ''}`}
+                                            style={selected ? { borderColor: color, background: bg, color } : {}}
+                                            onClick={() => { setNewGrade(g); setAddError(''); }}
+                                        >
+                                            {selected && <CheckCircle size={12} className="ps-grade-check" />}
+                                            <span>Grade {g}</span>
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
-                        <button className="ps-pin-submit" onClick={handleAddProfile}>
-                            Create Profile
-                        </button>
+                        <button className="ps-pin-submit" onClick={handleAddProfile}>Create Profile</button>
                         {user.profiles.length > 0 && (
-                            <button className="ps-back-link" onClick={() => {
-                                setAdding(false);
-                                setAddError('');
-                            }}>
+                            <button className="ps-back-link" onClick={() => { setAdding(false); setAddError(''); }}>
                                 <ArrowLeft size={14}/> Back to profiles
                             </button>
                         )}

@@ -294,6 +294,47 @@
 }
 .ps-add-input::placeholder { color: #a1a1aa; }
 
+/* ── Grade grid ── */
+.ps-grade-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.ps-grade-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 0.4rem;
+  border-radius: 10px;
+  border: 1.5px solid #e4e4e7;
+  background: #fafafa;
+  color: #374151;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: var(--font-body, 'Nunito', sans-serif);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s, color 0.15s;
+}
+.ps-grade-cell:hover {
+  border-color: #c084fc;
+  background: #faf5ff;
+  transform: scale(1.05);
+}
+.ps-grade-cell.selected {
+  font-weight: 800;
+  box-shadow: 0 3px 10px rgba(124,58,237,0.18);
+  transform: scale(1.06);
+}
+
+.ps-grade-check {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+}
+
 /* ── Level cards ── */
 .ps-add-levels {
   display: flex;
