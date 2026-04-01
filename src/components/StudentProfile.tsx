@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useStore, type EducationLevel } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users } from 'lucide-react';
+import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users, Camera } from 'lucide-react';
 import '../styles/profile.css';
 import { LEVEL_CONFIG } from '../hooks/LevelConfigs';
 import { avatarUrl, AVATARS } from '../hooks/Packages.ts';
@@ -29,6 +29,22 @@ const StudentProfile: React.FC = () => {
   const [editName, setEditName] = useState('');
   const [saveMsg, setSaveMsg] = useState('');
   const [error, setError] = useState('');
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const saveAvatar = (avatar: string) => {
+    updateUser({ profiles: user!.profiles.map(p =>
+      p.id === (user!.profiles.find(p => p.id === user!.activeProfileId) ?? user!.profiles[0]).id
+        ? { ...p, avatar } : p
+    )});
+  };
+
+  const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => saveAvatar(reader.result as string);
+    reader.readAsDataURL(file);
+  };
 
   if (!isLoggedIn || !user) {
     return (
@@ -69,7 +85,12 @@ const StudentProfile: React.FC = () => {
       <div className="pr-hero" style={{ background: lvl.bg }}>
         <div className="pr-hero-orb" />
         <div className="pr-hero-inner">
-          <div className="pr-hero-avatar"><img src={avatarUrl(activeProfile.avatar || AVATARS[0])} alt="avatar" width={72} height={72} style={{borderRadius:'50%'}} /></div>
+          <div className="pr-hero-avatar" style={{ cursor: 'pointer', position: 'relative' }} onClick={() => setTab('account')}>
+            <img src={avatarUrl(activeProfile.avatar || AVATARS[0])} alt="avatar" width={72} height={72} style={{borderRadius:'50%'}} />
+            <div style={{ position:'absolute', bottom:0, right:0, background:'rgba(0,0,0,0.55)', borderRadius:'50%', width:22, height:22, display:'flex', alignItems:'center', justifyContent:'center' }}>
+              <Camera size={12} color="#fff" />
+            </div>
+          </div>
           <div className="pr-hero-info">
             <h1 className="pr-hero-name">{activeProfile.username}</h1>
             <span className="pr-hero-level">{lvl.emoji} {lvl.label} · {lvl.grades}</span>
@@ -167,6 +188,23 @@ const StudentProfile: React.FC = () => {
             {error   && <div className="pr-msg pr-msg-error"><Shield size={14} /> {error}</div>}
             {saveMsg && <div className="pr-msg pr-msg-success"><CheckCircle size={14} /> {saveMsg}</div>}
 
+            {/* ── Avatar editor ── */}
+            <div className="pr-field">
+              <label className="pr-label">Avatar</label>
+              <div className="pr-avatar-grid">
+                {AVATARS.map(a => (
+                  <button key={a}
+                    className={`pr-avatar-opt ${activeProfile.avatar === a ? 'selected' : ''}`}
+                    onClick={() => saveAvatar(a)}>
+                    <img src={avatarUrl(a)} alt={a} width={36} height={36} />
+                  </button>
+                ))}
+              </div>
+              <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleUpload} />
+              <button className="pr-upload-btn" onClick={() => fileRef.current?.click()}>
+                <Camera size={14} /> Upload Photo
+              </button>
+            </div>
             <div className="pr-field">
               <label className="pr-label">Display Name</label>
               <input className="pr-input" value={editName} onChange={e => setEditName(e.target.value)} />

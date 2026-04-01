@@ -106,7 +106,7 @@ const GuestHero: React.FC = () => {
           </section>
 
           {/* Stats Strip */}
-          <div>
+          {/*<div>*/}
             <div className="gh-stats-strip reveal">
               <div className="gh-stat-item">
                 <span className="gh-stat-num">50K+</span>
@@ -125,7 +125,7 @@ const GuestHero: React.FC = () => {
                 <span className="gh-stat-label">From/month</span>
               </div>
             </div>
-          </div>
+          {/*</div>*/}
 
 
           {/* Exam Browser */}

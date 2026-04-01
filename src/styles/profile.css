@@ -292,3 +292,28 @@
   .pr-stat-val  { font-size: 0.95rem; }
   .pr-tabs, .pr-content { margin-left: 0.75rem; margin-right: 0.75rem; }
 }
+
+/* ── Avatar editor ─────────────────────────────────────── */
+.pr-avatar-grid {
+  display: flex; flex-wrap: wrap; gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+.pr-avatar-opt {
+  background: none; border: 2px solid transparent;
+  border-radius: 50%; padding: 2px; cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.pr-avatar-opt:hover { transform: scale(1.1); }
+.pr-avatar-opt.selected { border-color: #7c3aed; }
+.pr-avatar-opt img { display: block; border-radius: 50%; }
+
+.pr-upload-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.45rem 1rem; border-radius: 999px;
+  border: 1.5px solid var(--border, #e5e7eb);
+  background: var(--bg-soft, #f9fafb);
+  color: var(--text, #111); font-size: 0.82rem;
+  font-weight: 600; cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pr-upload-btn:hover { background: #ede9fe; border-color: #7c3aed; color: #7c3aed; }
