@@ -17,14 +17,22 @@ const SUBJECT_ICONS: Record<string, string> = {
 
 const getIcon = (name: string) => SUBJECT_ICONS[name] ?? '📖';
 
-export const SeniorSchoolDashboard =() =>{
+export const SeniorSchoolDashboard = ({ initialSubject: initSubjectName }: { initialSubject?: string } = {}) => {
   const { levelSelections, setLevelSelection } = useStore();
   const savedGrade = levelSelections.senior_school?.grade as Grade | undefined;
 
-  const [view, setView] = useState<ExtendedView>(savedGrade ? 'TERMS' : 'GRADES');
+  const getInitSubject = (): Subject | null => {
+    if (!initSubjectName || !savedGrade) return null;
+    const termData = (EXAM_DATA as any)[savedGrade]?.['TERM 1'] || [];
+    return termData.find((s: Subject) => s.name === initSubjectName) ?? null;
+  };
+
+  const initSubject = getInitSubject();
+
+  const [view, setView] = useState<ExtendedView>(initSubject ? 'INSTRUCTIONS' : (savedGrade ? 'TERMS' : 'GRADES'));
   const [selectedGrade, setSelectedGrade] = useState<Grade | null>(savedGrade ?? null);
-  const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
-  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
+  const [selectedTerm, setSelectedTerm] = useState<string | null>(initSubject ? 'TERM 1' : null);
+  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(initSubject);
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState<Record<number, string>>({});
   const [timeLeft, setTimeLeft] = useState(120);
@@ -296,7 +304,7 @@ export const SeniorSchoolDashboard =() =>{
 
                   <div className="results-actions">
                     <button className="try-again-btn" onClick={startExam}>🔄 Try Again</button>
-                    <button className="new-subject-btn" onClick={() => setView('SUBJECTS')}>📚 New Subject</button>
+                    {/*<button className="new-subject-btn" onClick={() => setView('SUBJECTS')}>📚 New Subject</button>*/}
                   </div>
                 </div>
 
@@ -318,6 +326,7 @@ export const SeniorSchoolDashboard =() =>{
                     ))}
                   </div>
                 </div>
+
               </div>
           );
         })()}

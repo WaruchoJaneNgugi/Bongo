@@ -287,7 +287,7 @@ const StudentDashboard: React.FC<{ profile: StudentProfile }> = ({ profile }) =>
             <div className="db-recs-grid">
                 {[
                     { emoji: '🧮', name: 'Algebra Fundamentals',  sub: 'Mathematics · 5 quizzes', color: '#10b981' },
-                    { emoji: '📖', name: 'Reading Comprehension', sub: 'English · 3 quizzes',     color: '#3b82f6' },
+                    { emoji: '📖', name: 'Reading Comprehension', sub: 'English.png · 3 quizzes',     color: '#3b82f6' },
                     { emoji: '🗣️', name: 'Ngeli za Kiswahili',     sub: 'Kiswahili · 4 quizzes',  color: '#8b5cf6' },
                 ].map(r => (
                     <div key={r.name} className="db-rec-card" onClick={() => navigate('/games')}>

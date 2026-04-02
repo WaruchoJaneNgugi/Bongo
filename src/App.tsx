@@ -15,6 +15,7 @@ import NotFound from './components/404/NotFound';
 import {MiddleSchoolDashboard} from "./components/level/MiddleSchoolDashboard.tsx";
 import {LowerPrimaryDashboard} from "./components/level/LowerPrimaryDashboard.tsx";
 import {SeniorSchoolDashboard} from "./components/level/SeniorSchoolDashboard.tsx";
+import {MainLevelEntry} from "./components/level/MainlevelEntry.tsx";
 import {ZenMain} from "./components/games/Mahjong/components/ZenMain.tsx";
 // import {BongoMain} from "./components/games/BongoQuiz/component/BongoMain.tsx";
 // import {SudokuMain} from "./components/games/Sudoku/SudokuMain.tsx";
@@ -32,26 +33,26 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 const AppContent: React.FC = () => {
-  const { overlay, user, isLoggedIn } = useStore();
+  const { overlay,  isLoggedIn } = useStore();
 
-  const levelRoute = () => {
-    if (user?.type !== 'student') return '/';
-    const activeProfile = user.profiles.find(p => p.id === user.activeProfileId);
-    if (!activeProfile) return '/profile-select';
-    const routes = {
-      lower_primary: '/level/lower-primary',
-      middle_school: '/level/middle-school',
-      senior_school: '/level/senior-school',
-    };
-    return routes[activeProfile.educationLevel] ?? '/profile-select';
-  };
+  // const levelRoute = () => {
+  //   if (user?.type !== 'student') return '/';
+  //   const activeProfile = user.profiles.find(p => p.id === user.activeProfileId);
+  //   if (!activeProfile) return '/profile-select';
+  //   const routes = {
+  //     lower_primary: '/level/lower-primary',
+  //     middle_school: '/level/middle-school',
+  //     senior_school: '/level/senior-school',
+  //   };
+  //   return routes[activeProfile.educationLevel] ?? '/profile-select';
+  // };
 
   return (
     <div className="main-body-container">
       <Navbar />
 
       <Routes>
-        <Route path="/"        element={isLoggedIn ? <Navigate to={levelRoute()} replace /> : <LandingPage />} />
+        <Route path="/"        element={isLoggedIn ? <Navigate to="/home" replace /> : <LandingPage />} />
         <Route path="/about"   element={<AboutPage />} />
         <Route path="/games"   element={<GamesPage />} />
         <Route path="/profile" element={<StudentProfile />} />
@@ -68,12 +69,13 @@ const AppContent: React.FC = () => {
         {/*<Route path="/games/connect-four" element={<ConnectFour />} />*/}
 
         <Route path="/profile-select"      element={<ProtectedRoute><ProfileSelectOverlay /></ProtectedRoute>} />
+        <Route path="/home"               element={<ProtectedRoute><MainLevelEntry /></ProtectedRoute>} />
         <Route path="/dashboard"          element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
         <Route path="/level/lower-primary" element={<ProtectedRoute><LowerPrimaryDashboard /></ProtectedRoute>} />
         <Route path="/level/middle-school" element={<ProtectedRoute><MiddleSchoolDashboard /></ProtectedRoute>} />
         <Route path="/level/senior-school" element={<ProtectedRoute><SeniorSchoolDashboard /></ProtectedRoute>} />
 
-        <Route path="/level" element={<ProtectedRoute><Navigate to={levelRoute()} replace /></ProtectedRoute>} />
+        <Route path="/level" element={<ProtectedRoute><Navigate to="/home" replace /></ProtectedRoute>} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>

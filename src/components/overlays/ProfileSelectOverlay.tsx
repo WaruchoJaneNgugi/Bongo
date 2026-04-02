@@ -6,9 +6,9 @@ import '../../styles/profile-select.css';
 import {AVATARS, avatarUrl} from "../../hooks/Packages.ts";
 
 const ROUTES: Record<EducationLevel, string> = {
-    lower_primary: '/level/lower-primary',
-    middle_school: '/level/middle-school',
-    senior_school: '/level/senior-school',
+    lower_primary: '/home',
+    middle_school: '/home',
+    senior_school: '/home',
 };
 
 const gradeToLevel = (grade: number): EducationLevel =>

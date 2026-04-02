@@ -8,7 +8,7 @@ import Timer from './MiddleSchool/components/Timer';
 import ExamManager from './MiddleSchool/components/ExamManager';
 import ResultsView from './MiddleSchool/components/ResultsView';
 import './MiddleSchool/styles/styles.css';
-import { BookOpen, ChevronLeft } from 'lucide-react';
+// import { BookOpen, ChevronLeft } from 'lucide-react';
 import { useStore } from '../../store/useStore';
 
 type AppState = 'term' | 'subject' | 'timer' | 'exam' | 'results';
@@ -21,15 +21,23 @@ const SUBJECT_DURATIONS: Record<string, number> = {
   'CRE': 1,
 };
 
-export const MiddleSchoolDashboard=()=> {
-  const { levelSelections, setLevelSelection } = useStore();
+interface MiddleSchoolDashboardProps {
+  initialSubject?: Subject;
+}
+
+export const MiddleSchoolDashboard = ({ initialSubject }: MiddleSchoolDashboardProps = {}) => {
+  const { levelSelections } = useStore();
   const saved = levelSelections.middle_school;
 
-  const [appState, setAppState] = useState<AppState>('term');
+  const [appState, setAppState] = useState<AppState>(() => initialSubject ? 'timer' : 'term');
   const [className, setClassName] = useState<ClassName>((saved?.className as ClassName) || null);
-  const [term, setTerm] = useState<Term>(null);
-  const [subject, setSubject] = useState<Subject>(null);
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [term, setTerm] = useState<Term>(initialSubject ? 'Term 1' : null);
+  const [subject, setSubject] = useState<Subject>(initialSubject ?? null);
+  const [questions, setQuestions] = useState<Question[]>(() =>
+    initialSubject && saved?.className
+      ? getQuestions(saved.className as string, 'Term 1', initialSubject)
+      : []
+  );
   const [answers, setAnswers] = useState<Record<number, string>>({});
   const [forceSubmit, setForceSubmit] = useState(false);
 
@@ -76,10 +84,10 @@ export const MiddleSchoolDashboard=()=> {
     navigate('results', { answers: submittedAnswers });
   };
 
-  const handleRestart = () => {
-    setForceSubmit(false);
-    setLevelSelection('middle_school', undefined as any);
-  };
+  // const handleRestart = () => {
+  //   setForceSubmit(false);
+  //   setLevelSelection('middle_school', undefined as any);
+  // };
 
   const handleTakeAnotherExam = () => {
     setForceSubmit(false);
@@ -96,34 +104,39 @@ export const MiddleSchoolDashboard=()=> {
 
   return (
       <div className={`app-container ${appState === 'exam' ? 'exam-mode-container' : ''}`}>
-        <header className="header">
-          <div className="header-content">
-            {appState !== 'results' && appState !== 'exam' && appState !== 'term' ? (
-                <button onClick={handleBack} className="btn-back-mobile" style={{ color: '#4f7396', padding: 0 }}>
-                  <ChevronLeft size={24} />
-                  <span>Back</span>
-                </button>
-            ) : (
-                <div className="logo" onClick={appState === 'exam' ? undefined : handleRestart} style={{ cursor: appState === 'exam' ? 'default' : 'pointer' }}>
-                  <div className="logo-icon">
-                    <BookOpen size={24} />
-                  </div>
-                  <h1 className={`text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-fuchsia-600 font-bold animate-gradient-x ${appState === 'exam' ? 'hidden-on-mobile' : ''}`}>Middle School</h1>
-                </div>
-            )}
+        {appState === 'exam' &&(
 
-            {appState === 'exam' && subject && (
+            <header className="header">
+
+
+          <div className="header-content">
+            {/*{appState !== 'results' && appState !== 'exam' && appState !== 'term' ? (*/}
+            {/*    <button onClick={handleBack} className="btn-back-mobile" style={{ color: '#4f7396', padding: 0 }}>*/}
+            {/*      <ChevronLeft size={24} />*/}
+            {/*      <span>Back</span>*/}
+            {/*    </button>*/}
+            {/*) : (*/}
+            {/*    <div className="logo" onClick={appState === 'exam' ? undefined : handleRestart} style={{ cursor: appState === 'exam' ? 'default' : 'pointer' }}>*/}
+            {/*      <div className="logo-icon">*/}
+            {/*        <BookOpen size={24} />*/}
+            {/*      </div>*/}
+            {/*      <h1 className={`text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-fuchsia-600 font-bold animate-gradient-x ${appState === 'exam' ? 'hidden-on-mobile' : ''}`}>Middle School</h1>*/}
+            {/*    </div>*/}
+            {/*)}*/}
+
+            {subject && (
                 <Timer
                     durationMinutes={SUBJECT_DURATIONS[subject] || 20}
                     onTimeUp={handleTimeUp}
                 />
             )}
 
-            {appState === 'exam' && subject && (
+            {subject && (
                 <div className="header-subject">{subject}</div>
             )}
           </div>
         </header>
+)}
 
         <main className={`main-content ${appState === 'exam' ? 'exam-mode' : ''} ${appState === 'timer' ? 'timer-mode' : ''}`}>
           {appState === 'term' && className && (

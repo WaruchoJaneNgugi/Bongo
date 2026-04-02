@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import {
-  Home, Gamepad2, User, LogOut, Menu, X,
-  GraduationCap, ChevronDown,
-} from 'lucide-react';
+import { Home, Gamepad2, User, LogOut, Menu, X, GraduationCap } from 'lucide-react';
 import '../styles/navbar.css';
-import { avatarUrl, AVATARS } from '../hooks/Packages.ts';
 
 const Navbar: React.FC = () => {
   const { isLoggedIn, user, setOverlay, logout } = useStore();
@@ -14,7 +10,6 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 12);
@@ -22,24 +17,7 @@ const Navbar: React.FC = () => {
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    const handler = (e: MouseEvent) => {
-      const wrap = document.querySelector('.nb-user-wrap');
-      if (wrap && !wrap.contains(e.target as Node)) setDropdownOpen(false);
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [dropdownOpen]);
-
-  // const isMobile = window.innerWidth <= 768;
   const isActive = (p: string) => location.pathname === p || location.pathname.startsWith(p + '/');
-
-  // const userInitial = user?.username?.charAt(0).toUpperCase() || 'S';
-  const userAvatar = user?.profiles.find(p => p.id === user.activeProfileId)?.avatar
-    ?? user?.profiles[0]?.avatar ?? AVATARS[0];
-
   const handleLogout = () => { logout(); navigate('/'); setMenuOpen(false); };
 
 
@@ -77,7 +55,7 @@ const Navbar: React.FC = () => {
                 <Gamepad2 size={17} /> Games
               </Link>
               {isLoggedIn && (
-              <Link to="/profile" className={`nb-link ${isActive('/profile') ? 'active' : ''}`} onClick={() => setDropdownOpen(false)}>
+              <Link to="/profile" className={`nb-link ${isActive('/profile') ? 'active' : ''}`} >
                 <User size={16} /> Profile
               </Link>
               )}
@@ -85,43 +63,21 @@ const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: auth / user menu */}
+          {/* Right: auth / user info */}
           <div className="nb-right">
-            {isLoggedIn ? (
-              <div className="nb-user-wrap">
-                <button
-                  className="nb-user-btn"
-                  onClick={() => setDropdownOpen(v => !v)}
-                >
-                  <span className="nb-user-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={28} height={28} style={{borderRadius:'50%'}} /></span>
-                  <span className="nb-user-name nb-desktop-only">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</span>
-                  <ChevronDown size={15} className={`nb-chevron ${dropdownOpen ? 'open' : ''}`} />
-                </button>
+            {isLoggedIn ? (() => {
+              const profile = user?.profiles.find(p => p.id === user.activeProfileId) ?? user?.profiles[0];
+              return (
+                <div className="nb-student-info">
+                  <span className="nb-student-name">{profile?.username}</span>
+                  <div className="nb-student-info-grad-xp-container">
+                    <span className="nb-student-badge">Grade {profile?.grade}</span>
+                    <span className="nb-student-xp">⚡ {profile?.xp ?? 0} XP</span>
+                  </div>
 
-                {dropdownOpen && (
-                  <>
-                    <div className="nb-dropdown-overlay" onClick={() => setDropdownOpen(false)} />
-                    <div className="nb-dropdown">
-                      <div className="nb-dropdown-header">
-                        <span className="nb-dd-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={36} height={36} style={{borderRadius:'50%'}} /></span>
-                        <div>
-                          <p className="nb-dd-name">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</p>
-                          <p className="nb-dd-role">🎓 Student</p>
-                        </div>
-                      </div>
-                      {/*<div className="nb-dropdown-divider" />*/}
-                      {/*<Link to="/profile" className="nb-dd-item" onClick={() => setDropdownOpen(false)}>*/}
-                      {/*  <User size={16} /> Profile*/}
-                      {/*</Link>*/}
-                      <div className="nb-dropdown-divider" />
-                      <button className="nb-dd-item nb-dd-logout" onClick={handleLogout}>
-                        <LogOut size={16} /> Log Out
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ) : (
+                </div>
+              );
+            })() : (
               <div className="nb-auth-btns">
                 <button className="nb-btn-outline" onClick={() => setOverlay('login')}>Log In</button>
                 <button className="nb-btn-primary" onClick={() => setOverlay('signup')}>Sign Up</button>
@@ -144,7 +100,7 @@ const Navbar: React.FC = () => {
 
             {isLoggedIn && (
               <div className="nb-drawer-profile">
-                <span className="nb-drawer-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={40} height={40} style={{borderRadius:'50%'}} /></span>
+                {/*<span className="nb-drawer-avatar"><img src={avatarUrl(userAvatar)} alt="avatar" width={40} height={40} style={{borderRadius:'50%'}} /></span>*/}
                 <div>
                   <p className="nb-drawer-name">{user?.profiles.find(p => p.id === user.activeProfileId)?.username ?? user?.profiles[0]?.username}</p>
                   <p className="nb-drawer-role">🎓 Student</p>

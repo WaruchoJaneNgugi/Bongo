@@ -1,4 +1,3 @@
-// component/LowerPrimary.tsx
 import { useState } from "react";
 import type { Grade, Term, Subject, QuizResult, Screen } from "../types";
 
@@ -11,15 +10,20 @@ import ResultsScreen     from "../components/ResultsScreen";
 
 import "../styles/global.css";
 import {useStore} from "../../../../store/useStore.ts";
+import { SUBJECTS } from "../data";
 
-export function LowerPrimary() {
-    const { levelSelections, setLevelSelection } = useStore();
+export function LowerPrimary({ initialSubject: initSubjectName }: { initialSubject?: string } = {}) {
+    const { levelSelections } = useStore();
     const savedGrade = levelSelections.lower_primary?.grade as Grade | undefined;
 
-    const [screen,  setScreen]  = useState<Screen>(savedGrade ? "term" : "landing");
-    const [grade,   setGrade]   = useState<Grade   | null>(savedGrade ?? null);
-    const [term,    setTerm]    = useState<Term    | null>(null);
-    const [subject, setSubject] = useState<Subject | null>(null);
+    const initSubject = initSubjectName
+        ? (SUBJECTS.find(s => s.label === initSubjectName) ?? null)
+        : null;
+
+    const [screen,  setScreen]  = useState<Screen>(initSubject ? "examinfo" : (savedGrade ? "term" : "landing"));
+    const [grade]   = useState<Grade   | null>(savedGrade ?? null);
+    const [term,    setTerm]    = useState<Term    | null>(initSubject ? 1 : null);
+    const [subject, setSubject] = useState<Subject | null>(initSubject);
     const [result,  setResult]  = useState<QuizResult | null>(null);
 
     // const handleGradeContinue = (g: Grade): void => {
@@ -47,15 +51,7 @@ export function LowerPrimary() {
 
     const handleRetry = (): void => { setResult(null); setScreen("examinfo"); };
 
-    const handleChangeSubject = (): void => { setSubject(null); setResult(null); setScreen("subjects"); };
-
     const handleChangeTerm = (): void => { setTerm(null); setSubject(null); setResult(null); setScreen("term"); };
-
-    const handleChangeGrade = (): void => {
-        setGrade(null); setTerm(null); setSubject(null); setResult(null);
-        setLevelSelection('lower_primary', undefined as any);
-        setScreen("landing");
-    };
 
     return (
         <>
@@ -70,7 +66,8 @@ export function LowerPrimary() {
             )}
 
             {screen === "examinfo" && grade !== null && term !== null && subject !== null && (
-                <ExamInfoScreen grade={grade} term={term} subject={subject} onStart={handleStartExam} onBack={() => setScreen("subjects")} />
+                // <ExamInfoScreen grade={grade} term={term} subject={subject} onStart={handleStartExam} onBack={() => setScreen("subjects")} />
+                <ExamInfoScreen grade={grade} term={term} subject={subject} onStart={handleStartExam} />
             )}
 
             {screen === "quiz" && grade !== null && term !== null && subject !== null && (
@@ -80,7 +77,7 @@ export function LowerPrimary() {
             {screen === "results" && grade !== null && term !== null && subject !== null && result !== null && (
                 <ResultsScreen
                     grade={grade} subject={subject} result={result}
-                    onRetry={handleRetry} onChangeSubject={handleChangeSubject} onChangeGrade={handleChangeGrade}
+                    onRetry={handleRetry}
                 />
             )}
         </>

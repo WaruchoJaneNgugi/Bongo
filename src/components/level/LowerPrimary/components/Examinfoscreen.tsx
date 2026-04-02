@@ -6,7 +6,6 @@ export interface ExamInfoScreenProps {
     term: Term;
     subject: Subject;
     onStart: () => void;
-    onBack: () => void;
 }
 
 /** Total quiz seconds — must match QuizScreen's TOTAL_SECONDS */
@@ -48,7 +47,7 @@ export default function ExamInfoScreen({
                                            term,
                                            subject,
                                            onStart,
-                                           onBack,
+                                           // onBack,
                                        }: ExamInfoScreenProps) {
     const totalSecs = TOTAL_SECONDS[grade][term];
     const marks     = QUESTIONS_PER_TERM; // 1 mark per question
@@ -58,7 +57,7 @@ export default function ExamInfoScreen({
             <div className="lower-ei-card">
 
                 {/* Back */}
-                <button className="lower-ei-back" onClick={onBack}>← Back</button>
+                {/*<button className="lower-ei-back" onClick={onBack}>← Back</button>*/}
 
                 {/* ── Title block ── */}
                 <div className="lower-ei-header">

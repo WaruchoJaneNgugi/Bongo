@@ -317,3 +317,6 @@
   transition: background 0.15s, border-color 0.15s;
 }
 .pr-upload-btn:hover { background: #ede9fe; border-color: #7c3aed; color: #7c3aed; }
+
+.pr-logout-btn { background: rgba(239,68,68,0.15); color: #fca5a5; }
+.pr-logout-btn:hover { background: rgba(239,68,68,0.28); }

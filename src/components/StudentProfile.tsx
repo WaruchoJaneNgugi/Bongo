@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useStore, type EducationLevel } from '../store/useStore';
 import { useNavigate } from 'react-router-dom';
-import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users, Camera } from 'lucide-react';
+import { Trophy, Settings, Zap, Flame, Star, CheckCircle, Shield, Users, Camera, LogOut } from 'lucide-react';
 import '../styles/profile.css';
 import { LEVEL_CONFIG } from '../hooks/LevelConfigs';
 import { avatarUrl, AVATARS } from '../hooks/Packages.ts';
@@ -113,11 +113,16 @@ const StudentProfile: React.FC = () => {
           </div>
         </div>
 
-        {user.profiles.length > 1 && (
-          <button className="pr-switch-btn" onClick={() => setOverlay('profile-select')}>
-            <Users size={13} /> Switch Profile
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {user.profiles.length > 1 && (
+            <button className="pr-switch-btn" onClick={() => setOverlay('profile-select')}>
+              <Users size={13} /> Switch Profile
+            </button>
+          )}
+          <button className="pr-switch-btn pr-logout-btn" onClick={() => { useStore.getState().logout(); navigate('/'); }}>
+            <LogOut size={13} /> Log Out
           </button>
-        )}
+        </div>
       </div>
 
       {/* ── Quick stats ── */}

@@ -11,8 +11,6 @@ export interface ResultsScreenProps {
     subject: Subject;
     result: QuizResult;
     onRetry: () => void;
-    onChangeSubject: () => void;
-    onChangeGrade: () => void;
 }
 
 export function ResultsScreen({
@@ -20,7 +18,6 @@ export function ResultsScreen({
                                   subject,
                                   result,
                                   onRetry,
-                                  onChangeSubject,
                               }: ResultsScreenProps) {
     const { finalScore, total, answers } = result;
     const pct   = Math.round((finalScore / total) * 100);
@@ -72,9 +69,9 @@ export function ResultsScreen({
                         <button className="btn btn-primary" onClick={onRetry}>
                             🔁 Try Again
                         </button>
-                        <button className="btn btn-outline" onClick={onChangeSubject}>
-                            📚 New Subject
-                        </button>
+                        {/*<button className="btn btn-outline" onClick={onChangeSubject}>*/}
+                        {/*    📚 New Subject*/}
+                        {/*</button>*/}
                         {/*<button*/}
                         {/*    className="btn btn-outline btn-full"*/}
                         {/*    onClick={onChangeGrade}*/}

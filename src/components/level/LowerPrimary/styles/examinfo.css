@@ -4,7 +4,7 @@
     background-image: radial-gradient(rgba(167,139,250,0.2) 1.5px, transparent 1.5px);
     background-size: 22px 22px;
     display: flex;
-    align-items: center;
+    /*align-items: center;*/
     justify-content: center;
     padding: 16px;
     font-family: var(--font-body);
