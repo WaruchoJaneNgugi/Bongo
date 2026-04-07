@@ -2,16 +2,18 @@
 .main-profile-student-main{
   display: flex;
   /*align-items: center;*/
-  justify-content: center;
+  /*justify-content: center;*/
   width: 100%;
+  /*max-width: 1300px;*/
 }
+
 
 .pr-root {
   min-height: 100vh;
   background: #faf5ff;
   padding-bottom: 4rem;
   width: 100%;
-  max-width: 1200px;
+  /*max-width: 1200px;*/
   /*margin: 0 auto;*/
 }
 

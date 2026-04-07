@@ -95,8 +95,7 @@ const SignUpOverlay: React.FC = () => {
     };
     registerUser(newUser);
     login(newUser);
-    setOverlay(null);
-    navigate('/profile-select');
+    setOverlay('profile-select');
   };
 
   return (

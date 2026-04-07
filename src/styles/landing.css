@@ -37,7 +37,7 @@
 
 @media (min-width: 700px){
     .gh-slider-full{
-        height:clamp(260px, 65dvh, 880px);
+        height:clamp(260px, 50dvh, 880px);
     }
 }
 
@@ -70,7 +70,7 @@
 
 /* Decorative confetti dots on slider */
 .gh-slider-full::before {
-    content: '⭐ 🎯 📚 🏆 ✨';
+    /*content: '⭐ 🎯 📚 🏆 ✨';*/
     position: absolute;
     top: 16px;
     right: 20px;

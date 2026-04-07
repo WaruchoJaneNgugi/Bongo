@@ -69,12 +69,16 @@ const Navbar: React.FC = () => {
               const profile = user?.profiles.find(p => p.id === user.activeProfileId) ?? user?.profiles[0];
               return (
                 <div className="nb-student-info">
-                  <span className="nb-student-name">{profile?.username}</span>
-                  <div className="nb-student-info-grad-xp-container">
-                    <span className="nb-student-badge">Grade {profile?.grade}</span>
-                    <span className="nb-student-xp">⚡ {profile?.xp ?? 0} XP</span>
+                  <div className="nb-student-avatar-circle">
+                    {profile?.username?.charAt(0).toUpperCase()}
                   </div>
-
+                  <div className="nb-student-details">
+                    <span className="nb-student-name">{profile?.username}</span>
+                    <div className="nb-student-info-grad-xp-container">
+                      <span className="nb-student-badge">Grade {profile?.grade}</span>
+                      <span className="nb-student-xp">⚡ {profile?.xp ?? 0} XP</span>
+                    </div>
+                  </div>
                 </div>
               );
             })() : (

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import './styles/globals.css';
 import { useStore } from './store/useStore';
 import Navbar from './components/Navbar';
+import { SplashScreen } from './components/SplashScreen';
 import LandingPage from './components/LandingPage';
 import SignUpOverlay from './components/overlays/SignUpOverlay';
 import LoginOverlay from './components/overlays/LoginOverlay';
@@ -87,10 +88,14 @@ const AppContent: React.FC = () => {
   );
 };
 
-const App: React.FC = () => (
-  <BrowserRouter>
-    <AppContent />
-  </BrowserRouter>
-);
+const App: React.FC = () => {
+  const [ready, setReady] = useState(false);
+  return (
+    <BrowserRouter>
+      {!ready && <SplashScreen onDone={() => setReady(true)} />}
+      <AppContent />
+    </BrowserRouter>
+  );
+};
 
 export default App;

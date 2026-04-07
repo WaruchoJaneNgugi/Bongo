@@ -8,6 +8,7 @@ import {getTopicsForGrade, searchAllTopics} from './data/topicsData';
 import type {SubjectTopics} from './data/topicsData';
 import type {EducationLevel} from '../../store/useStore';
 import type {Subject as MiddleSubject} from './MiddleSchool/types';
+import Footer from '../Footer';
 
 // Subject poster images per level
 import lp_English        from './SubjectsImg/Grade1-3/English.png';
@@ -29,6 +30,15 @@ import ss_Kiswahili      from './SubjectsImg/grade10-12/Kiswahili.png';
 import ss_Biology        from './SubjectsImg/grade10-12/Biology.png';
 import ss_Chemistry      from './SubjectsImg/grade10-12/Chemistry.png';
 import ss_Physics        from './SubjectsImg/grade10-12/Physics.png';
+import ht_lp  from './HotopicsIMG/grade1-3.png';
+import ht_ms  from './HotopicsIMG/grade4-9.png';
+import ht_ss  from './HotopicsIMG/grade10-12.png';
+
+const HOT_TOPICS_BG: Record<EducationLevel, string> = {
+    lower_primary: ht_lp,
+    middle_school: ht_ms,
+    senior_school: ht_ss,
+};
 
 const SUBJECT_IMAGES: Record<EducationLevel, Record<string, string>> = {
     lower_primary: {
@@ -64,7 +74,7 @@ const LEVEL_SUBJECTS: Record<EducationLevel, { name: string; icon: string; grad:
     lower_primary: [
         { name: 'Literacy',            icon: '📚', grad: 'linear-gradient(135deg,#f97316,#fb923c)', desc: 'Reading & Writing' },
         { name: 'Kiswahili',           icon: '🗨️', grad: 'linear-gradient(135deg,#0ea5e9,#38bdf8)', desc: 'Lugha ya Taifa' },
-        { name: 'English',             icon: '🔤', grad: 'linear-gradient(135deg,#10b981,#34d399)', desc: 'Language Skills' },
+        { name: 'English',             icon: '📖', grad: 'linear-gradient(135deg,#10b981,#34d399)', desc: 'Language Skills' },
         { name: 'Mathematics',         icon: '➗', grad: 'linear-gradient(135deg,#e11d48,#fb7185)', desc: 'Numbers & Logic' },
         { name: 'Environmental',       icon: '🌍', grad: 'linear-gradient(135deg,#16a34a,#4ade80)', desc: 'Nature & Society' },
         { name: 'Hygiene & Nutrition', icon: '🍎', grad: 'linear-gradient(135deg,#0891b2,#22d3ee)', desc: 'Health & Food' },
@@ -90,38 +100,89 @@ const LEVEL_SUBJECTS: Record<EducationLevel, { name: string; icon: string; grad:
     ],
 };
 
-const HOT_TOPICS = [
-    {
-        title: 'KCPE 2025 Results',
-        // emoji: '🏆',
-        img: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&q=80'
+const HOT_TOPICS_BY_LEVEL: Record<EducationLevel, { title: string; emoji: string; grad: string; tag: string }[]> = {
+    lower_primary: [
+        { title: 'Listening & Speaking',     emoji: '🗣️', grad: 'linear-gradient(135deg,#f97316,#fb923c)', tag: 'Literacy' },
+        { title: 'Letter Sounds & Alphabet', emoji: '🔤', grad: 'linear-gradient(135deg,#0ea5e9,#38bdf8)', tag: 'Literacy' },
+        { title: 'Counting Forward & Back',  emoji: '🔢', grad: 'linear-gradient(135deg,#e11d48,#fb7185)', tag: 'Maths' },
+        { title: 'Addition & Subtraction',   emoji: '➕', grad: 'linear-gradient(135deg,#7c3aed,#a78bfa)', tag: 'Maths' },
+        { title: 'My Family & Home',         emoji: '🏠', grad: 'linear-gradient(135deg,#16a34a,#4ade80)', tag: 'Environment' },
+        { title: 'Plants & Animals',         emoji: '🌿', grad: 'linear-gradient(135deg,#0891b2,#22d3ee)', tag: 'Environment' },
+        { title: 'Personal Cleanliness',     emoji: '🧼', grad: 'linear-gradient(135deg,#d97706,#fbbf24)', tag: 'Hygiene' },
+        { title: 'Shapes & Patterns',        emoji: '🔷', grad: 'linear-gradient(135deg,#db2777,#f472b6)', tag: 'Maths' },
+        { title: 'Storytelling',             emoji: '📖', grad: 'linear-gradient(135deg,#f97316,#fbbf24)', tag: 'English' },
+        { title: 'Drawing & Crafts',         emoji: '🎨', grad: 'linear-gradient(135deg,#7c3aed,#ec4899)', tag: 'Creative' },
+    ],
+    middle_school: [
+        { title: 'Reading Comprehension',    emoji: '📘', grad: 'linear-gradient(135deg,#0ea5e9,#38bdf8)', tag: 'English' },
+        { title: 'Fractions & Decimals',     emoji: '➗', grad: 'linear-gradient(135deg,#e11d48,#fb7185)', tag: 'Maths' },
+        { title: 'Human Body Systems',       emoji: '🫀', grad: 'linear-gradient(135deg,#10b981,#34d399)', tag: 'Science' },
+        { title: 'Map Work & Counties',      emoji: '🗺️', grad: 'linear-gradient(135deg,#f97316,#fb923c)', tag: 'Social Studies' },
+        { title: 'Algebra & Equations',      emoji: '📐', grad: 'linear-gradient(135deg,#7c3aed,#a78bfa)', tag: 'Maths' },
+        { title: 'Matter: Solids & Liquids', emoji: '⚗️', grad: 'linear-gradient(135deg,#0891b2,#22d3ee)', tag: 'Science' },
+        { title: 'Sarufi ya Kiswahili',      emoji: '📗', grad: 'linear-gradient(135deg,#16a34a,#4ade80)', tag: 'Kiswahili' },
+        { title: 'Coding & Digital Safety',  emoji: '💻', grad: 'linear-gradient(135deg,#1e40af,#60a5fa)', tag: 'ICT' },
+        { title: 'Entrepreneurship Basics',  emoji: '💼', grad: 'linear-gradient(135deg,#d97706,#fbbf24)', tag: 'Business' },
+        { title: 'Statistics & Probability', emoji: '📊', grad: 'linear-gradient(135deg,#db2777,#f472b6)', tag: 'Maths' },
+    ],
+    senior_school: [
+        { title: 'Differentiation',          emoji: '📈', grad: 'linear-gradient(135deg,#e11d48,#fb7185)', tag: 'Maths' },
+        { title: 'Organic Chemistry',        emoji: '⚗️', grad: 'linear-gradient(135deg,#7c3aed,#a78bfa)', tag: 'Chemistry' },
+        { title: 'Genetics & Evolution',     emoji: '🧬', grad: 'linear-gradient(135deg,#16a34a,#4ade80)', tag: 'Biology' },
+        { title: 'Motion & Forces',          emoji: '🧲', grad: 'linear-gradient(135deg,#d97706,#fbbf24)', tag: 'Physics' },
+        { title: 'Essay & Oral Skills',      emoji: '📝', grad: 'linear-gradient(135deg,#0ea5e9,#38bdf8)', tag: 'English' },
+        { title: 'Acids, Bases & Salts',     emoji: '🧪', grad: 'linear-gradient(135deg,#0891b2,#22d3ee)', tag: 'Chemistry' },
+        { title: 'Electricity & Magnetism',  emoji: '⚡', grad: 'linear-gradient(135deg,#f97316,#fb923c)', tag: 'Physics' },
+        { title: 'Human Physiology',         emoji: '🫁', grad: 'linear-gradient(135deg,#10b981,#34d399)', tag: 'Biology' },
+        { title: 'Fasihi ya Kiswahili',      emoji: '📗', grad: 'linear-gradient(135deg,#16a34a,#4ade80)', tag: 'Kiswahili' },
+        { title: 'Trigonometry',             emoji: '📐', grad: 'linear-gradient(135deg,#db2777,#f472b6)', tag: 'Maths' },
+    ],
+};
+
+const BONGO_BOOKS: Record<EducationLevel, { title: string; subject: string; grade: string; color: string; spine: string }[]> = {
+    lower_primary: [
+        { title: 'Literacy Activities',    subject: 'Literacy',     grade: 'Grade 1–3', color: '#f97316', spine: '#c2410c' },
+        { title: 'Kiswahili Shughuli',     subject: 'Kiswahili',    grade: 'Grade 1–3', color: '#0ea5e9', spine: '#0369a1' },
+        { title: 'Mathematics Fun',        subject: 'Mathematics',  grade: 'Grade 1–3', color: '#e11d48', spine: '#9f1239' },
+        { title: 'Our Environment',        subject: 'Environmental',grade: 'Grade 1–3', color: '#16a34a', spine: '#14532d' },
+        { title: 'Hygiene & Nutrition',    subject: 'Hygiene',      grade: 'Grade 1–3', color: '#0891b2', spine: '#155e75' },
+        { title: 'Creative Activities',    subject: 'Creative',     grade: 'Grade 1–3', color: '#7c3aed', spine: '#4c1d95' },
+    ],
+    middle_school: [
+        { title: 'Mathematics',            subject: 'Mathematics',  grade: 'Grade 4–9', color: '#e11d48', spine: '#9f1239' },
+        { title: 'English Language',       subject: 'English',      grade: 'Grade 4–9', color: '#0ea5e9', spine: '#0369a1' },
+        { title: 'Integrated Science',     subject: 'Science',      grade: 'Grade 4–9', color: '#10b981', spine: '#065f46' },
+        { title: 'Social Studies',         subject: 'Social Studies',grade: 'Grade 4–9',color: '#f97316', spine: '#c2410c' },
+        { title: 'Kiswahili',              subject: 'Kiswahili',    grade: 'Grade 4–9', color: '#7c3aed', spine: '#4c1d95' },
+        { title: 'Business Studies',       subject: 'Business',     grade: 'Grade 7–9', color: '#d97706', spine: '#92400e' },
+    ],
+    senior_school: [
+        { title: 'Mathematics',            subject: 'Mathematics',  grade: 'Grade 10–12', color: '#e11d48', spine: '#9f1239' },
+        { title: 'English & Literature',   subject: 'English',      grade: 'Grade 10–12', color: '#0ea5e9', spine: '#0369a1' },
+        { title: 'Physics',                subject: 'Physics',      grade: 'Grade 10–12', color: '#d97706', spine: '#92400e' },
+        { title: 'Chemistry',              subject: 'Chemistry',    grade: 'Grade 10–12', color: '#7c3aed', spine: '#4c1d95' },
+        { title: 'Biology',                subject: 'Biology',      grade: 'Grade 10–12', color: '#16a34a', spine: '#14532d' },
+        { title: 'Kiswahili',              subject: 'Kiswahili',    grade: 'Grade 10–12', color: '#0891b2', spine: '#155e75' },
+    ],
+};
+
+const LEVEL_BANNER: Record<EducationLevel, { emoji: string; title: string; desc: string; grad: string }> = {
+    lower_primary: {
+        emoji: '🌟', grad: 'linear-gradient(135deg,#f97316,#fb923c)',
+        title: 'Keep Exploring, Young Learner!',
+        desc: 'Every question you answer makes you smarter. You\'re doing amazing!',
     },
-    {
-        title: 'CBC Curriculum Update',
-        // emoji: '📋',
-        img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&q=80'
+    middle_school: {
+        emoji: '🚀', grad: 'linear-gradient(135deg,#6366f1,#a78bfa)',
+        title: 'Level Up Your Knowledge!',
+        desc: 'Tackle topics, ace exams, and build skills that last a lifetime.',
     },
-    {
-        title: 'Math Olympiad Tips',
-        // emoji: '🧮',
-        img: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=300&q=80'
+    senior_school: {
+        emoji: '🎓', grad: 'linear-gradient(135deg,#0ea5e9,#7c3aed)',
+        title: 'Your Future Starts Here.',
+        desc: 'Master your subjects, prepare for exams, and unlock your potential.',
     },
-    {
-        title: 'Science Fair 2025',
-        // emoji: '🔬',
-        img: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=300&q=80'
-    },
-    {
-        title: 'Reading Challenge',
-        // emoji: '📖',
-        img: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=300&q=80'
-    },
-    {
-        title: 'Kiswahili Week',
-        // emoji: '🗣️',
-        img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=300&q=80'
-    },
-];
+};
 
 export const MainLevelEntry = () => {
     const {user} = useStore();
@@ -168,6 +229,7 @@ export const MainLevelEntry = () => {
     }
 
     return (
+        <>
         <div className="Main-lvl-Container">
             <div className="Main-lvl-Container-section">
 
@@ -175,15 +237,20 @@ export const MainLevelEntry = () => {
                 <section className="hot-topics-container">
                     <h2 className="mle-section-heading">🔥 Hot Topics This Week</h2>
                     <div className="main-lvl-hot-topics-container">
-                        {HOT_TOPICS.map((t) => (
-                            <div className="hot-topics-div" key={t.title}>
-                                <img className="hot-topic-image" src={t.img} alt={t.title} loading="lazy" />
-                                <div className="hot-topic-body">
-                                    {/*<span className="hot-topic-emoji">{t.emoji}</span>*/}
+                        <div className="hot-topics-track">
+                            {HOT_TOPICS_BY_LEVEL[level].map((t, i) => (
+                                <div className="hot-topics-div" key={`${t.title}-${i}`}
+                                    style={{
+                                        backgroundImage: `url(${HOT_TOPICS_BG[level]})`,
+                                        backgroundSize: 'cover',
+                                        backgroundPosition: 'center',
+                                    } as React.CSSProperties}>
+                                    <span className="hot-topic-emoji">{t.emoji}</span>
+                                    <span className="hot-topic-tag">{t.tag}</span>
                                     <p className="hot-topic-title">{t.title}</p>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </section>
 
@@ -215,6 +282,7 @@ export const MainLevelEntry = () => {
                                             <span className="mle-result-title">{r.topic.title}</span>
                                             <span className="mle-result-meta">{r.subject} · {r.topic.desc}</span>
                                         </div>
+                                        <span className="mle-result-arrow">›</span>
                                     </div>
                                 ))}
                             </>
@@ -229,6 +297,7 @@ export const MainLevelEntry = () => {
                                             <span className="mle-result-title">{r.topic.title}</span>
                                             <span className="mle-result-meta">{r.subject} · Grade {r.grade} · {r.topic.desc}</span>
                                         </div>
+                                        <span className="mle-result-arrow">›</span>
                                     </div>
                                 ))}
                             </>
@@ -239,18 +308,19 @@ export const MainLevelEntry = () => {
                 {/* ── Browse by Subject ── */}
                 <section className="mle-browse-section">
                     <h2 className="mle-section-heading">📖 Browse by Subject</h2>
-                    <div className="mle-browse-scroll">
+                    <div className="mle-browse-grid">
                         {browseTopics.map((st) => {
                             const meta = subjects.find(s => s.name === st.subject);
                             return (
                                 <button
                                     key={st.subject}
-                                    className="mle-browse-chip"
-                                    style={{'--chip-color': meta?.grad.match(/#[0-9a-f]{6}/i)?.[0] ?? '#6366f1'} as React.CSSProperties}
+                                    className="mle-browse-card"
+                                    style={{'--card-grad': meta?.grad ?? 'linear-gradient(135deg,#6366f1,#a78bfa)'} as React.CSSProperties}
                                     onClick={() => setTopicsView(st)}
                                 >
-                                    <span className="mle-browse-chip-icon">{meta?.icon ?? '📚'}</span>
-                                    <span className="mle-browse-chip-name">{st.subject}</span>
+                                    <span className="mle-browse-card-icon">{meta?.icon ?? '📚'}</span>
+                                    <span className="mle-browse-card-name">{st.subject}</span>
+                                    <span className="mle-browse-card-desc">{meta?.desc ?? ''}</span>
                                 </button>
                             );
                         })}
@@ -264,10 +334,18 @@ export const MainLevelEntry = () => {
                         {browseTopics.map((st) => {
                             const meta = subjects.find(s => s.name === st.subject);
                             const img = SUBJECT_IMAGES[level]?.[st.subject];
+                            const handleRevisionClick = () => {
+                                if (level === 'lower_primary') {
+                                    setSelectedSubject(st.subject);
+                                    setInExam(true);
+                                } else {
+                                    setTopicsView(st);
+                                }
+                            };
                             return (
                                 <div
                                     key={st.subject}
-                                    onClick={() => setTopicsView(st)}
+                                    onClick={handleRevisionClick}
                                     className="mle-subject-card"
                                     style={{'--grad': meta?.grad} as React.CSSProperties}
                                 >
@@ -281,7 +359,39 @@ export const MainLevelEntry = () => {
                     </div>
                 </section>
 
+                {/* ── Bongo Books ── */}
+                <section className="mle-books-section">
+                    <h2 className="mle-section-heading">📗 Bongo Books</h2>
+                    <div className="mle-books-grid">
+                        {BONGO_BOOKS[level].map((book) => (
+                            <div key={book.title} className="mle-book-card"
+                                style={{'--book-color': book.color, '--book-spine': book.spine} as React.CSSProperties}>
+                                <div className="mle-book-spine" />
+                                <div className="mle-book-cover">
+                                    <div className="mle-book-cover-band" />
+                                    <span className="mle-book-subject">{book.subject}</span>
+                                    <span className="mle-book-title">{book.title}</span>
+                                    <span className="mle-book-grade">{book.grade}</span>
+                                    <span className="mle-book-logo">BongoQuiz</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </section>
+
+                {/* ── Level Banner ── */}
+                <section className="mle-level-banner"
+                    style={{'--banner-grad': LEVEL_BANNER[level].grad} as React.CSSProperties}>
+                    <span className="mle-banner-emoji">{LEVEL_BANNER[level].emoji}</span>
+                    <div>
+                        <p className="mle-banner-title">{LEVEL_BANNER[level].title}</p>
+                        <p className="mle-banner-desc">{LEVEL_BANNER[level].desc}</p>
+                    </div>
+                </section>
+
             </div>
         </div>
+        <Footer />
+        </>
     );
 };

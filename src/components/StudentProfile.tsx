@@ -61,7 +61,7 @@ const StudentProfile: React.FC = () => {
   if (!activeProfile) return null;
 
   const lvl = LEVEL_OPTIONS.find(l => l.id === activeProfile.educationLevel)!;
-  const xpPercent = (activeProfile.xp % 1000) / 10;
+  const xpPercent = activeProfile.xp;
   const earnedAch = ACHIEVEMENTS.filter(a => a.earned).length;
   const earnedXP   = ACHIEVEMENTS.filter(a => a.earned).reduce((s, a) => s + a.pts, 0);
 

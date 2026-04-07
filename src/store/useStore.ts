@@ -65,7 +65,7 @@ export const useStore = create<AppState>()(
 
       setOverlay: (overlay, pkg = null) => set({ overlay, signupPackage: pkg }),
 
-      login: (user) => set({ user, isLoggedIn: true, overlay: null }),
+      login: (user) => set({ user, isLoggedIn: true }),
 
       logout: () => set({ user: null, isLoggedIn: false, overlay: null }),
 
