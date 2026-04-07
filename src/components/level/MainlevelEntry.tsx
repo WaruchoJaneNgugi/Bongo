@@ -185,7 +185,7 @@ const LEVEL_BANNER: Record<EducationLevel, { emoji: string; title: string; desc:
 };
 
 export const MainLevelEntry = () => {
-    const {user} = useStore();
+    const {user, setLevelSelection} = useStore();
     const [inExam, setInExam] = useState(false);
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
     const [topicsView, setTopicsView] = useState<SubjectTopics | null>(null);
@@ -335,12 +335,17 @@ export const MainLevelEntry = () => {
                             const meta = subjects.find(s => s.name === st.subject);
                             const img = SUBJECT_IMAGES[level]?.[st.subject];
                             const handleRevisionClick = () => {
-                                if (level === 'lower_primary') {
-                                    setSelectedSubject(st.subject);
-                                    setInExam(true);
+                                // ensure level selections are set so dashboards can initialise correctly
+                                if (level === 'middle_school') {
+                                    const schoolLevel = grade <= 6 ? 'Upper Primary' : 'Junior Secondary School';
+                                    setLevelSelection('middle_school', { level: schoolLevel, className: `Grade ${grade}` as any });
+                                } else if (level === 'senior_school') {
+                                    setLevelSelection('senior_school', { grade: String(grade) as any });
                                 } else {
-                                    setTopicsView(st);
+                                    setLevelSelection('lower_primary', { grade });
                                 }
+                                setSelectedSubject(st.subject);
+                                setInExam(true);
                             };
                             return (
                                 <div
