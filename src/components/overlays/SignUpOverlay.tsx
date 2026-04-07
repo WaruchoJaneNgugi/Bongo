@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useStore, type FamilyPackage } from '../../store/useStore';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { Phone, ArrowRight, ArrowLeft, CheckCircle, Shield } from 'lucide-react';
 import '../../styles/overlay.css';
 import { PACKAGES } from "../../hooks/Packages.ts";
@@ -39,7 +39,7 @@ const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasErro
 
 const SignUpOverlay: React.FC = () => {
   const { setOverlay, registerUser, login, allUsers, signupPackage } = useStore();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // steps: 1=phone+pin, 2=otp, 3=package
   const [step, setStep] = useState(1);
