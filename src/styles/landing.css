@@ -41,31 +41,42 @@
     }
 }
 
-.gh-slider-bg-image {
+.gh-slide {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+    z-index: 1;
 }
 
-.gh-slider-bg-image img {
+.gh-slide-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+}
+
+.gh-slide-img {
     width: 100%;
     height: 100%;
     object-fit: fill;
-    animation: kb-enter 6s ease forwards;
+    display: block;
 }
 
-@keyframes kb-enter {
-    from { transform: scale(1.08); opacity: 0; }
-    8%   { opacity: 1; }
-    to   { transform: scale(1); opacity: 1; }
+.gh-slide-active .gh-slide-img {
+    animation: gh-kenburns 4s ease forwards;
 }
 
-.gh-slider-overlay {
+@keyframes gh-kenburns {
+    from { transform: scale(1.08); }
+    to   { transform: scale(1); }
+}
+
+.gh-slide-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
-    mix-blend-mode: multiply;
-    opacity: 0.75;
+    background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+    pointer-events: none;
 }
 
 /* Decorative confetti dots on slider */

@@ -53,6 +53,15 @@
     z-index: 2;
 }
 
+.hs-slide-active .hs-bg-img {
+    animation: hs-kenburns 4s ease forwards;
+}
+
+@keyframes hs-kenburns {
+    from { transform: scale(1.08); }
+    to   { transform: scale(1); }
+}
+
 /* ── Background Image ── */
 .hs-bg-img {
     position: absolute;

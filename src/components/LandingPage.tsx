@@ -64,7 +64,7 @@ const SLIDES = [
 
 const GuestHero: React.FC = () => {
   const [slideIdx, setSlideIdx] = useState(0);
-  const slide = SLIDES[slideIdx];
+  // const slide = SLIDES[slideIdx];
   const { setOverlay } = useStore();
 
   const goSlide = (idx: number) => setSlideIdx(idx);
@@ -81,14 +81,14 @@ const GuestHero: React.FC = () => {
         {/* Slider Section */}
         <div className="slider-section-cta">
           <section className="gh-slider-full">
-            <div className="gh-slider-bg-image">
-              <img key={slideIdx} src={slide.img} alt={slide.grade} />
-            </div>
-            <div className="gh-slider-content" key={slideIdx}>
-              <button
-                  className="gh-slider-cta"
-                  onClick={() => setOverlay('signup')}
-              >
+            {SLIDES.map((s, i) => (
+              <div key={s.id} className={`gh-slide ${i === slideIdx ? 'gh-slide-active' : ''}`}>
+                <img src={s.img} alt={s.grade} className="gh-slide-img" />
+                <div className="gh-slide-overlay" />
+              </div>
+            ))}
+            <div className="gh-slider-content">
+              <button className="gh-slider-cta" onClick={() => setOverlay('signup')}>
                 Start Learning <ArrowRight size={18} />
               </button>
             </div>
