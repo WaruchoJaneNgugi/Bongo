@@ -35,7 +35,7 @@
 .ps-backdrop {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  background: var(--bg-main);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -68,7 +68,7 @@
 .pas-add-screen-container {
   position: fixed;
   inset: 0;
-  background: var(--bg);
+  /*background: var(--bg-main);*/
   display: flex;
   align-items: center;
   justify-content: center;
@@ -252,7 +252,7 @@
   width: 100%;
   max-width: 430px;
   animation: ps-fade-up 0.38s cubic-bezier(0.34,1.56,0.64,1) both;
-  background: var(--bg);
+  background: var(--bg-main);
   border-radius: var(--r-xl);
   padding: 2.25rem 2rem 2rem;
   box-shadow: 0 8px 40px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.04);
@@ -314,7 +314,7 @@
 }
 .ps-add-input:focus {
   border-color: var(--primary-light);
-  background: var(--bg);
+  background: var(--bg-main);
   box-shadow: 0 0 0 4px rgba(168,85,247,0.1);
 }
 .ps-add-input::placeholder { color: var(--gray-300); }

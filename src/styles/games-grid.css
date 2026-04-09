@@ -24,7 +24,7 @@
     .games-grid-card { margin: 5px 1rem; grid-template-columns: repeat(7, 1fr); gap: 12px; }
 }
 @media (min-width: 1281px) {
-    .games-grid-card { grid-template-columns: repeat(8, 1fr); gap: 14px; max-width: 1600px; }
+    .games-grid-card { grid-template-columns: repeat(8, 1fr); gap: 14px; }
 }
 
 /*@media (min-width: 1600px) {*/

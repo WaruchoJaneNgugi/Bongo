@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './styles/globals.css';
 import { useStore } from './store/useStore';
 import Navbar from './components/Navbar';
@@ -18,15 +18,40 @@ import {LowerPrimaryDashboard} from "./components/level/LowerPrimaryDashboard.ts
 import {SeniorSchoolDashboard} from "./components/level/SeniorSchoolDashboard.tsx";
 import {MainLevelEntry} from "./components/level/MainlevelEntry.tsx";
 import {ZenMain} from "./components/games/Mahjong/components/ZenMain.tsx";
-// import {BongoMain} from "./components/games/GradeUp/component/BongoMain.tsx";
-// import {SudokuMain} from "./components/games/Sudoku/SudokuMain.tsx";
-// import {MathQuiz} from "./components/games/MathQuiz/MathQuiz.tsx";
-// import {MainGameLayout} from "./components/games/BibleQuiz/components/MainGameLayout.tsx";
-// import CheckersArena from "./components/games/Checkers/CheckersArena.tsx";
-// import {TictacToe} from "./components/games/tictac/TictacToe.tsx";
-// import WordQuest from "./components/games/WordQuest/components/Quest.tsx";
-// import {KiswahiliQuiz} from "./components/games/KiswahiliQuiz/Kiswahili.tsx";
-// import {ConnectFour} from "./components/games/ConnecFour/ConnectFour.tsx";
+
+const StarField: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const canvas = canvasRef.current!;
+    const ctx = canvas.getContext('2d')!;
+    let raf: number;
+    const stars = Array.from({ length: 160 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: Math.random() * 1.5 + 0.3,
+      o: Math.random(),
+      speed: Math.random() * 0.004 + 0.002,
+    }));
+    const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+    resize();
+    window.addEventListener('resize', resize);
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      stars.forEach(s => {
+        s.o += s.speed;
+        if (s.o > 1) s.o = 0;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${Math.abs(Math.sin(s.o * Math.PI))})`;
+        ctx.fill();
+      });
+      raf = requestAnimationFrame(draw);
+    };
+    draw();
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize); };
+  }, []);
+  return <canvas ref={canvasRef} style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }} />;
+};
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isLoggedIn } = useStore();
@@ -34,22 +59,18 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
 };
 
 const AppContent: React.FC = () => {
-  const { overlay,  isLoggedIn } = useStore();
+  const { overlay, isLoggedIn } = useStore();
+  const location = useLocation();
+  const isGames = location.pathname === '/games';
 
-  // const levelRoute = () => {
-  //   if (user?.type !== 'student') return '/';
-  //   const activeProfile = user.profiles.find(p => p.id === user.activeProfileId);
-  //   if (!activeProfile) return '/profile-select';
-  //   const routes = {
-  //     lower_primary: '/level/lower-primary',
-  //     middle_school: '/level/middle-school',
-  //     senior_school: '/level/senior-school',
-  //   };
-  //   return routes[activeProfile.educationLevel] ?? '/profile-select';
-  // };
+  useEffect(() => {
+    document.body.classList.toggle('games-bg', isGames);
+    return () => document.body.classList.remove('games-bg');
+  }, [isGames]);
 
   return (
-    <div className="main-body-container">
+    <div className={`main-body-container${isGames ? ' games-mode' : ''}`}>
+      {isGames && <StarField />}
       <Navbar />
 
       <Routes>
@@ -59,15 +80,6 @@ const AppContent: React.FC = () => {
         <Route path="/profile" element={<StudentProfile />} />
 
         <Route path="/games/mahjong" element={<ZenMain />} />
-        {/*<Route path="/games/bongo-quiz" element={<BongoMain />} />*/}
-        {/*<Route path="/games/sudoku" element={<SudokuMain />} />*/}
-        {/*<Route path="/games/math-quiz" element={<MathQuiz />} />*/}
-        {/*<Route path="/games/bible-quiz" element={< MainGameLayout />} />*/}
-        {/*<Route path="/games/checkers" element={< CheckersArena />} />*/}
-        {/*<Route path="/games/tictac-toe" element={< TictacToe />} />*/}
-        {/*<Route path="/games/word-quest" element={< WordQuest />} />*/}
-        {/*<Route path="/games/kiswahili-quiz" element={<KiswahiliQuiz />} />*/}
-        {/*<Route path="/games/connect-four" element={<ConnectFour />} />*/}
 
         <Route path="/profile-select"      element={<ProtectedRoute><ProfileSelectOverlay /></ProtectedRoute>} />
         <Route path="/home"               element={<ProtectedRoute><MainLevelEntry /></ProtectedRoute>} />

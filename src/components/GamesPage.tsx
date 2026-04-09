@@ -1,10 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { useGameStore, type FilterTag, type Game } from '../store/useGameStore';
-import { Gamepad2, Lock } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import '../styles/games.css';
 import '../styles/games-filter.css';
 import '../styles/games-grid.css';
 import { useGame } from '../hooks/useGame.ts';
+import { GamesHero } from './GamesHero.tsx';
+import WinnerMarquee from "./WinnerMarquee.tsx";
 
 const FILTERS: { id: FilterTag; label: string; emoji: string; color: string }[] = [
   { id: 'all', label: 'All Games', emoji: '🎮', color: '#00f5d4' },
@@ -41,9 +43,6 @@ const GamesPage: React.FC = () => {
     );
   }, [activeFilter, allGames]);
 
-  const hotCount = allGames.filter(g => g.tags?.includes('hot')).length;
-  const newCount = allGames.filter(g => g.tags?.includes('new')).length;
-
   // Image loading states
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
   const [failedImages, setFailedImages] = useState<Record<string, boolean>>({});
@@ -76,37 +75,9 @@ const GamesPage: React.FC = () => {
       <div className="gp-main-div">
       <div className="gp-root">
         {/* Hero Section */}
-        <div className="gp-hero">
-          <div className="gp-hero-bg" />
-          <div className="gp-hero-content">
-            <div className="gp-hero-badge">
-              <Gamepad2 size={16} />
-              Learning through Play
-            </div>
-            <h1 className="gp-hero-title">
-              Game <span>Zone</span>
-              <span className="gp-hero-title-emoji"> 🎮</span>
-            </h1>
-            <p className="gp-hero-sub">
-              Earn XP, unlock achievements and master CBC subjects — one game at a time.
-            </p>
+        <GamesHero />
+        <WinnerMarquee />
 
-            <div className="gp-hero-stats">
-              <div className="gp-hero-stat">
-                <span className="gp-hs-val">{allGames.length}</span>
-                <span className="gp-hs-lbl">Games</span>
-              </div>
-              <div className="gp-hero-stat">
-                <span className="gp-hs-val">{hotCount} 🔥</span>
-                <span className="gp-hs-lbl">Trending</span>
-              </div>
-              <div className="gp-hero-stat">
-                <span className="gp-hs-val">{newCount} ✨</span>
-                <span className="gp-hs-lbl">New</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Category Filter */}
         <div className="mobile-categories">
@@ -243,6 +214,24 @@ const GamesPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Games Footer */}
+      <div className="gp-footer reveal">
+        <div className="gp-footer-glow" />
+        <h3 className="gp-footer-title reveal">Learning feels like playing here</h3>
+        <p className="gp-footer-sub reveal">
+          Every game on GradeUp is built to make you smarter — without it feeling like school.
+          Play, earn XP, climb the leaderboard, and watch your grades soar. 🎉
+        </p>
+        <div className="gp-footer-badges reveal">
+          <span>✅ CBC Aligned</span>
+          <span>⚡ Earn XP</span>
+          <span>🔥 Daily Streaks</span>
+          <span>🏅 Unlock Badges</span>
+        </div>
+        <p className="gp-footer-copy reveal">© {new Date().getFullYear()} GradeUp · Made with ❤️ for Kenyan students</p>
+      </div>
+
       </div>
   );
 };

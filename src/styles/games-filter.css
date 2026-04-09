@@ -335,6 +335,15 @@
     flex-shrink: 0;
 }
 
+.mobile-category-chip:hover {
+    background: linear-gradient(135deg,
+    rgba(0,245,212,0.1) 0%,
+    rgba(255,60,172,0.1) 100%);
+    border-color: var(--chip-color);
+    box-shadow: 0 0 12px var(--chip-glow);
+    transform: translateY(-2px) scale(1.04);
+}
+
 .mobile-category-chip.active-game-cat {
     background: linear-gradient(135deg,
     rgba(0,245,212,0.15) 0%,
@@ -421,7 +430,11 @@
     }
 }
 .mobile-categories {
-    max-width: 1200px;
+    margin-top:10px;
+    backdrop-filter: blur(10);
+    border-radius: 10px;
+    background: rgb(135 85 218 / 0.15);
+    /*max-width: 1200px;*/
 }
 /* Tablet Portrait */
 @media (max-width: 768px) {

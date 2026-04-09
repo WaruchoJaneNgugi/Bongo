@@ -78,15 +78,15 @@ const StudentProfile: React.FC = () => {
     return (
         <div className="pr-root">
 
-            {/* Profile Header */}
-            <div className="pr-page-header">
-                              <button className="pr-page-header-logout" onClick={() => {
-                    useStore.getState().logout();
-                    navigate('/');
-                }}>
-                    <LogOut size={15}/> Log Out
-                </button>
-            </div>
+            {/*/!* Profile Header *!/*/}
+            {/*<div className="pr-page-header">*/}
+            {/*                  <button className="pr-page-header-logout" onClick={() => {*/}
+            {/*        useStore.getState().logout();*/}
+            {/*        navigate('/');*/}
+            {/*    }}>*/}
+            {/*        <LogOut size={15}/> Log Out*/}
+            {/*    </button>*/}
+            {/*</div>*/}
 
 
             <div className="pr-hero" style={{background: lvl.bg}}>
@@ -125,12 +125,12 @@ const StudentProfile: React.FC = () => {
                             <Users size={13}/> Switch Profile
                         </button>
                     )}
-                    {/*<button className="pr-switch-btn pr-logout-btn" onClick={() => {*/}
-                    {/*    useStore.getState().logout();*/}
-                    {/*    navigate('/');*/}
-                    {/*}}>*/}
-                    {/*    <LogOut size={13}/> Log Out*/}
-                    {/*</button>*/}
+                    <button className="pr-switch-btn pr-logout-btn" onClick={() => {
+                        useStore.getState().logout();
+                        navigate('/');
+                    }}>
+                        <LogOut size={13}/> Log Out
+                    </button>
                 </div>
             </div>
 
@@ -177,22 +177,23 @@ const StudentProfile: React.FC = () => {
                         {error && <div className="pr-msg pr-msg-error"><Shield size={14}/> {error}</div>}
                         {saveMsg && <div className="pr-msg pr-msg-success"><CheckCircle size={14}/> {saveMsg}</div>}
 
-                        <div className="pr-field">
+                        <div className="pr-field pr-field--avatar">
                             <label className="pr-label">Avatar</label>
-                            <div className="pr-avatar-grid">
-                                {AVATARS.map(a => (
-                                    <button key={a}
-                                            className={`pr-avatar-opt ${activeProfile.avatar === a ? 'selected' : ''}`}
-                                            onClick={() => saveAvatar(a)}>
-                                        <img src={avatarUrl(a)} alt={a} width={36} height={36}/>
-                                    </button>
-                                ))}
+                            <div className="pr-avatar-row">
+                                <div className="pr-avatar-grid">
+                                    {AVATARS.map(a => (
+                                        <button key={a}
+                                                className={`pr-avatar-opt ${activeProfile.avatar === a ? 'selected' : ''}`}
+                                                onClick={() => saveAvatar(a)}>
+                                            <img src={avatarUrl(a)} alt={a} width={36} height={36}/>
+                                        </button>
+                                    ))}
+                                </div>
+                                <input ref={fileRef} type="file" accept="image/*" className="pr-hidden" onChange={handleUpload}/>
+                                <button className="pr-upload-btn" onClick={() => fileRef.current?.click()}>
+                                    <Camera size={14}/> Upload Photo
+                                </button>
                             </div>
-                            <input ref={fileRef} type="file" accept="image/*" className="pr-hidden"
-                                   onChange={handleUpload}/>
-                            <button className="pr-upload-btn" onClick={() => fileRef.current?.click()}>
-                                <Camera size={14}/> Upload Photo
-                            </button>
                         </div>
 
                         <div className="pr-field">

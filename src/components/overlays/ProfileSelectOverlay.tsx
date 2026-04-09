@@ -74,7 +74,7 @@ const ProfileSelectOverlay: React.FC = () => {
 
     return (
         <div className="ps-backdrop">
-            <div className="ps-logo">Bongo<span>Quiz</span></div>
+            <div className="ps-logo">Grade<span>Up</span></div>
 
             {!adding ? (
                 <div className="ps-screen">
@@ -148,7 +148,7 @@ const ProfileSelectOverlay: React.FC = () => {
                         </div>
 
                         <button className="ps-pin-submit" onClick={handleAddProfile}>
-                            Create Profile 🚀
+                            Create Profile
                         </button>
 
                         {user.profiles.length > 0 && (

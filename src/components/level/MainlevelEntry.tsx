@@ -67,9 +67,60 @@ export const MainLevelEntry = () => {
         <>
         <div className="Main-lvl-Container">
             <div className="Main-lvl-Container-section">
+                {/* ── Search ── */}
+                <div className="mle-search-overlay-wrap">
+                    <div className="mle-search-wrap">
+                        <span className="mle-search-icon">🔍</span>
+                        <input
+                            className="mle-search-input"
+                            placeholder="Search subjects or topics…"
+                            value={query}
+                            onChange={e => setQuery(e.target.value)}
+                        />
+                        {query && <button className="mle-search-clear" onClick={() => setQuery('')}>✕</button>}
+                    </div>
 
+                    {/* ── Search Results ── */}
+                    {query.trim() && (
+                        <section className="mle-search-results">
+                            {myResults.length === 0 && otherResults.length === 0 && (
+                                <p className="mle-no-results">No results for "{query}"</p>
+                            )}
+                            {myResults.length > 0 && (
+                                <>
+                                    <p className="mle-results-label">Your Grade</p>
+                                    {myResults.map((r, i) => (
+                                        <div key={i} className="mle-result-row">
+                                            <span className="mle-result-emoji">{r.topic.emoji}</span>
+                                            <div className="mle-result-text">
+                                                <span className="mle-result-title">{r.topic.title}</span>
+                                                <span className="mle-result-meta">{r.subject} · {r.topic.desc}</span>
+                                            </div>
+                                            <span className="mle-result-arrow">›</span>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+                            {otherResults.length > 0 && (
+                                <>
+                                    <p className="mle-results-label mle-results-label--other">Other Grades</p>
+                                    {otherResults.map((r, i) => (
+                                        <div key={i} className="mle-result-row mle-result-row--other">
+                                            <span className="mle-result-emoji">{r.topic.emoji}</span>
+                                            <div className="mle-result-text">
+                                                <span className="mle-result-title">{r.topic.title}</span>
+                                                <span className="mle-result-meta">{r.subject} · Grade {r.grade} · {r.topic.desc}</span>
+                                            </div>
+                                            <span className="mle-result-arrow">›</span>
+                                        </div>
+                                    ))}
+                                </>
+                            )}
+                        </section>
+                    )}
+                </div>
                 {/* ── Hot Topics ── */}
-                <section className="hot-topics-container">
+                <section className="hot-topics-container reveal">
                     <h2 className="mle-section-heading">🔥 Hot Topics This Week</h2>
                     <div className="main-lvl-hot-topics-container">
                         <div className="hot-topics-track">
@@ -89,68 +140,17 @@ export const MainLevelEntry = () => {
                     </div>
                 </section>
 
-                {/* ── Search ── */}
-                <div className="mle-search-wrap">
-                    <span className="mle-search-icon">🔍</span>
-                    <input
-                        className="mle-search-input"
-                        placeholder="Search subjects or topics…"
-                        value={query}
-                        onChange={e => setQuery(e.target.value)}
-                    />
-                    {query && <button className="mle-search-clear" onClick={() => setQuery('')}>✕</button>}
-                </div>
-
-                {/* ── Search Results ── */}
-                {query.trim() && (
-                    <section className="mle-search-results">
-                        {myResults.length === 0 && otherResults.length === 0 && (
-                            <p className="mle-no-results">No results for "{query}"</p>
-                        )}
-                        {myResults.length > 0 && (
-                            <>
-                                <p className="mle-results-label">Your Grade</p>
-                                {myResults.map((r, i) => (
-                                    <div key={i} className="mle-result-row">
-                                        <span className="mle-result-emoji">{r.topic.emoji}</span>
-                                        <div className="mle-result-text">
-                                            <span className="mle-result-title">{r.topic.title}</span>
-                                            <span className="mle-result-meta">{r.subject} · {r.topic.desc}</span>
-                                        </div>
-                                        <span className="mle-result-arrow">›</span>
-                                    </div>
-                                ))}
-                            </>
-                        )}
-                        {otherResults.length > 0 && (
-                            <>
-                                <p className="mle-results-label mle-results-label--other">Other Grades</p>
-                                {otherResults.map((r, i) => (
-                                    <div key={i} className="mle-result-row mle-result-row--other">
-                                        <span className="mle-result-emoji">{r.topic.emoji}</span>
-                                        <div className="mle-result-text">
-                                            <span className="mle-result-title">{r.topic.title}</span>
-                                            <span className="mle-result-meta">{r.subject} · Grade {r.grade} · {r.topic.desc}</span>
-                                        </div>
-                                        <span className="mle-result-arrow">›</span>
-                                    </div>
-                                ))}
-                            </>
-                        )}
-                    </section>
-                )}
-
                 {/* ── Browse by Subject ── */}
-                <section className="mle-browse-section">
+                <section className="mle-browse-section reveal">
                     <h2 className="mle-section-heading">📖 Browse by Subject</h2>
                     <div className="mle-browse-grid">
-                        {browseTopics.map((st) => {
+                        {browseTopics.map((st, i) => {
                             const meta = subjects.find(s => s.name === st.subject);
                             return (
                                 <button
                                     key={st.subject}
                                     className="mle-browse-card"
-                                    style={{'--card-grad': meta?.grad ?? 'linear-gradient(135deg,#6366f1,#a78bfa)'} as React.CSSProperties}
+                                    style={{'--card-grad': meta?.grad ?? 'linear-gradient(135deg,#6366f1,#a78bfa)', animationDelay: `${i * 0.05}s`} as React.CSSProperties}
                                     onClick={() => setTopicsView(st)}
                                 >
                                     <span className="mle-browse-card-icon">{meta?.icon ?? '📚'}</span>
@@ -163,14 +163,13 @@ export const MainLevelEntry = () => {
                 </section>
 
                 {/* ── Revision ── */}
-                <section className="mle-revision-section">
+                <section className="mle-revision-section reveal">
                     <h2 className="mle-section-heading">📚 Revision</h2>
                     <div className="mle-revision-grid">
-                        {browseTopics.map((st) => {
+                        {browseTopics.map((st, i) => {
                             const meta = subjects.find(s => s.name === st.subject);
                             const img = SUBJECT_IMAGES[level]?.[st.subject];
                             const handleRevisionClick = () => {
-                                // ensure level selections are set so dashboards can initialize correctly
                                 if (level === 'middle_school') {
                                     const schoolLevel = grade <= 6 ? 'Upper Primary' : 'Junior Secondary School';
                                     setLevelSelection('middle_school', { level: schoolLevel, className: `Grade ${grade}` as any });
@@ -187,7 +186,7 @@ export const MainLevelEntry = () => {
                                     key={st.subject}
                                     onClick={handleRevisionClick}
                                     className="mle-subject-card"
-                                    style={{'--grad': meta?.grad} as React.CSSProperties}
+                                    style={{'--grad': meta?.grad, animationDelay: `${i * 0.06}s`} as React.CSSProperties}
                                 >
                                     {img
                                         ? <img src={img} alt={st.subject} className="mle-card-poster" />
@@ -200,12 +199,12 @@ export const MainLevelEntry = () => {
                 </section>
 
                 {/* ── Bongo Books ── */}
-                <section className="mle-books-section">
+                <section className="mle-books-section reveal">
                     <h2 className="mle-section-heading">📗 Bongo Books</h2>
                     <div className="mle-books-grid">
-                        {BONGO_BOOKS[level].map((book) => (
+                        {BONGO_BOOKS[level].map((book, i) => (
                             <div key={book.title} className="mle-book-card"
-                                style={{'--book-color': book.color, '--book-spine': book.spine} as React.CSSProperties}>
+                                style={{'--book-color': book.color, '--book-spine': book.spine, animationDelay: `${i * 0.07}s`} as React.CSSProperties}>
                                 <div className="mle-book-spine" />
                                 <div className="mle-book-cover">
                                     <div className="mle-book-cover-band" />
@@ -220,7 +219,7 @@ export const MainLevelEntry = () => {
                 </section>
 
                 {/* ── Level Banner ── */}
-                <section className="mle-level-banner"
+                <section className="mle-level-banner reveal"
                     style={{'--banner-grad': LEVEL_BANNER[level].grad} as React.CSSProperties}>
                     <span className="mle-banner-emoji">{LEVEL_BANNER[level].emoji}</span>
                     <div>
