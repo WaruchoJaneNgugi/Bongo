@@ -11,7 +11,7 @@ export interface SubjectTopics {
     topics: Topic[];
 }
 
-const TOPICS: Record<EducationLevel, Record<number, SubjectTopics[]>> = {
+export const TOPICS: Record<EducationLevel, Record<number, SubjectTopics[]>> = {
     lower_primary: {
         1: [
             { subject: 'Literacy', topics: [

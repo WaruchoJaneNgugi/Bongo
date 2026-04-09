@@ -33,7 +33,7 @@ const AboutPage: React.FC = () => {
               <span>{user.profiles.find(p => p.id === user.activeProfileId)?.username ?? user.profiles[0]?.username}</span>
             </div>
           )}
-          <h1 className="ab-hero-title">About <span>BongoQuiz</span></h1>
+          <h1 className="ab-hero-title">About <span>GradeUp</span></h1>
           <p className="ab-hero-sub">
             Kenya's #1 CBC revision platform — helping 50,000+ students learn smarter, score higher, and enjoy the journey.
           </p>
@@ -103,7 +103,7 @@ const AboutPage: React.FC = () => {
           <span className="ab-badge ab-badge-light">Our Mission</span>
           <h2>Making Quality Education <span>Accessible to All</span></h2>
           <p>
-            BongoQuiz was founded in Nairobi with a simple belief: every Kenyan student deserves access to high-quality revision tools, regardless of their background or location. We combine CBC curriculum expertise with modern gamification to make studying genuinely enjoyable.
+            GradeUp was founded in Nairobi with a simple belief: every Kenyan student deserves access to high-quality revision tools, regardless of their background or location. We combine CBC curriculum expertise with modern gamification to make studying genuinely enjoyable.
           </p>
         </div>
       </section>

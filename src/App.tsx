@@ -18,7 +18,7 @@ import {LowerPrimaryDashboard} from "./components/level/LowerPrimaryDashboard.ts
 import {SeniorSchoolDashboard} from "./components/level/SeniorSchoolDashboard.tsx";
 import {MainLevelEntry} from "./components/level/MainlevelEntry.tsx";
 import {ZenMain} from "./components/games/Mahjong/components/ZenMain.tsx";
-// import {BongoMain} from "./components/games/BongoQuiz/component/BongoMain.tsx";
+// import {BongoMain} from "./components/games/GradeUp/component/BongoMain.tsx";
 // import {SudokuMain} from "./components/games/Sudoku/SudokuMain.tsx";
 // import {MathQuiz} from "./components/games/MathQuiz/MathQuiz.tsx";
 // import {MainGameLayout} from "./components/games/BibleQuiz/components/MainGameLayout.tsx";

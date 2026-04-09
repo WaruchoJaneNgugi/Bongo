@@ -26,16 +26,16 @@ const HOW_IT_WORKS = [
 ];
 
 const TESTIMONIALS = [
-  { name: 'Amina W.', grade: 'Grade 8 · Nairobi', text: 'My daughter went from a C to a B+ in Maths in just one term. BongoQuiz makes revision feel like a game!', avatar: 'Amina' },
+  { name: 'Amina W.', grade: 'Grade 8 · Nairobi', text: 'My daughter went from a C to a B+ in Maths in just one term. GradeUp makes revision feel like a game!', avatar: 'Amina' },
   { name: 'Peter K.', grade: 'Grade 11 · Kisumu', text: 'The mock exams are exactly like the real thing. I feel so much more confident going into my finals.', avatar: 'Kofi' },
   { name: 'Grace M.', grade: 'Grade 4 · Mombasa', text: 'My son actually asks to do his homework now. The streaks and badges keep him motivated every day.', avatar: 'Zawadi' },
 ];
 
 const FAQS = [
-  { q: 'Is BongoQuiz really free?', a: 'BongoQuiz offers affordable family plans starting from KSh 240/month. One subscription covers multiple student profiles under one account.' },
+  { q: 'Is GradeUp really free?', a: 'GradeUp offers affordable family plans starting from KSh 240/month. One subscription covers multiple student profiles under one account.' },
   { q: 'Which curriculum does it follow?', a: 'All content is aligned to the Kenyan CBC (Competency Based Curriculum) for Grade 1–12.' },
   { q: 'Can multiple children use one account?', a: 'Yes. Our family plans support up to 5+ student profiles under one subscription.' },
-  { q: 'Does it work on mobile?', a: 'Absolutely. BongoQuiz is fully optimised for phones, tablets, and desktops.' },
+  { q: 'Does it work on mobile?', a: 'Absolutely. GradeUp is fully optimised for phones, tablets, and desktops.' },
 ];
 
 const FEATURES = [

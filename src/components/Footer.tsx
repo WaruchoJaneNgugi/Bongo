@@ -4,11 +4,11 @@ import { GraduationCap, Mail, Phone, MapPin, Send, Facebook, Twitter, Instagram,
 import '../styles/footer.css';
 
 const SOCIALS = [
-  { icon: Facebook,  label: 'Facebook',  href: 'https://facebook.com/bongoquiz',  color: '#1877F2' },
-  { icon: Twitter,   label: 'Twitter/X', href: 'https://twitter.com/bongoquiz',   color: '#1DA1F2' },
-  { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/bongoquiz', color: '#E1306C' },
-  { icon: Youtube,   label: 'YouTube',   href: 'https://youtube.com/@bongoquiz',  color: '#FF0000' },
-  { icon: Send,      label: 'Telegram',  href: 'https://t.me/bongoquiz',          color: '#229ED9' },
+  { icon: Facebook,  label: 'Facebook',  href: 'https://facebook.com/gradeup',  color: '#1877F2' },
+  { icon: Twitter,   label: 'Twitter/X', href: 'https://twitter.com/gradeup',   color: '#1DA1F2' },
+  { icon: Instagram, label: 'Instagram', href: 'https://instagram.com/gradeup', color: '#E1306C' },
+  { icon: Youtube,   label: 'YouTube',   href: 'https://youtube.com/@gradeup',  color: '#FF0000' },
+  { icon: Send,      label: 'Telegram',  href: 'https://t.me/gradeup',          color: '#229ED9' },
 ];
 
 const LINKS = [
@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
           <div className="ft-col ft-brand">
             <button className="ft-logo" onClick={() => navigate('/')}>
               <div className="ft-logo-icon"><GraduationCap size={20} color="#fff" /></div>
-              <span>Bongo<strong>Quiz</strong></span>
+              <span>Grade<strong>Up</strong></span>
             </button>
             <p className="ft-tagline">Kenya's #1 CBC revision platform — making learning engaging, effective, and fun for every student.</p>
             <div className="ft-socials">
@@ -70,7 +70,7 @@ const Footer: React.FC = () => {
           <div className="ft-col">
             <h4 className="ft-col-title">Contact</h4>
             <ul className="ft-contact-list">
-              <li><a href="mailto:hello@bongoquiz.co.ke" className="ft-contact-item"><Mail size={15}/><span>hello@bongoquiz.co.ke</span></a></li>
+              <li><a href="mailto:hello@gradeup.co.ke" className="ft-contact-item"><Mail size={15}/><span>hello@gradeup.co.ke</span></a></li>
               <li><a href="tel:+254700000000" className="ft-contact-item"><Phone size={15}/><span>+254 700 000 000</span></a></li>
               <li className="ft-contact-item ft-no-link"><MapPin size={15}/><span>Westlands, Nairobi</span></li>
             </ul>
@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="ft-bottom">
-          <p>© {year} BongoQuiz. All rights reserved. Built with ❤️ in Kenya.</p>
+          <p>© {year} GradeUp. All rights reserved. Built with ❤️ in Kenya.</p>
           <div className="ft-legal">
             <button onClick={() => navigate('/privacy')}>Privacy Policy</button>
             <span>·</span>

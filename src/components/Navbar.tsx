@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
 
   /* ── Bottom nav items (logged in) ──────────────────────── */
   const bottomItems = [
-    { path: '/',          icon: Home,     label: 'Home',    exact: true },
+    { path: '/home',          icon: Home,     label: 'Home',    exact: true },
     { path: '/games',     icon: Gamepad2, label: 'Games',   exact: false },
     { path: '/profile',   icon: User,     label: 'Profile', exact: false },
   ];
@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
 
             <button className="nb-logo" onClick={() => { navigate('/'); setMenuOpen(false); }}>
               <GraduationCap size={28} color="#7c3aed" />
-              <span>Bongo<strong>Quiz</strong></span>
+              <span>Grade<strong>Up</strong></span>
             </button>
 
 
@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
           <div className="nb-drawer">
             <div className="nb-drawer-header">
               <GraduationCap size={32} color="#7c3aed" />
-              <span>BongoQuiz</span>
+              <span>GradeUp</span>
               <button className="nb-drawer-close" onClick={() => setMenuOpen(false)}><X size={20} /></button>
             </div>
 

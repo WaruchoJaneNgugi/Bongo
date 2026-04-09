@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import Mahjong from '../assets/Games/mahjong.png';
-import BongoQuiz from '../assets/Games/bongoquiz.png';
+import GradeUp from '../assets/Games/bongoquiz.png';
 import Sudoku from '../assets/Games/sodoku.png';
 import MathQuiz from '../assets/Games/mathquiz.png';
 import BibleQuiz from '../assets/Games/Bible-IMG.png';
@@ -61,7 +61,7 @@ const ALL_GAMES: Game[] = [
     name: 'Bongo Quiz',
     // description: 'Build vocabulary and master spelling with fun word puzzles.',
     tags: ['popular', 'english', 'puzzle'],
-    image: BongoQuiz,
+    image: GradeUp,
     emoji: '📝',
     bgColor: 'linear-gradient(135deg, #2563eb 0%, #0891b2 100%)',
     component: '/games/bongo-quiz',

@@ -212,7 +212,7 @@ export const MainLevelEntry = () => {
                                     <span className="mle-book-subject">{book.subject}</span>
                                     <span className="mle-book-title">{book.title}</span>
                                     <span className="mle-book-grade">{book.grade}</span>
-                                    <span className="mle-book-logo">BongoQuiz</span>
+                                    <span className="mle-book-logo">GradeUp</span>
                                 </div>
                             </div>
                         ))}

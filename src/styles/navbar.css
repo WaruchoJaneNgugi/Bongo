@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   navbar.css  —  BongoQuiz Navigation (Playful Learning)
+   navbar.css  —  GradeUp Navigation (Playful Learning)
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Root ────────────────────────────────────────────────── */
@@ -127,6 +127,41 @@
 }
 .nb-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124,58,237,0.4); }
 .nb-btn-primary.full { width: 100%; justify-content: center; display: flex; }
+
+@media (max-width:450px){
+
+  .nb-btn-outline {
+    padding: 0.55rem 1.2rem;
+    background: transparent;
+    border: 2px solid #ddd6fe;
+    border-radius: 999px;
+    color: #7c3aed;
+    font-size: 0.66rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .nb-btn-outline:hover { background: #f4f0ff; border-color: #a78bfa; transform: translateY(-1px); }
+  .nb-btn-outline.full { width: 100%; justify-content: center; display: flex; }
+
+  .nb-btn-primary {
+    padding: 0.55rem 1.2rem;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    border: none;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.66rem;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(124,58,237,0.3);
+    transition: transform 0.15s, box-shadow 0.15s;
+    font-family: 'Nunito', sans-serif;
+  }
+  .nb-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(124,58,237,0.4); }
+  .nb-btn-primary.full { width: 100%; justify-content: center; display: flex; }
+
+}
 
 /* ── User menu ───────────────────────────────────────────── */
 .nb-user-wrap { position: relative; }

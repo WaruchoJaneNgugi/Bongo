@@ -103,7 +103,7 @@ export const useStore = create<AppState>()(
         })),
     }),
     {
-      name: 'bongoquiz-v3',
+      name: 'gradeup-v3',
       partialize: (state) => ({
         user: state.user,
         allUsers: state.allUsers,
