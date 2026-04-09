@@ -70,14 +70,19 @@ export const MainLevelEntry = () => {
                 {/* ── Search ── */}
                 <div className="mle-search-overlay-wrap">
                     <div className="mle-search-wrap">
-                        <span className="mle-search-icon">🔍</span>
+                        {/*<span className="mle-search-icon">🔍</span>*/}
                         <input
                             className="mle-search-input"
                             placeholder="Search subjects or topics…"
                             value={query}
                             onChange={e => setQuery(e.target.value)}
                         />
-                        {query && <button className="mle-search-clear" onClick={() => setQuery('')}>✕</button>}
+                        {query
+                            ? <button className="mle-search-clear" onClick={() => setQuery('')}>✕</button>
+                            : <button className="mle-search-btn" aria-label="Search">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                              </button>
+                        }
                     </div>
 
                     {/* ── Search Results ── */}
@@ -119,6 +124,52 @@ export const MainLevelEntry = () => {
                         </section>
                     )}
                 </div>
+                <div className="mle-top-row">
+                {/* ── Streak / XP strip ── */}
+                {/*<div className="mle-xp-strip reveal">*/}
+                {/*    <div className="mle-xp-streak">*/}
+                {/*        <span className="mle-xp-fire">🔥</span>*/}
+                {/*        <span className="mle-xp-streak-val">{activeProfile?.streak ?? 0}</span>*/}
+                {/*        <span className="mle-xp-streak-lbl">Day Streak</span>*/}
+                {/*    </div>*/}
+                {/*    <div className="mle-xp-center">*/}
+                {/*        <p className="mle-xp-msg">Keep going! You're doing great!</p>*/}
+                {/*        <div className="mle-xp-bar-track">*/}
+                {/*            <div className="mle-xp-bar-fill" style={{ width: `${Math.min(((activeProfile?.xp ?? 0) % 1000) / 10, 100)}%` }} />*/}
+                {/*        </div>*/}
+                {/*        <span className="mle-xp-label">{(activeProfile?.xp ?? 0) % 1000} / 1000 XP</span>*/}
+                {/*    </div>*/}
+                {/*    <div className="mle-xp-badges">*/}
+                {/*        <span className="mle-xp-trophy">🏆</span>*/}
+                {/*        <span className="mle-xp-badge-val">2</span>*/}
+                {/*        <span className="mle-xp-badge-lbl">Badges</span>*/}
+                {/*    </div>*/}
+                {/*</div>*/}
+
+                {/* ── Continue Learning ── */}
+                <div className="mle-continue-card reveal">
+                    <div className="mle-continue-header">
+                        <span className="mle-continue-title">Continue Learning</span>
+                        <button className="mle-continue-view-all" onClick={() => {}}>View all ›</button>
+                    </div>
+                    <div className="mle-continue-body">
+                        <div className="mle-continue-thumb">📐</div>
+                        <div className="mle-continue-info">
+                            <span className="mle-continue-topic">Fractions &amp; Decimals</span>
+                            <span className="mle-continue-meta">Mathematics · Grade {activeProfile?.grade ?? grade}</span>
+                            <div className="mle-continue-bar-wrap">
+                                <div className="mle-continue-bar-track">
+                                    <div className="mle-continue-bar-fill" style={{ width: '60%' }} />
+                                </div>
+                                <span className="mle-continue-pct">60% complete</span>
+                            </div>
+                        </div>
+                        <button className="mle-continue-resume" onClick={() => setInExam(true)}>▶ Resume</button>
+                    </div>
+                </div>
+
+                </div>{/* end mle-top-row */}
+
                 {/* ── Hot Topics ── */}
                 <section className="hot-topics-container reveal">
                     <h2 className="mle-section-heading">🔥 Hot Topics This Week</h2>
@@ -156,6 +207,9 @@ export const MainLevelEntry = () => {
                                     <span className="mle-browse-card-icon">{meta?.icon ?? '📚'}</span>
                                     <span className="mle-browse-card-name">{st.subject}</span>
                                     <span className="mle-browse-card-desc">{meta?.desc ?? ''}</span>
+                                    <div className="mle-browse-card-progress">
+                                        <div className="mle-browse-card-progress-fill" style={{ width: `${[60,40,75,50,30,45,80][i % 7]}%` }} />
+                                    </div>
                                 </button>
                             );
                         })}
@@ -164,11 +218,15 @@ export const MainLevelEntry = () => {
 
                 {/* ── Revision ── */}
                 <section className="mle-revision-section reveal">
-                    <h2 className="mle-section-heading">📚 Revision</h2>
+                    <div className="mle-section-row">
+                        <h2 className="mle-section-heading">📚 Revision</h2>
+                        <button className="mle-see-all">See all ›</button>
+                    </div>
                     <div className="mle-revision-grid">
                         {browseTopics.map((st, i) => {
                             const meta = subjects.find(s => s.name === st.subject);
                             const img = SUBJECT_IMAGES[level]?.[st.subject];
+                            const mockProgress = [60, 40, 75, 50, 30, 45, 80][i % 7];
                             const handleRevisionClick = () => {
                                 if (level === 'middle_school') {
                                     const schoolLevel = grade <= 6 ? 'Upper Primary' : 'Junior Secondary School';
@@ -182,16 +240,21 @@ export const MainLevelEntry = () => {
                                 setInExam(true);
                             };
                             return (
-                                <div
-                                    key={st.subject}
-                                    onClick={handleRevisionClick}
-                                    className="mle-subject-card"
-                                    style={{'--grad': meta?.grad, animationDelay: `${i * 0.06}s`} as React.CSSProperties}
-                                >
-                                    {img
-                                        ? <img src={img} alt={st.subject} className="mle-card-poster" />
-                                        : <span className="mle-card-icon">{meta?.icon ?? '📚'}</span>
-                                    }
+                                <div key={st.subject} className="mle-revision-item" onClick={handleRevisionClick}
+                                    style={{ animationDelay: `${i * 0.06}s` }}>
+                                    <div className="mle-subject-card"
+                                        style={{'--grad': meta?.grad} as React.CSSProperties}>
+                                        {img
+                                            ? <img src={img} alt={st.subject} className="mle-card-poster" />
+                                            : <span className="mle-card-icon">{meta?.icon ?? '📚'}</span>
+                                        }
+                                    </div>
+                                    <div className="mle-revision-progress">
+                                        <div className="mle-rev-bar-track">
+                                            <div className="mle-rev-bar-fill" style={{ width: `${mockProgress}%` }} />
+                                        </div>
+                                        <span className="mle-rev-pct">{mockProgress}%</span>
+                                    </div>
                                 </div>
                             );
                         })}

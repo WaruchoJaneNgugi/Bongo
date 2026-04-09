@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
 
             {/* Desktop nav links */}
             <div className="nb-links">
-              <Link to="/" className={`nb-link ${location.pathname === '/' || isActive('/level') ? 'active' : ''}`}>
+              <Link to="/" className={`nb-link ${location.pathname === '/home' || isActive('/level') ? 'active' : ''}`}>
                 <Home size={17} /> Home
               </Link>
               <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>

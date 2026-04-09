@@ -300,6 +300,10 @@
     color: #fff;
     text-align: center;
     line-height: 1.2;
+    min-height: 2.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-shadow: 0 1px 3px rgba(0,0,0,0.25);
 }
 .mle-browse-card-desc {
@@ -308,6 +312,20 @@
     color: rgba(255,255,255,0.82);
     text-align: center;
     line-height: 1.2;
+}
+
+.mle-browse-card-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.25);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-top: 4px;
+}
+.mle-browse-card-progress-fill {
+    height: 100%;
+    background: rgba(255,255,255,0.9);
+    border-radius: 999px;
 }
 
 /* ── Topics view ── */
@@ -401,15 +419,15 @@
 
 .mle-search-results {
     position: absolute;
-    top: calc(100% - 1rem);
+    top: calc(100% - 0rem);
     left: 0; right: 0;
     background: #fff;
-    border-radius: 0 0 16px 16px;
+    border-radius: 16px 0 16px 16px;
     padding: 0.6rem;
     border: 1.5px solid rgba(99,102,241,0.2);
     border-top: none;
     box-shadow: 0 16px 40px rgba(99,102,241,0.15);
-    max-height: 360px;
+    max-height: 560px;
     overflow-y: auto;
     display: grid;
     grid-template-columns: 1fr;
@@ -476,6 +494,18 @@
     transition: background 0.15s;
 }
 .mle-search-clear:hover { background: rgba(99,102,241,0.22); }
+
+.mle-search-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(124,58,237,0.35);
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.mle-search-btn:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(124,58,237,0.5); }
 
 /* ── Search results ── */
 
@@ -737,3 +767,92 @@
     transform: translateY(-3px);
     box-shadow: 0 16px 40px rgba(0,0,0,0.2);
 }
+
+/* ── Top row (XP strip + Continue Learning) ── */
+.mle-top-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    margin-bottom: 0.85rem;
+}
+
+@media (min-width: 768px) {
+    .mle-top-row { flex-direction: row; align-items: stretch; }
+    .mle-top-row .mle-xp-strip,
+    .mle-top-row .mle-continue-card { flex: 1; margin-bottom: 0; }
+}
+
+/* ── XP Strip ── */
+.mle-xp-strip {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #faf5ff, #fce7f3);
+    border: 1.5px solid #e9d5ff;
+    border-radius: 16px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.85rem;
+}
+.mle-xp-streak, .mle-xp-badges {
+    display: flex; flex-direction: column; align-items: center; gap: 1px; flex-shrink: 0;
+}
+.mle-xp-fire, .mle-xp-trophy { font-size: 1.4rem; }
+.mle-xp-streak-val, .mle-xp-badge-val {
+    font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #7c3aed; line-height: 1;
+}
+.mle-xp-streak-lbl, .mle-xp-badge-lbl {
+    font-size: 0.6rem; font-weight: 700; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.04em;
+}
+.mle-xp-center { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.mle-xp-msg { font-size: 0.75rem; font-weight: 600; color: #4b5563; margin: 0; }
+.mle-xp-bar-track { height: 8px; background: #e9d5ff; border-radius: 999px; overflow: hidden; }
+.mle-xp-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #ec4899); border-radius: 999px; transition: width 1s ease; }
+.mle-xp-label { font-size: 0.65rem; font-weight: 700; color: #9ca3af; }
+
+/* ── Continue Learning ── */
+.mle-continue-card {
+    background: #fff;
+    border: 1.5px solid #e9d5ff;
+    border-radius: 16px;
+    padding: 1rem;
+    margin-bottom: 0.85rem;
+    box-shadow: 0 2px 12px rgba(124,58,237,0.07);
+}
+.mle-continue-header {
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;
+}
+.mle-continue-title { font-family: 'Fredoka One', cursive; font-size: 1rem; color: #1e1b4b; font-weight: 400; }
+.mle-continue-view-all { background: none; border: none; color: #7c3aed; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+.mle-continue-body { display: flex; align-items: center; gap: 0.85rem; }
+.mle-continue-thumb {
+    width: 60px; height: 60px; border-radius: 12px; flex-shrink: 0;
+    background: linear-gradient(135deg, #ede9fe, #fce7f3);
+    display: flex; align-items: center; justify-content: center; font-size: 1.8rem;
+}
+.mle-continue-info { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.mle-continue-topic { font-size: 0.92rem; font-weight: 800; color: #1e1b4b; }
+.mle-continue-meta { font-size: 0.72rem; color: #9ca3af; font-weight: 600; }
+.mle-continue-bar-wrap { display: flex; align-items: center; gap: 0.5rem; margin-top: 4px; }
+.mle-continue-bar-track { flex: 1; height: 7px; background: #e9d5ff; border-radius: 999px; overflow: hidden; }
+.mle-continue-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #ec4899); border-radius: 999px; }
+.mle-continue-pct { font-size: 0.68rem; font-weight: 700; color: #7c3aed; white-space: nowrap; }
+.mle-continue-resume {
+    background: #7c3aed; color: #fff; border: none; border-radius: 999px;
+    padding: 0.5rem 1rem; font-size: 0.8rem; font-weight: 700; cursor: pointer;
+    white-space: nowrap; flex-shrink: 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: 'Nunito', sans-serif;
+}
+.mle-continue-resume:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(124,58,237,0.35); }
+
+/* ── Section row (heading + see all) ── */
+.mle-section-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.9rem; }
+.mle-section-row .mle-section-heading { margin-bottom: 0; }
+.mle-see-all { background: none; border: none; color: #7c3aed; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; }
+
+/* ── Revision item with progress ── */
+.mle-revision-item { display: flex; flex-direction: column; gap: 0.4rem; cursor: pointer; }
+.mle-revision-progress { display: flex; align-items: center; gap: 0.4rem; }
+.mle-rev-bar-track { flex: 1; height: 5px; background: #e9d5ff; border-radius: 999px; overflow: hidden; }
+.mle-rev-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #ec4899); border-radius: 999px; }
+.mle-rev-pct { font-size: 0.65rem; font-weight: 700; color: #7c3aed; white-space: nowrap; }
