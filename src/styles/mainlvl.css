@@ -123,18 +123,16 @@
 }
 
 .mle-revision-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    flex-direction: row;
     gap: 0.85rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.5rem;
 }
 
-@media (min-width: 480px) {
-    .mle-revision-grid { grid-template-columns: repeat(3, 1fr); }
-}
-
-@media (min-width: 680px) {
-    .mle-revision-grid { grid-template-columns: repeat(7, 1fr); }
-}
+.mle-revision-grid::-webkit-scrollbar { display: none; }
 
 .mle-subject-card {
     display: flex;
@@ -851,7 +849,7 @@
 .mle-see-all { background: none; border: none; color: #7c3aed; font-size: 0.8rem; font-weight: 700; cursor: pointer; font-family: 'Nunito', sans-serif; }
 
 /* ── Revision item with progress ── */
-.mle-revision-item { display: flex; flex-direction: column; gap: 0.4rem; cursor: pointer; }
+.mle-revision-item { display: flex; flex-direction: column; gap: 0.4rem; cursor: pointer; flex: 0 0 auto; width: 110px; scroll-snap-align: start; }
 .mle-revision-progress { display: flex; align-items: center; gap: 0.4rem; }
 .mle-rev-bar-track { flex: 1; height: 5px; background: #e9d5ff; border-radius: 999px; overflow: hidden; }
 .mle-rev-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #ec4899); border-radius: 999px; }
