@@ -35,13 +35,18 @@ export interface StudentUser {
 export type AppUser = StudentUser;
 export type Overlay = null | 'signup' | 'login' | 'profile-select';
 
+// { [phone]: { attempts: number; lockoutUntil: number | null } }
+export type LoginAttempts = Record<string, { attempts: number; lockoutUntil: number | null }>;
+
 interface AppState {
   overlay: Overlay;
   signupPackage: FamilyPackage | null;
   user: AppUser | null;
   allUsers: AppUser[];
   isLoggedIn: boolean;
+  sessionToken: string | null;   // runtime-only, not persisted
   levelSelections: LevelSelections;
+  loginAttempts: LoginAttempts;
 
   setOverlay: (overlay: Overlay, pkg?: FamilyPackage | null) => void;
   login: (user: AppUser) => void;
@@ -51,6 +56,9 @@ interface AppState {
   updateUser: (updates: Partial<AppUser>) => void;
   findUserByPhone: (phone: string) => AppUser | undefined;
   setLevelSelection: (level: keyof LevelSelections, value: LevelSelections[keyof LevelSelections]) => void;
+  recordFailedAttempt: (phone: string) => void;
+  clearAttempts: (phone: string) => void;
+  getAttemptInfo: (phone: string) => { attempts: number; lockoutUntil: number | null };
 }
 
 export const useStore = create<AppState>()(
@@ -61,13 +69,15 @@ export const useStore = create<AppState>()(
       user: null,
       allUsers: [],
       isLoggedIn: false,
+      sessionToken: null,
       levelSelections: {},
+      loginAttempts: {},
 
       setOverlay: (overlay, pkg = null) => set({ overlay, signupPackage: pkg }),
 
-      login: (user) => set({ user, isLoggedIn: true }),
+      login: (user) => set({ user, isLoggedIn: true, sessionToken: crypto.randomUUID() }),
 
-      logout: () => set({ user: null, isLoggedIn: false, overlay: null }),
+      logout: () => set({ user: null, isLoggedIn: false, overlay: null, sessionToken: null }),
 
       registerUser: (newUser) =>
         set((state) => ({ allUsers: [...state.allUsers, newUser] })),
@@ -101,6 +111,25 @@ export const useStore = create<AppState>()(
         set((state) => ({
           levelSelections: { ...state.levelSelections, [level]: value },
         })),
+
+      recordFailedAttempt: (phone) =>
+        set((state) => {
+          const prev = state.loginAttempts[phone] ?? { attempts: 0, lockoutUntil: null };
+          const attempts = prev.attempts + 1;
+          const lockoutUntil = attempts >= 5 ? Date.now() + 5 * 60 * 1000 : null; // 5 min lockout after 5 fails
+          return { loginAttempts: { ...state.loginAttempts, [phone]: { attempts, lockoutUntil } } };
+        }),
+
+      clearAttempts: (phone) =>
+        set((state) => {
+          const { [phone]: _, ...rest } = state.loginAttempts;
+          return { loginAttempts: rest };
+        }),
+
+      getAttemptInfo: (phone) => {
+        const info = get().loginAttempts[phone];
+        return info ?? { attempts: 0, lockoutUntil: null };
+      },
     }),
     {
       name: 'gradeup-v3',
@@ -109,6 +138,8 @@ export const useStore = create<AppState>()(
         allUsers: state.allUsers,
         isLoggedIn: state.isLoggedIn,
         levelSelections: state.levelSelections,
+        loginAttempts: state.loginAttempts,
+        // sessionToken intentionally excluded — not persisted
       }),
     }
   )

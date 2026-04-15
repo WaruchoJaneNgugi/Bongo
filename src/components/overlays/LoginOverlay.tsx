@@ -6,7 +6,7 @@ import '../../styles/overlay.css';
 
 const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasError?: boolean; disabled?: boolean }> = ({ value, onChange, hasError, disabled }) => {
   const refs = [useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null),
-                useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
+    useRef<HTMLInputElement>(null), useRef<HTMLInputElement>(null)];
   const digits = value.padEnd(4, '').split('').slice(0, 4);
 
   const handleInput = (i: number, char: string) => {
@@ -26,15 +26,15 @@ const PinInput: React.FC<{ value: string; onChange: (v: string) => void; hasErro
   };
 
   return (
-    <div className="ov-pin-row">
-      {[0,1,2,3].map(i => (
-        <input key={i} ref={refs[i]} type="password" inputMode="numeric" maxLength={1}
-          value={digits[i] || ''} onChange={e => handleInput(i, e.target.value)}
-          onKeyDown={e => handleKeyDown(i, e)} onPaste={handlePaste} disabled={disabled}
-          className={`ov-pin-box ${hasError ? 'error' : ''} ${digits[i] ? 'filled' : ''}`}
-          autoComplete="off" />
-      ))}
-    </div>
+      <div className="ov-pin-row">
+        {[0,1,2,3].map(i => (
+            <input key={i} ref={refs[i]} type="password" inputMode="numeric" maxLength={1}
+                   value={digits[i] || ''} onChange={e => handleInput(i, e.target.value)}
+                   onKeyDown={e => handleKeyDown(i, e)} onPaste={handlePaste} disabled={disabled}
+                   className={`ov-pin-box ${hasError ? 'error' : ''} ${digits[i] ? 'filled' : ''}`}
+                   autoComplete="off" />
+        ))}
+      </div>
   );
 };
 
@@ -82,41 +82,41 @@ const LoginOverlay: React.FC = () => {
   };
 
   return (
-    <div className="ov-backdrop" onClick={() => setOverlay(null)}>
-      <div className="ov-container" onClick={e => e.stopPropagation()}>
-        <div className="ov-card">
-          <button className="ov-close" onClick={() => setOverlay(null)}><X size={18} /></button>
-          <div className="ov-logo">Bongo<span>Quiz</span></div>
+      <div className="ov-backdrop" onClick={() => setOverlay(null)}>
+        <div className="ov-container" onClick={e => e.stopPropagation()}>
+          <div className="ov-card">
+            <button className="ov-close" onClick={() => setOverlay(null)}><X size={18} /></button>
+            <div className="ov-logo">Bongo<span>Quiz</span></div>
 
-          <h2 className="ov-title">👋 Welcome Back!</h2>
-          <p className="ov-sub">Continue your learning streak 🔥</p>
+            <h2 className="ov-title">👋 Welcome Back!</h2>
+            <p className="ov-sub">Continue your learning streak 🔥</p>
 
-          {error && <div className="ov-error"><Shield size={14} />{error}</div>}
+            {error && <div className="ov-error"><Shield size={14} />{error}</div>}
 
-          <div className="ov-form-group">
-            <label className="ov-label"><Phone size={15} /> Phone Number</label>
-            <input className="ov-input" type="tel" placeholder="0712 345 678"
-              value={phone} onChange={e => { setPhone(e.target.value); setError(''); }}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()} disabled={loading} />
+            <div className="ov-form-group">
+              <label className="ov-label"><Phone size={15} /> Phone Number</label>
+              <input className="ov-input" type="tel" placeholder="0712 345 678"
+                     value={phone} onChange={e => { setPhone(e.target.value); setError(''); }}
+                     onKeyDown={e => e.key === 'Enter' && handleLogin()} disabled={loading} />
+            </div>
+
+            <div className="ov-form-group">
+              <label className="ov-label">🔐 Account PIN</label>
+              <PinInput value={pin} onChange={v => { setPin(v); setError(''); }}
+                        hasError={!!error && pin.length < 4} disabled={loading} />
+            </div>
+
+            <button className="ov-submit" onClick={handleLogin} disabled={loading}>
+              {loading ? 'Logging in…' : <><span>Log In</span><ArrowRight size={18} /></>}
+            </button>
+
+            <p className="ov-footer-text">
+              Don't have an account?{' '}
+              <button className="ov-link" onClick={() => setOverlay('signup')}>Sign Up</button>
+            </p>
           </div>
-
-          <div className="ov-form-group">
-            <label className="ov-label">🔐 Account PIN</label>
-            <PinInput value={pin} onChange={v => { setPin(v); setError(''); }}
-              hasError={!!error && pin.length < 4} disabled={loading} />
-          </div>
-
-          <button className="ov-submit" onClick={handleLogin} disabled={loading}>
-            {loading ? 'Logging in…' : <><span>Log In</span><ArrowRight size={18} /></>}
-          </button>
-
-          <p className="ov-footer-text">
-            Don't have an account?{' '}
-            <button className="ov-link" onClick={() => setOverlay('signup')}>Sign Up</button>
-          </p>
         </div>
       </div>
-    </div>
   );
 };
 

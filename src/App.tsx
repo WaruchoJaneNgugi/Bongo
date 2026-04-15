@@ -54,8 +54,9 @@ const StarField: React.FC = () => {
 };
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isLoggedIn } = useStore();
-  return isLoggedIn ? <>{children}</> : <Navigate to="/" replace />;
+  const { isLoggedIn, user, allUsers } = useStore();
+  const isValid = isLoggedIn && user != null && allUsers.some(u => u.phone === user.phone);
+  return isValid ? <>{children}</> : <Navigate to="/" replace />;
 };
 
 const AppContent: React.FC = () => {
