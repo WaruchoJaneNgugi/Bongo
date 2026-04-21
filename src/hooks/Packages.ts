@@ -15,11 +15,27 @@ export const AVATARS = [
 export const avatarUrl = (a: string) => DICEBEAR(a);
 
 export const PACKAGES: {
-    id: FamilyPackage; label: string; price: string; period: string;
-    icon: ElementType; color: string; popular?: boolean;
+    id: FamilyPackage; label: string; subtitle: string; price: string; period: string;
+    icon: ElementType; color: string; popular?: boolean; features: string[];
 }[] = [
-    { id: 'solo',   label: '1 Students',   price: 'KSh 240', period: '/month', icon: User,   color: '#10b981' },
-    { id: 'trio',   label: '2 Students',  price: 'KSh 360', period: '/month', icon: Users,  color: '#3b82f6', popular: true },
-    { id: 'quad',   label: '3 Students',  price: 'KSh 480', period: '/month', icon: Crown,  color: '#f59e0b' },
-    { id: 'family', label: '4+ Students', price: 'KSh 1080', period: '/month', icon: Star,   color: '#a855f7' },
+    {
+        id: 'solo', label: 'Solo', subtitle: '1 Student', price: 'KSh 240', period: '/month',
+        icon: User, color: '#10b981',
+        features: ['1 student profile', 'All subjects & levels', 'Mock exams & quizzes', 'Progress tracking'],
+    },
+    {
+        id: 'trio', label: 'Duo', subtitle: '2 Students', price: 'KSh 360', period: '/month',
+        icon: Users, color: '#3b82f6', popular: true,
+        features: ['2 student profiles', 'All subjects & levels', 'Mock exams & quizzes', 'Progress tracking', 'Priority support'],
+    },
+    {
+        id: 'quad', label: 'Trio', subtitle: '3 Students', price: 'KSh 480', period: '/month',
+        icon: Crown, color: '#f59e0b',
+        features: ['3 student profiles', 'All subjects & levels', 'Mock exams & quizzes', 'Progress tracking', 'Priority support'],
+    },
+    {
+        id: 'family', label: 'Family', subtitle: '4+ Students', price: 'KSh 1,080', period: '/month',
+        icon: Star, color: '#a855f7',
+        features: ['Unlimited profiles', 'All subjects & levels', 'Mock exams & quizzes', 'Advanced analytics', 'Priority support', 'Early access to features'],
+    },
 ];

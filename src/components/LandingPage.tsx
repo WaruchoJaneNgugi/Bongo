@@ -13,22 +13,23 @@ import Footer from './Footer';
 import '../styles/landing.css';
 import '../styles/exambrowser.css';
 import '../styles/landing-loggedin.css';
+import {TriangleBackground} from "./TriangleBackground.tsx";
 import {ExamBrowser} from "./ExamBrowser.tsx";
 import {LEVEL_CONFIG} from "../hooks/LevelConfigs.ts";
 import {PACKAGES, avatarUrl, AVATARS} from "../hooks/Packages.ts";
 
 
 const HOW_IT_WORKS = [
-  { step: '1', emoji: '📱', title: 'Sign Up Free', desc: 'Create your account in 30 seconds with just a phone number.' },
-  { step: '2', emoji: '🎯', title: 'Pick Your Level', desc: 'Choose Lower Primary, Middle School, or Senior School.' },
-  { step: '3', emoji: '📝', title: 'Practice & Play', desc: 'Take quizzes, mock exams, and fun games — all CBC aligned.' },
-  { step: '4', emoji: '🏆', title: 'Track Progress', desc: 'Earn XP, badges, and watch your grades improve.' },
+  { step: '1', emoji: '📱', title: 'Sign Up Free',    desc: 'Create your account in 30 seconds with just a phone number.', color: '#10b981' },
+  { step: '2', emoji: '🎯', title: 'Pick Your Level', desc: 'Choose Lower Primary, Middle School, or Senior School.',       color: '#3b82f6' },
+  { step: '3', emoji: '📝', title: 'Practice & Play', desc: 'Take quizzes, mock exams, and fun games — all CBC aligned.',   color: '#f59e0b' },
+  { step: '4', emoji: '🏆', title: 'Track Progress',  desc: 'Earn XP, badges, and watch your grades improve.',              color: '#a855f7' },
 ];
 
 const TESTIMONIALS = [
-  { name: 'Amina W.', grade: 'Grade 8 · Nairobi', text: 'My daughter went from a C to a B+ in Maths in just one term. GradeUp makes revision feel like a game!', avatar: 'Amina' },
-  { name: 'Peter K.', grade: 'Grade 11 · Kisumu', text: 'The mock exams are exactly like the real thing. I feel so much more confident going into my finals.', avatar: 'Kofi' },
-  { name: 'Grace M.', grade: 'Grade 4 · Mombasa', text: 'My son actually asks to do his homework now. The streaks and badges keep him motivated every day.', avatar: 'Zawadi' },
+  { name: 'Amina W.', grade: 'Grade 8 · Nairobi',  text: 'My daughter went from a C to a B+ in Maths in just one term. GradeUp makes revision feel like a game!', avatar: 'Amina', color: '#10b981' },
+  { name: 'Peter K.', grade: 'Grade 11 · Kisumu',  text: 'The mock exams are exactly like the real thing. I feel so much more confident going into my finals.',       avatar: 'Kofi',  color: '#3b82f6' },
+  { name: 'Grace M.', grade: 'Grade 4 · Mombasa',  text: 'My son actually asks to do his homework now. The streaks and badges keep him motivated every day.',          avatar: 'Zawadi',color: '#a855f7' },
 ];
 
 const FAQS = [
@@ -78,9 +79,10 @@ const GuestHero: React.FC = () => {
 
   return (
       <div className="gh-guest">
+        <TriangleBackground />
         {/* Slider Section */}
         <div className="slider-section-cta">
-          <section className="gh-slider-full">
+          <section className="gh-slider-full" data-parallax="0.08">
             {SLIDES.map((s, i) => (
               <div key={s.id} className={`gh-slide ${i === slideIdx ? 'gh-slide-active' : ''}`}>
                 <img src={s.img} alt={s.grade} className="gh-slide-img" />
@@ -133,30 +135,37 @@ const GuestHero: React.FC = () => {
 
           {/* Pricing Section */}
           <section className="gh-pricing-section reveal">
-            <div className="gh-section-header">
+            <div className="gh-section-header reveal">
               <span className="gh-section-badge">💳 Simple Pricing</span>
               <h2 className="gh-section-title">Pick your <span className="gh-text-gradient">plan</span></h2>
               <p className="gh-section-sub">One subscription covers the whole family. Cancel anytime.</p>
             </div>
             <div className="gh-pricing-grid">
-              {PACKAGES.map(pkg => {
+              {PACKAGES.map((pkg, i) => {
                 const Icon = pkg.icon;
                 return (
                     <button
                         key={pkg.id}
-                        className={`gh-pricing-card${pkg.popular ? ' gh-pricing-card--popular' : ''}`}
+                        className={`gh-pricing-card reveal${pkg.popular ? ' gh-pricing-card--popular' : ''}`}
+                        style={{ '--pkg-color': pkg.color, transitionDelay: `${i * 0.1}s` } as React.CSSProperties}
                         onClick={() => setOverlay('signup', pkg.id)}
                     >
-                      {pkg.popular && <div className="gh-pricing-badge" style={{ background: pkg.color }}>POPULAR</div>}
-                      <div className="gh-pricing-icon" style={{ background: `${pkg.color}18`, color: pkg.color }}>
-                        <Icon size={26} />
+                      {pkg.popular && <div className="gh-pricing-badge">⭐ Most Popular</div>}
+                      <div className="gh-pricing-icon" style={{ background: `${pkg.color}22`, color: pkg.color }}>
+                        <Icon size={28} />
                       </div>
                       <div className="gh-pricing-label">{pkg.label}</div>
+                      <div className="gh-pricing-subtitle">{pkg.subtitle}</div>
                       <div className="gh-pricing-price">
                         <span className="gh-pricing-amount">{pkg.price}</span>
                         <span className="gh-pricing-period">{pkg.period}</span>
                       </div>
-                      <div className="gh-pricing-cta" style={{ background: pkg.color }}>Get Started</div>
+                      <ul className="gh-pricing-features">
+                        {pkg.features.map(f => (
+                          <li key={f}><span className="gh-pricing-check" style={{ color: pkg.color }}>✓</span>{f}</li>
+                        ))}
+                      </ul>
+                      <div className="gh-pricing-cta" style={{ background: pkg.color }}>Get Started →</div>
                     </button>
                 );
               })}
@@ -164,15 +173,15 @@ const GuestHero: React.FC = () => {
           </section>
 
           {/* How it works */}
-          <section className="gh-how-section reveal">
-            <div className="gh-section-header">
+          <section className="gh-how-section">
+            <div className="gh-section-header reveal">
               <span className="gh-section-badge">🚀 How It Works</span>
               <h2 className="gh-section-title">Up and running in <span className="gh-text-gradient">minutes</span></h2>
             </div>
             <div className="gh-how-grid">
-              {HOW_IT_WORKS.map(item => (
-                <div key={item.step} className="gh-how-card reveal">
-                  <div className="gh-how-step">{item.step}</div>
+              {HOW_IT_WORKS.map((item, i) => (
+                <div key={item.step} className="gh-how-card reveal" style={{ '--how-color': item.color, transitionDelay: `${i * 0.1}s` } as React.CSSProperties}>
+                  <div className="gh-how-step" style={{ background: item.color }}>{item.step}</div>
                   <div className="gh-how-emoji">{item.emoji}</div>
                   <h3 className="gh-how-title">{item.title}</h3>
                   <p className="gh-how-desc">{item.desc}</p>
@@ -182,8 +191,8 @@ const GuestHero: React.FC = () => {
           </section>
 
           {/* Features Section */}
-          <section className="gh-features-section reveal">
-            <div className="gh-section-header">
+          <section className="gh-features-section">
+            <div className="gh-section-header reveal">
               <span className="gh-section-badge">Why Choose Us</span>
               <h2 className="gh-section-title">
                 Everything you need to <span className="gh-text-gradient">succeed</span>
@@ -191,9 +200,9 @@ const GuestHero: React.FC = () => {
               <p className="gh-section-sub">Built specifically for Kenyan CBC students, teachers, and parents.</p>
             </div>
             <div className="gh-features-grid">
-              {FEATURES.map(({ icon: Icon, title, desc, color }) => (
-                  <div key={title} className="gh-feature-card reveal">
-                    <div className="gh-feature-icon" style={{ background: `${color}15`, color }}>
+              {FEATURES.map(({ icon: Icon, title, desc, color }, i) => (
+                  <div key={title} className="gh-feature-card reveal" style={{ '--feat-color': color, transitionDelay: `${i * 0.08}s` } as React.CSSProperties}>
+                    <div className="gh-feature-icon" style={{ background: `${color}22`, color, border: `1px solid ${color}44` }}>
                       <Icon size={26} />
                     </div>
                     <h3 className="gh-feature-title">{title}</h3>
@@ -204,17 +213,17 @@ const GuestHero: React.FC = () => {
           </section>
 
           {/* Testimonials */}
-          <section className="gh-testimonials-section reveal">
-            <div className="gh-section-header">
+          <section className="gh-testimonials-section">
+            <div className="gh-section-header reveal">
               <span className="gh-section-badge">💬 What Parents Say</span>
               <h2 className="gh-section-title">Trusted by <span className="gh-text-gradient">50,000+ families</span></h2>
             </div>
             <div className="gh-testimonials-grid">
-              {TESTIMONIALS.map(t => (
-                <div key={t.name} className="gh-testimonial-card reveal">
+              {TESTIMONIALS.map((t, i) => (
+                <div key={t.name} className="gh-testimonial-card reveal" style={{ '--t-color': t.color, transitionDelay: `${i * 0.12}s` } as React.CSSProperties}>
                   <p className="gh-testimonial-text">"{t.text}"</p>
                   <div className="gh-testimonial-author">
-                    <img src={avatarUrl(t.avatar)} alt={t.name} width={40} height={40} className="gh-testimonial-avatar" />
+                    <img src={avatarUrl(t.avatar)} alt={t.name} width={40} height={40} className="gh-testimonial-avatar" style={{ border: `2px solid ${t.color}66` }} />
                     <div>
                       <span className="gh-testimonial-name">{t.name}</span>
                       <span className="gh-testimonial-grade">{t.grade}</span>
@@ -226,14 +235,14 @@ const GuestHero: React.FC = () => {
           </section>
 
           {/* FAQ */}
-          <section className="gh-faq-section reveal">
-            <div className="gh-section-header">
+          <section className="gh-faq-section">
+            <div className="gh-section-header reveal">
               <span className="gh-section-badge">❓ FAQ</span>
               <h2 className="gh-section-title">Common <span className="gh-text-gradient">questions</span></h2>
             </div>
             <div className="gh-faq-list">
-              {FAQS.map(f => (
-                <details key={f.q} className="gh-faq-item">
+              {FAQS.map((f, i) => (
+                <details key={f.q} className="gh-faq-item reveal" style={{ transitionDelay: `${i * 0.08}s` }}>
                   <summary className="gh-faq-q">{f.q}</summary>
                   <p className="gh-faq-a">{f.a}</p>
                 </details>

@@ -39,7 +39,7 @@ const Footer: React.FC = () => {
           <div className="ft-col ft-brand">
             <button className="ft-logo" onClick={() => navigate('/')}>
               <div className="ft-logo-icon"><GraduationCap size={20} color="#fff" /></div>
-              <span>Grade<strong>Up</strong></span>
+              <span>High<strong>Scores</strong></span>
             </button>
             <p className="ft-tagline">Kenya's #1 CBC revision platform — making learning engaging, effective, and fun for every student.</p>
             <div className="ft-socials">
@@ -95,7 +95,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="ft-bottom">
-          <p>© {year} GradeUp. All rights reserved. Built with ❤️ in Kenya.</p>
+          <p>© {year} HighScores. All rights reserved. Built with ❤️ in Kenya.</p>
           <div className="ft-legal">
             <button onClick={() => navigate('/privacy')}>Privacy Policy</button>
             <span>·</span>

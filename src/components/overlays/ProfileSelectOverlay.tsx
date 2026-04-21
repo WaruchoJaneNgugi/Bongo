@@ -74,7 +74,7 @@ const ProfileSelectOverlay: React.FC = () => {
 
     return (
         <div className="ps-backdrop">
-            <div className="ps-logo">Grade<span>Up</span></div>
+            <div className="ps-logo">High<span>Scores</span></div>
 
             {!adding ? (
                 <div className="ps-screen">

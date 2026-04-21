@@ -42,7 +42,7 @@ const Navbar: React.FC = () => {
 
             <button className="nb-logo" onClick={() => { navigate('/'); setMenuOpen(false); }}>
               <GraduationCap size={28} color="#7c3aed" />
-              <span>Grade<strong>Up</strong></span>
+              <span>High<strong>Scores</strong></span>
             </button>
 
 
@@ -98,7 +98,7 @@ const Navbar: React.FC = () => {
           <div className="nb-drawer">
             <div className="nb-drawer-header">
               <GraduationCap size={32} color="#7c3aed" />
-              <span>GradeUp</span>
+              <span>Highscores</span>
               <button className="nb-drawer-close" onClick={() => setMenuOpen(false)}><X size={20} /></button>
             </div>
 

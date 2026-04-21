@@ -103,7 +103,7 @@ const SignUpOverlay: React.FC = () => {
         <div className="ov-container" onClick={e => e.stopPropagation()}>
           <div className="ov-card">
             <button className="ov-close" onClick={() => setOverlay(null)}>✕</button>
-            <div className="ov-logo">Bongo<span>Quiz</span></div>
+            <div className="ov-logo">High<span>Scores</span></div>
 
             <div className="ov-steps">
               {[1,2,3].map(n => (
