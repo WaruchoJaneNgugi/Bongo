@@ -10,6 +10,7 @@ import type {EducationLevel} from '../../store/useStore';
 import type {Subject as MiddleSubject} from './MiddleSchool/types';
 import Footer from '../Footer';
 import "../../styles/mainlvl.css"
+import {TriangleBackground} from '../TriangleBackground';
 import {
     BONGO_BOOKS,
     HOT_TOPICS_BG,
@@ -65,6 +66,7 @@ export const MainLevelEntry = () => {
 
     return (
         <>
+        <TriangleBackground />
         <div className="Main-lvl-Container">
             <div className="Main-lvl-Container-section">
                 {/* ── Search ── */}
