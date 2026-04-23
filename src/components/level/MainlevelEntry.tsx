@@ -8,6 +8,7 @@ import {getTopicsForGrade, searchAllTopics} from './data/topicsData';
 import type {SubjectTopics} from './data/topicsData';
 import type {EducationLevel} from '../../store/useStore';
 import type {Subject as MiddleSubject} from './MiddleSchool/types';
+import Lvl4to9SubjectsView from './Subjects/lvl4-9sub/Lvl4to9SubjectsView';
 import Footer from '../Footer';
 import "../../styles/mainlvl.css"
 import {TriangleBackground} from '../TriangleBackground';
@@ -26,6 +27,7 @@ export const MainLevelEntry = () => {
     const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
     const [topicsView, setTopicsView] = useState<SubjectTopics | null>(null);
     const [query, setQuery] = useState('');
+    const [lvl4to9Subject, setLvl4to9Subject] = useState<string | null>(null);
 
     const activeProfile = user?.profiles.find(p => p.id === user.activeProfileId);
     const level: EducationLevel = activeProfile?.educationLevel ?? 'middle_school';
@@ -62,6 +64,16 @@ export const MainLevelEntry = () => {
 
     if (topicsView) {
         return <TopicsView subjectData={topicsView} onBack={() => setTopicsView(null)} />;
+    }
+
+    if (lvl4to9Subject !== null) {
+        return (
+            <Lvl4to9SubjectsView
+                grade={grade}
+                initialSubjectTitle={lvl4to9Subject}
+                onBack={() => setLvl4to9Subject(null)}
+            />
+        );
     }
 
     return (
@@ -204,7 +216,13 @@ export const MainLevelEntry = () => {
                                     key={st.subject}
                                     className="mle-browse-card"
                                     style={{'--card-grad': meta?.grad ?? 'linear-gradient(135deg,#6366f1,#a78bfa)', animationDelay: `${i * 0.05}s`} as React.CSSProperties}
-                                    onClick={() => setTopicsView(st)}
+                                    onClick={() => {
+                                        if (level === 'middle_school' && grade >= 4 && grade <= 9) {
+                                            setLvl4to9Subject(st.subject);
+                                        } else {
+                                            setTopicsView(st);
+                                        }
+                                    }}
                                 >
                                     <span className="mle-browse-card-icon">{meta?.icon ?? '📚'}</span>
                                     <span className="mle-browse-card-name">{st.subject}</span>

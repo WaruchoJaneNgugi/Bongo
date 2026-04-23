@@ -855,3 +855,63 @@
 .mle-rev-bar-track { flex: 1; height: 5px; background: #e9d5ff; border-radius: 999px; overflow: hidden; }
 .mle-rev-bar-fill { height: 100%; background: linear-gradient(90deg, #7c3aed, #ec4899); border-radius: 999px; }
 .mle-rev-pct { font-size: 0.65rem; font-weight: 700; color: #7c3aed; white-space: nowrap; }
+
+/* ── Dark theme overrides ────────────────────────────────── */
+[data-theme="dark"] .mle-section-heading { color: #e9d5ff; }
+
+[data-theme="dark"] .hot-topics-container { background: rgba(124,58,237,0.12); }
+
+[data-theme="dark"] .mle-revision-section { background: rgba(124,58,237,0.1); }
+
+[data-theme="dark"] .mle-subject-card { background: rgba(26,10,58,0.9); box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+
+[data-theme="dark"] .mle-browse-section { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.2); }
+
+[data-theme="dark"] .mle-books-section { background: rgba(124,58,237,0.1); border-color: rgba(124,58,237,0.2); }
+
+[data-theme="dark"] .mle-continue-card {
+  background: rgba(124,58,237,0.12);
+  border-color: rgba(124,58,237,0.3);
+}
+[data-theme="dark"] .mle-continue-title,
+[data-theme="dark"] .mle-continue-topic { color: #e9d5ff; }
+[data-theme="dark"] .mle-continue-meta { color: rgba(255,255,255,0.45); }
+[data-theme="dark"] .mle-continue-thumb { background: rgba(124,58,237,0.25); }
+[data-theme="dark"] .mle-continue-bar-track { background: rgba(124,58,237,0.25); }
+
+[data-theme="dark"] .mle-search-wrap {
+  background: rgba(26,10,58,0.9);
+  border-color: rgba(124,58,237,0.3);
+}
+[data-theme="dark"] .mle-search-input { color: #e9d5ff; }
+[data-theme="dark"] .mle-search-results {
+  background: #1a0a3a;
+  border-color: rgba(124,58,237,0.25);
+}
+[data-theme="dark"] .mle-result-row {
+  background: rgba(26,10,58,0.9);
+  border-color: rgba(124,58,237,0.15);
+}
+[data-theme="dark"] .mle-result-title { color: #e9d5ff; }
+[data-theme="dark"] .mle-result-emoji { background: rgba(124,58,237,0.2); }
+[data-theme="dark"] .mle-no-results { color: rgba(255,255,255,0.4); }
+
+[data-theme="dark"] .topic-card {
+  background: rgba(26,10,58,0.85);
+  border-color: rgba(124,58,237,0.2);
+}
+[data-theme="dark"] .topic-title { color: #e9d5ff; }
+[data-theme="dark"] .topic-desc { color: rgba(255,255,255,0.5); }
+[data-theme="dark"] .topic-emoji-box { background: rgba(124,58,237,0.2); }
+[data-theme="dark"] .topic-arrow { color: rgba(168,85,247,0.5); }
+[data-theme="dark"] .topics-title { color: #e9d5ff; }
+[data-theme="dark"] .topics-subtitle { color: rgba(255,255,255,0.5); }
+
+[data-theme="dark"] .mle-back-btn {
+  background: rgba(26,10,58,0.9);
+  border-color: rgba(124,58,237,0.3);
+  color: #c084fc;
+}
+[data-theme="dark"] .mle-back-btn:hover { background: rgba(124,58,237,0.2); }
+
+[data-theme="dark"] .mle-rev-bar-track { background: rgba(124,58,237,0.2); }

@@ -1,6 +1,26 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+/* ── Theme store ─────────────────────────────────────────── */
+interface ThemeState {
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+}
+
+export const useThemeStore = create<ThemeState>()(
+  persist(
+    (set, get) => ({
+      theme: 'light',
+      toggleTheme: () => {
+        const next = get().theme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', next);
+        set({ theme: next });
+      },
+    }),
+    { name: 'gradeup-theme' }
+  )
+);
+
 export type EducationLevel = 'lower_primary' | 'middle_school' | 'senior_school';
 export type FamilyPackage = 'solo' | 'trio' | 'quad' | 'family';
 

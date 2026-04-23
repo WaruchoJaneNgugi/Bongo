@@ -76,7 +76,7 @@ export const LEVEL_SUBJECTS: Record<EducationLevel, { name: string; icon: string
         { name: 'English',       icon: '📝', grad: 'linear-gradient(135deg,#0ea5e9,#38bdf8)', desc: 'Language Skills' },
         { name: 'Science',       icon: '🔬', grad: 'linear-gradient(135deg,#10b981,#34d399)', desc: 'Experiments & Facts' },
         { name: 'Social Studies',icon: '🗺️', grad: 'linear-gradient(135deg,#f97316,#fb923c)', desc: 'People & Places' },
-        { name: 'CRE',           icon: '⛪', grad: 'linear-gradient(135deg,#d97706,#fbbf24)', desc: 'Values & Faith' },
+        // { name: 'CRE',           icon: '⛪', grad: 'linear-gradient(135deg,#d97706,#fbbf24)', desc: 'Values & Faith' },
     ],
 
     senior_school: [

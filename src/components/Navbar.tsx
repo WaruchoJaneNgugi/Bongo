@@ -1,15 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
-import { Home, Gamepad2, User, LogOut, Menu, X, GraduationCap } from 'lucide-react';
+import { useThemeStore } from '../store/useStore';
+import { Home, Gamepad2, User, LogOut, Menu, X, GraduationCap, Sun, Moon } from 'lucide-react';
 import '../styles/navbar.css';
 
 const Navbar: React.FC = () => {
   const { isLoggedIn, user, setOverlay, logout } = useStore();
+  const { theme, toggleTheme } = useThemeStore();
   const navigate = useNavigate();
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Apply persisted theme on mount
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 12);
@@ -65,6 +72,14 @@ const Navbar: React.FC = () => {
 
           {/* Right: auth / user info */}
           <div className="nb-right">
+            <button
+              className="nb-theme-toggle"
+              onClick={toggleTheme}
+              aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+            >
+              {theme === 'light' ? <Moon size={17} /> : <Sun size={17} />}
+            </button>
             {isLoggedIn ? (() => {
               const profile = user?.profiles.find(p => p.id === user.activeProfileId) ?? user?.profiles[0];
               return (
