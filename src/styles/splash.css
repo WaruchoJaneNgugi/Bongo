@@ -33,7 +33,7 @@
 .splash-word {
   position: relative; z-index: 1;
   font-family: var(--font-display); font-weight: 700; font-size: 27px;
-  color: #0f5132; letter-spacing: -.01em;
+  color: var(--primary-dark); letter-spacing: -.01em;
 }
 .splash-word strong { color: var(--primary); }
 .splash-word-dot { color: var(--gold-500); }
@@ -53,5 +53,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .splash-ring, .splash-ring--inner, .splash-cap { animation: none; }
-  .splash-bar-fill { animation-duration: .8s; }
+  .splash-bar-fill { animation: none; width: 100%; }
 }
