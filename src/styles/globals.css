@@ -7,20 +7,33 @@ input, select, textarea { font-size: 16px; }
 
 /* ── TOKENS ─────────────────────────────────────────── */
 :root {
-  /* Brand */
-  --purple-50:  #f0f9f4;
-  --purple-100: #e3f5ea;
-  --purple-200: #c9ebd8;
-  --purple-300: #97d4b4;
-  --purple-400: #5cba8a;
-  --purple-500: #2f9e6a;
-  --purple-600: #15803d;
-  --purple-700: #126b3f;
-  --purple-800: #0f5132;
-  --purple-900: #0b3d28;
-  --primary:    #157347;
+  /* Brand (green) — semantic source of truth */
+  --brand-50:  #f0f9f4;
+  --brand-100: #e3f5ea;
+  --brand-200: #c9ebd8;
+  --brand-300: #97d4b4;
+  --brand-400: #5cba8a;
+  --brand-500: #2f9e6a;
+  --brand-600: #15803d;
+  --brand-700: #126b3f;
+  --brand-800: #0f5132;
+  --brand-900: #0b3d28;
+  --primary:       #157347;
   --primary-light: #2f9e6a;
   --primary-dark:  #0f5132;
+
+  /* Legacy aliases — kept 1 phase so existing selectors keep resolving.
+     Migrate `--purple-*` refs to `--brand-*` in later phases, then remove. */
+  --purple-50:  var(--brand-50);
+  --purple-100: var(--brand-100);
+  --purple-200: var(--brand-200);
+  --purple-300: var(--brand-300);
+  --purple-400: var(--brand-400);
+  --purple-500: var(--brand-500);
+  --purple-600: var(--brand-600);
+  --purple-700: var(--brand-700);
+  --purple-800: var(--brand-800);
+  --purple-900: var(--brand-900);
 
   /* Neutrals */
   --gray-50:  #fafafa; --gray-100: #f4f4f5; --gray-200: #e4e4e7;
