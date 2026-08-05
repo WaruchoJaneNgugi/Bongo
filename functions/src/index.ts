@@ -5,8 +5,8 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { onDocumentCreated, onDocumentWritten } from 'firebase-functions/v2/firestore';
 import { setGlobalOptions } from 'firebase-functions/v2';
 import { defineSecret } from 'firebase-functions/params';
-import { randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import Anthropic from '@anthropic-ai/sdk';
+import { hashPin, pinMatches, cleanKenyanPhone, newSalt } from './shared/auth.js';
 
 initializeApp();
 const db = getFirestore();
@@ -660,19 +660,6 @@ export const generateTopicLesson = onCall(
  * ──────────────────────────────────────────────────────────── */
 const PACKAGES = ['solo', 'trio', 'quad', 'family'];
 
-function hashPin(pin: string, salt: string): string {
-  return scryptSync(pin, salt, 64).toString('hex');
-}
-function pinMatches(pin: string, salt: string, expected: string): boolean {
-  const a = Buffer.from(hashPin(pin, salt), 'hex');
-  const b = Buffer.from(expected, 'hex');
-  return a.length === b.length && timingSafeEqual(a, b);
-}
-function cleanKenyanPhone(phone: string): string | null {
-  const p = (phone || '').replace(/\s/g, '');
-  return /^(\+254|0)[7][0-9]{8}$/.test(p) ? p : null;
-}
-
 export const studentSignup = onCall(async request => {
   const { phone, pin, package: pkg } = (request.data ?? {}) as {
     phone?: string; pin?: string; package?: string;
@@ -685,7 +672,7 @@ export const studentSignup = onCall(async request => {
   const existing = await db.collection('accounts').where('phone', '==', cleanPhone).limit(1).get();
   if (!existing.empty) throw new HttpsError('already-exists', 'This number is already registered.');
 
-  const salt = randomBytes(16).toString('hex');
+  const salt = newSalt();
   const ref = await db.collection('accounts').add({
     phone: cleanPhone,
     pinSalt: salt,
