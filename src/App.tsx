@@ -35,6 +35,9 @@ import AchievementsPage from "./components/learn/AchievementsPage.tsx";
 import ChallengesPage from "./components/learn/ChallengesPage.tsx";
 import CommunityPage from "./components/learn/CommunityPage.tsx";
 import SettingsPage from "./components/learn/SettingsPage.tsx";
+import SellerAuthPage from './components/marketplace/SellerAuthPage';
+import SellerDashboard from './components/marketplace/SellerDashboard';
+import SellerProtectedRoute from './components/marketplace/SellerProtectedRoute';
 
 const StarField: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -106,6 +109,8 @@ const AppContent: React.FC = () => {
 
       <Routes>
         <Route path="/admin/*" element={<AdminPanel />} />
+        <Route path="/seller"           element={<SellerAuthPage />} />
+        <Route path="/seller/dashboard" element={<SellerProtectedRoute><SellerDashboard /></SellerProtectedRoute>} />
         {/* Wait for Firebase to resolve the session before choosing landing vs dashboard
             (prevents a logged-in user briefly seeing the landing page on refresh). */}
         <Route path="/"        element={!authReady ? null : isLoggedIn ? <Navigate to="/home" replace /> : <LandingPage />} />
