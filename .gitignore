@@ -33,3 +33,5 @@ functions/lib
 *.njsproj
 *.sln
 *.sw?
+
+.superpowers/
