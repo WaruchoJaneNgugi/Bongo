@@ -44,7 +44,7 @@
 
 /* ── Progress bar ────────────────────────────────────── */
 .ui-progress { height: 6px; border-radius: var(--r-full); background: var(--surface-3); overflow: hidden; }
-.ui-progress > i { display: block; height: 100%; border-radius: var(--r-full);
+.ui-progress > span { display: block; height: 100%; border-radius: var(--r-full);
   background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
 
 /* ── In-app loader (used by ui/Loader.tsx) ───────────── */
@@ -63,5 +63,5 @@
 @keyframes ui-loader-spin { to { transform: rotate(360deg); } }
 
 @media (prefers-reduced-motion: reduce) {
-  .ui-loader-ring { animation-duration: 2.4s; }
+  .ui-loader-ring { animation: none; }
 }
