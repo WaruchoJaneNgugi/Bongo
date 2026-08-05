@@ -1,10 +1,10 @@
 // Firebase client initialization.
 // Config values come from .env (VITE_ prefixed) — see .env.example.
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getStorage, type FirebaseStorage } from 'firebase/storage';
-import { getFunctions, type Functions } from 'firebase/functions';
+import { getAuth, connectAuthEmulator, type Auth } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator, type Firestore } from 'firebase/firestore';
+import { getStorage, connectStorageEmulator, type FirebaseStorage } from 'firebase/storage';
+import { getFunctions, connectFunctionsEmulator, type Functions } from 'firebase/functions';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -29,3 +29,15 @@ export const db: Firestore = getFirestore(app);
 export const storage: FirebaseStorage = getStorage(app);
 // region must match where Cloud Functions are deployed (see functions/src/index.ts)
 export const functions: Functions = getFunctions(app, 'us-central1');
+
+// Local development against the Firebase emulator suite.
+// Opt in by setting VITE_USE_EMULATORS=true in .env.local and running
+// `firebase emulators:start`. Production builds never touch these unless the
+// flag is explicitly set. Ports match firebase.json.
+if (import.meta.env.VITE_USE_EMULATORS === 'true') {
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  connectFirestoreEmulator(db, '127.0.0.1', 8080);
+  connectStorageEmulator(storage, '127.0.0.1', 9199);
+  connectFunctionsEmulator(functions, '127.0.0.1', 5001);
+  console.info('[firebase] Using local emulator suite (VITE_USE_EMULATORS=true).');
+}

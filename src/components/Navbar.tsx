@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useStore } from '../store/useStore';
 import { useThemeStore } from '../store/useStore';
-import { Home, Gamepad2, User, LogOut, Menu, X, GraduationCap, Sun, Moon, BookOpen, ClipboardList } from 'lucide-react';
+import { Home, Gamepad2, User, LogOut, Menu, X, GraduationCap, Sun, Moon, BookOpen, ClipboardList, Store } from 'lucide-react';
 import { subscribeProgress } from '../lib/learn';
 import '../styles/navbar.css';
 
@@ -78,6 +78,9 @@ const Navbar: React.FC = () => {
               <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={17} /> Games
               </Link>
+              <Link to="/seller" className={`nb-link ${isActive('/seller') ? 'active' : ''}`}>
+                <Store size={17} /> Sell
+              </Link>
               {isLoggedIn && (
               <Link to="/profile" className={`nb-link ${isActive('/profile') ? 'active' : ''}`} >
                 <User size={16} /> Profile
@@ -150,6 +153,9 @@ const Navbar: React.FC = () => {
               </Link>
               <Link to="/games" className={`nb-drawer-item ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={20} /> Games
+              </Link>
+              <Link to="/seller" className={`nb-drawer-item ${isActive('/seller') ? 'active' : ''}`}>
+                <Store size={20} /> Sell on Bongo
               </Link>
               {isLoggedIn && (
                 <>
