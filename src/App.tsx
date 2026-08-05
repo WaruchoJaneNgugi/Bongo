@@ -36,6 +36,7 @@ import ChallengesPage from "./components/learn/ChallengesPage.tsx";
 import CommunityPage from "./components/learn/CommunityPage.tsx";
 import SettingsPage from "./components/learn/SettingsPage.tsx";
 import SellerAuthPage from './components/marketplace/SellerAuthPage';
+import SellerLayout from './components/marketplace/SellerLayout';
 import SellerDashboard from './components/marketplace/SellerDashboard';
 import SellerProtectedRoute from './components/marketplace/SellerProtectedRoute';
 
@@ -85,12 +86,14 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const isGames = location.pathname === '/games';
   const isAdmin = location.pathname.startsWith('/admin');
+  const isSeller = location.pathname.startsWith('/seller');
   const LEARNER_PREFIXES = ['/home', '/learn', '/subjects', '/exams', '/revision', '/books', '/book', '/leaderboard', '/achievements', '/challenges', '/community', '/settings'];
   const isLearner = LEARNER_PREFIXES.some(p => location.pathname === p || location.pathname.startsWith(p + '/'));
 
   // Footer shows on every page except admin and immersive full-screen flows.
   const hideFooter =
     isAdmin ||
+    isSeller ||
     location.pathname === '/games/mahjong' ||
     /^\/learn\/topic\//.test(location.pathname) ||
     /^\/exams\/[^/]+$/.test(location.pathname) ||
@@ -105,12 +108,14 @@ const AppContent: React.FC = () => {
   return (
     <div className={`main-body-container${isGames ? ' games-mode' : ''}${isAdmin ? ' admin-mode' : ''}${isLearner ? ' learner-mode' : ''}`}>
       {isGames && <StarField />}
-      {!isAdmin && <Navbar />}
+      {!isAdmin && !isSeller && <Navbar />}
 
       <Routes>
         <Route path="/admin/*" element={<AdminPanel />} />
-        <Route path="/seller"           element={<SellerAuthPage />} />
-        <Route path="/seller/dashboard" element={<SellerProtectedRoute><SellerDashboard /></SellerProtectedRoute>} />
+        <Route path="/seller" element={<SellerAuthPage />} />
+        <Route element={<SellerProtectedRoute><SellerLayout /></SellerProtectedRoute>}>
+          <Route path="/seller/dashboard" element={<SellerDashboard />} />
+        </Route>
         {/* Wait for Firebase to resolve the session before choosing landing vs dashboard
             (prevents a logged-in user briefly seeing the landing page on refresh). */}
         <Route path="/"        element={!authReady ? null : isLoggedIn ? <Navigate to="/home" replace /> : <LandingPage />} />
