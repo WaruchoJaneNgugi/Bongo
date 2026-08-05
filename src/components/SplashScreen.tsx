@@ -11,11 +11,20 @@ export function SplashScreen({ onDone }: { onDone: () => void }) {
     }, [onDone]);
 
     return (
-        <div className={`splash-root ${hiding ? 'splash-hide' : ''}`}>
-            <div className="splash-logo">
-                <GraduationCap size={52} color="#5fae84" />
-                <span className="splash-wordmark">High <strong>Scores</strong></span>
+        <div
+            className={`splash-root ${hiding ? 'splash-hide' : ''}`}
+            role="status"
+            aria-label="Loading High Scores"
+        >
+            <div className="splash-loader" aria-hidden="true">
+                <span className="splash-ring" />
+                <span className="splash-ring splash-ring--inner" />
+                <GraduationCap size={26} className="splash-cap" />
             </div>
+            <div className="splash-word">
+                High<strong>Scores</strong><span className="splash-word-dot">.</span>
+            </div>
+            <div className="splash-sub">Learning, elevated</div>
             <div className="splash-bar"><div className="splash-bar-fill" /></div>
         </div>
     );
