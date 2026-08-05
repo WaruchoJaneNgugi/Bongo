@@ -1,0 +1,67 @@
+/* primitives.css — composable, token-driven UI classes (Phase 0).
+   Additive only. Consumed opt-in by later phases; safe to ship unused. */
+
+/* ── Buttons ─────────────────────────────────────────── */
+.ui-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-display); font-weight: 700; font-size: 14px;
+  color: #fff; border: none; cursor: pointer;
+  padding: 11px 20px; border-radius: var(--r);
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  box-shadow: var(--shadow-cta);
+  transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+}
+.ui-btn:hover { transform: translateY(-1px); filter: brightness(1.03); }
+.ui-btn:active { transform: translateY(0); }
+.ui-btn--ghost {
+  background: var(--surface-1); color: var(--primary);
+  border: 1px solid var(--hairline-strong); box-shadow: var(--shadow-1);
+}
+.ui-btn--ghost:hover { background: var(--surface-3); }
+
+/* ── Cards / surfaces ────────────────────────────────── */
+.ui-card {
+  background: var(--surface-1);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-2);
+  padding: var(--sp-5);
+}
+.ui-card--glass {
+  background: var(--surface-glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+
+/* ── Chip ────────────────────────────────────────────── */
+.ui-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--surface-1); border: 1px solid var(--hairline);
+  border-radius: var(--r-full); padding: 6px 12px;
+  font-family: var(--font-display); font-weight: 700; font-size: 12px;
+  color: var(--primary); box-shadow: var(--shadow-1);
+}
+.ui-chip .ui-chip-gold { color: var(--gold-500); }
+
+/* ── Progress bar ────────────────────────────────────── */
+.ui-progress { height: 6px; border-radius: var(--r-full); background: var(--surface-3); overflow: hidden; }
+.ui-progress > i { display: block; height: 100%; border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--primary), var(--primary-light)); }
+
+/* ── In-app loader (used by ui/Loader.tsx) ───────────── */
+.ui-loader { display: inline-flex; flex-direction: column; align-items: center; gap: 10px; }
+.ui-loader--full { position: fixed; inset: 0; justify-content: center;
+  background: var(--surface-2); z-index: 500; }
+.ui-loader-ring {
+  border-radius: 50%; border: 3px solid var(--hairline);
+  border-top-color: var(--primary); border-right-color: var(--gold-500);
+  animation: ui-loader-spin 1s cubic-bezier(.6,.1,.3,.9) infinite;
+}
+.ui-loader--sm .ui-loader-ring { width: 22px; height: 22px; border-width: 2px; }
+.ui-loader--md .ui-loader-ring { width: 40px; height: 40px; }
+.ui-loader--lg .ui-loader-ring { width: 64px; height: 64px; }
+.ui-loader-label { font-family: var(--font-body); font-size: 13px; color: var(--text-muted); }
+@keyframes ui-loader-spin { to { transform: rotate(360deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .ui-loader-ring { animation-duration: 2.4s; }
+}
