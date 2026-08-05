@@ -135,7 +135,10 @@ export const useStore = create<AppState>()(
           set({ accountId: current.uid });
           acctUnsub = subscribeAccount(current.uid, data => {
             if (data) set({ user: accountToUser(data), isLoggedIn: true, authReady: true });
-            else set({ user: null, isLoggedIn: false, authReady: true }); // e.g. an admin session
+            // No accounts/{uid} doc → not a student session. This is the expected
+            // path for admin AND marketplace seller sessions (a seller custom token
+            // has no matching accounts doc), so they correctly resolve to "not logged in" here.
+            else set({ user: null, isLoggedIn: false, authReady: true });
           });
         });
       },
