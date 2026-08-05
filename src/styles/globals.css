@@ -36,6 +36,26 @@ input, select, textarea { font-size: 16px; }
   --accent-light:  #e6b93a;
   --accent-dark:   #a87d0e;
 
+  /* ── Premium-white surfaces (Phase 0) ── */
+  --surface-1:       #ffffff;   /* base cards            */
+  --surface-2:       #fbfdfc;   /* page background       */
+  --surface-3:       #f4faf6;   /* subtle raised / hover */
+  --surface-glass:   rgba(255,255,255,0.70);
+  --hairline:        #e7f0ea;
+  --hairline-strong: #cfe6da;
+
+  /* Green-tinted soft shadow scale */
+  --shadow-1:   0 2px 8px   rgba(16,60,40,0.06);
+  --shadow-2:   0 6px 20px  rgba(16,60,40,0.07);
+  --shadow-3:   0 10px 34px rgba(16,60,40,0.10);
+  --shadow-cta: 0 6px 18px  rgba(21,115,71,0.28);
+
+  /* Gold accent scale */
+  --gold-100: #faf1d6;
+  --gold-300: #ecc75a;
+  --gold-500: #d4a017;
+  --gold-700: #a87d0e;
+
   /* Surface */
   --bg-main:          #ffffff;
   --bg-soft:     #f0f9f4;
