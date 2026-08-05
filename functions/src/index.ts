@@ -725,3 +725,5 @@ export const studentLogin = onCall(async request => {
     profiles: a.profiles ?? [],
   };
 });
+
+export { sellerSignup, sellerLogin } from './marketplace/sellerAuth.js';
