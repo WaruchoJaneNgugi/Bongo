@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useStore } from '../../../store/useStore';
 import { useMarketStore } from '../../../store/useMarketStore';
+import MarketAuthGate from './MarketAuthGate';
 import { ui } from './ui';
 
 const NAV = [
@@ -20,13 +21,18 @@ const NAV = [
 ];
 
 export default function MarketLayout() {
-  const { user } = useStore();
+  const { user, isLoggedIn, authReady } = useStore();
   const { cart, wishlist } = useMarketStore();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   const profile = user?.profiles.find(p => p.id === user.activeProfileId) ?? user?.profiles[0];
   const itemBase = 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors';
+
+  // The Market tab is reachable while logged out, but the marketplace needs an
+  // account — prompt Log In / Sign Up instead of rendering the shell.
+  if (!authReady) return null;
+  if (!isLoggedIn) return <MarketAuthGate />;
 
   const sidebar = (
     <>

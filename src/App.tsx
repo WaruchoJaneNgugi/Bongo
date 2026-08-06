@@ -128,7 +128,9 @@ const AppContent: React.FC = () => {
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
           <Route path="/seller/marketplace" element={<MarketBrowse />} />
         </Route>
-        <Route element={<ProtectedRoute><MarketLayout /></ProtectedRoute>}>
+        {/* Not ProtectedRoute: MarketLayout itself shows an auth gate (Log In /
+            Sign Up) when logged out, so the Market tab stays reachable. */}
+        <Route element={<MarketLayout />}>
           <Route path="/market"               element={<MarketHome />} />
           <Route path="/market/browse"        element={<MarketBrowse />} />
           <Route path="/market/library"       element={<MyLibrary />} />
