@@ -12,7 +12,7 @@ const NAV = [
   { label: 'Home', icon: Home, to: '/', real: true },
   { label: 'Teacher Dashboard', icon: LayoutDashboard, to: '/seller/dashboard', real: true },
   { label: 'My Resources', icon: FileText },
-  { label: 'Marketplace', icon: Store },
+  { label: 'Marketplace', icon: Store, to: '/seller/marketplace', real: true },
   { label: 'Orders', icon: ShoppingBag },
   { label: 'Earnings', icon: Wallet },
   { label: 'Messages', icon: MessageSquare, badge: 3 },

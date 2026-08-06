@@ -126,6 +126,7 @@ const AppContent: React.FC = () => {
         <Route path="/seller" element={<SellerAuthPage />} />
         <Route element={<SellerProtectedRoute><SellerLayout /></SellerProtectedRoute>}>
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          <Route path="/seller/marketplace" element={<MarketBrowse />} />
         </Route>
         <Route element={<ProtectedRoute><MarketLayout /></ProtectedRoute>}>
           <Route path="/market"               element={<MarketHome />} />
