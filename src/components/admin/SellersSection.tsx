@@ -64,7 +64,11 @@ const SellersSection: React.FC = () => {
             <div className="admin-player-rank"><Store size={18} /></div>
             <div className="admin-player-main">
               <h3>{s.displayName ?? 'Unnamed'} <span style={{ color: 'var(--muted)', fontWeight: 500, textTransform: 'capitalize' }}>· {s.type ?? '—'}</span></h3>
-              <p>{[s.phone, (s.regNumber ?? s.tscNumber) ? `${REG_LABEL[s.type ?? ''] ?? 'ID'} ${s.regNumber ?? s.tscNumber}` : null].filter(Boolean).join(' · ') || '—'}</p>
+              <p>{[
+                s.phone,
+                (s.regNumber ?? s.tscNumber) ? `${REG_LABEL[s.type ?? ''] ?? 'ID'} ${s.regNumber ?? s.tscNumber}` : null,
+                s.location,
+              ].filter(Boolean).join(' · ') || '—'}</p>
             </div>
             <span className={`admin-status ${STATUS_CLASS[s.status ?? ''] ?? 'is-off'}`}>{s.status ?? 'unknown'}</span>
             <div className="admin-row-actions">

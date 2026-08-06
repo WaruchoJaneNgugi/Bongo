@@ -17,8 +17,8 @@ const REG_LABEL: Record<string, string> = {
 const LENIENT_REG = true;
 
 export const sellerSignup = onCall(async request => {
-  const { phone, pin, displayName, type, regNumber } = (request.data ?? {}) as {
-    phone?: string; pin?: string; displayName?: string; type?: string; regNumber?: string;
+  const { phone, pin, displayName, type, regNumber, location } = (request.data ?? {}) as {
+    phone?: string; pin?: string; displayName?: string; type?: string; regNumber?: string; location?: string;
   };
   const db = getFirestore();
 
@@ -44,6 +44,13 @@ export const sellerSignup = onCall(async request => {
   const dupReg = await db.collection('sellers').where('regNumber', '==', cleanReg).limit(1).get();
   if (!dupReg.empty) throw new HttpsError('already-exists', `This ${REG_LABEL[type as string]} is already registered.`);
 
+  // Schools capture a location (town / county); other types don't.
+  let schoolLocation: string | null = null;
+  if (type === 'school') {
+    schoolLocation = (location ?? '').trim();
+    if (schoolLocation.length < 2) throw new HttpsError('invalid-argument', 'Enter the school location.');
+  }
+
   const existing = await db.collection('sellers').where('phone', '==', cleanPhone).limit(1).get();
   if (!existing.empty) throw new HttpsError('already-exists', 'This number is already a seller.');
 
@@ -55,6 +62,7 @@ export const sellerSignup = onCall(async request => {
     displayName: displayName.trim(),
     type,
     regNumber: cleanReg,
+    location: schoolLocation,
     status: 'pending',
     payoutBalancePending: 0,
     payoutBalancePaid: 0,

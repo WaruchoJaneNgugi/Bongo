@@ -10,6 +10,8 @@ export interface Seller {
   /** Type-specific registration number used for admin verification:
    *  teacher → TSC, school → MoE/NEMIS code, tutor → National ID. */
   regNumber?: string | null;
+  /** School location (town / county) — captured for schools only. */
+  location?: string | null;
   payoutBalancePending: number;
   payoutBalancePaid: number;
 }

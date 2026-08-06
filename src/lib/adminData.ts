@@ -21,6 +21,7 @@ export interface AdminSeller {
   type?: 'teacher' | 'tutor' | 'school';
   regNumber?: string | null;
   tscNumber?: string | null; // legacy field from the first teacher-only rollout
+  location?: string | null;
   status?: 'active' | 'pending' | 'suspended' | 'rejected';
   createdAt?: Timestamp | null;
 }

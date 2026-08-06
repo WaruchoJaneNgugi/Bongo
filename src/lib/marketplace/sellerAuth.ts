@@ -9,13 +9,14 @@ import type { Seller, SellerType } from './types';
  *  passes a type-specific registration number (teacher → TSC, school → MoE/NEMIS
  *  code, tutor → National ID); the server validates it and holds for review. */
 export async function signupSeller(
-  phone: string, pin: string, displayName: string, type: SellerType, regNumber?: string
+  phone: string, pin: string, displayName: string, type: SellerType,
+  regNumber?: string, location?: string
 ): Promise<string> {
   const fn = httpsCallable<
-    { phone: string; pin: string; displayName: string; type: SellerType; regNumber?: string },
+    { phone: string; pin: string; displayName: string; type: SellerType; regNumber?: string; location?: string },
     { token: string; sellerId: string }
   >(functions, 'sellerSignup');
-  const { token, sellerId } = (await fn({ phone, pin, displayName, type, regNumber })).data;
+  const { token, sellerId } = (await fn({ phone, pin, displayName, type, regNumber, location })).data;
   await signInWithCustomToken(auth, token);
   return sellerId;
 }

@@ -46,6 +46,7 @@ export default function SellerAuthPage() {
   const [pin, setPin] = useState('');
   const [name, setName] = useState('');
   const [type, setType] = useState<SellerType>('teacher');
+  const [location, setLocation] = useState('');
   const [reg, setReg] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -62,10 +63,15 @@ export default function SellerAuthPage() {
       setError(`Enter a valid ${REG[type].label}.`);
       return;
     }
+    if (mode === 'signup' && type === 'school' && location.trim().length < 2) {
+      setError('Enter the school location.');
+      return;
+    }
     setBusy(true);
     try {
-      if (mode === 'signup') await signup(phone, pin, name, type, reg.trim());
-      else await login(phone, pin);
+      if (mode === 'signup') {
+        await signup(phone, pin, name, type, reg.trim(), type === 'school' ? location.trim() : undefined);
+      } else await login(phone, pin);
       navigate('/seller/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong.');
@@ -98,7 +104,7 @@ export default function SellerAuthPage() {
 
         {mode === 'signup' && (
           <>
-            <input className={INPUT} placeholder="Your name"
+            <input className={INPUT} placeholder={type === 'school' ? 'School name' : 'Your name'}
               value={name} onChange={e => setName(e.target.value)} />
             <div>
               <label className="block text-xs font-semibold text-[#64748b] mb-1.5">I'm registering as</label>
@@ -116,6 +122,11 @@ export default function SellerAuthPage() {
                 ))}
               </div>
             </div>
+
+            {type === 'school' && (
+              <input className={INPUT} placeholder="School location (town / county)"
+                value={location} onChange={e => setLocation(e.target.value)} />
+            )}
 
             <div>
               <input className={INPUT} placeholder={REG[type].label}
