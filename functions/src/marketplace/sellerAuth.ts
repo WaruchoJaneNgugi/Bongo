@@ -3,13 +3,19 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { hashPin, pinMatches, cleanKenyanPhone, cleanTscNumber, newSalt } from '../shared/auth.js';
+import { hashPin, pinMatches, cleanKenyanPhone, cleanSellerRegNumber, newSalt } from '../shared/auth.js';
 
 const SELLER_TYPES = ['teacher', 'tutor', 'school'];
+// Human label for each type's registration number, used in error messages.
+const REG_LABEL: Record<string, string> = {
+  teacher: 'TSC number',
+  school: 'school registration code',
+  tutor: 'National ID number',
+};
 
 export const sellerSignup = onCall(async request => {
-  const { phone, pin, displayName, type, tscNumber } = (request.data ?? {}) as {
-    phone?: string; pin?: string; displayName?: string; type?: string; tscNumber?: string;
+  const { phone, pin, displayName, type, regNumber } = (request.data ?? {}) as {
+    phone?: string; pin?: string; displayName?: string; type?: string; regNumber?: string;
   };
   const db = getFirestore();
 
@@ -23,18 +29,15 @@ export const sellerSignup = onCall(async request => {
     throw new HttpsError('invalid-argument', 'type must be teacher, tutor, or school.');
   }
 
-  // Teachers must supply a valid, unique Kenyan TSC number and are held for
-  // admin review before they can sell. Tutors/schools are auto-active.
-  const isTeacher = type === 'teacher';
-  let cleanTsc: string | null = null;
-  if (isTeacher) {
-    cleanTsc = cleanTscNumber(tscNumber ?? '');
-    if (!cleanTsc) {
-      throw new HttpsError('invalid-argument', 'Enter a valid TSC number (5–9 digits).');
-    }
-    const dupTsc = await db.collection('sellers').where('tscNumber', '==', cleanTsc).limit(1).get();
-    if (!dupTsc.empty) throw new HttpsError('already-exists', 'This TSC number is already registered.');
+  // Every seller supplies a type-specific registration number (teacher → TSC,
+  // school → MoE/NEMIS code, tutor → National ID). It must be valid and unique,
+  // and the account is held for admin review before it can sell.
+  const cleanReg = cleanSellerRegNumber(type as string, regNumber ?? '');
+  if (!cleanReg) {
+    throw new HttpsError('invalid-argument', `Enter a valid ${REG_LABEL[type as string]}.`);
   }
+  const dupReg = await db.collection('sellers').where('regNumber', '==', cleanReg).limit(1).get();
+  if (!dupReg.empty) throw new HttpsError('already-exists', `This ${REG_LABEL[type as string]} is already registered.`);
 
   const existing = await db.collection('sellers').where('phone', '==', cleanPhone).limit(1).get();
   if (!existing.empty) throw new HttpsError('already-exists', 'This number is already a seller.');
@@ -46,8 +49,8 @@ export const sellerSignup = onCall(async request => {
     pinHash: hashPin(pin as string, salt),
     displayName: displayName.trim(),
     type,
-    tscNumber: cleanTsc,
-    status: isTeacher ? 'pending' : 'active',
+    regNumber: cleanReg,
+    status: 'pending',
     payoutBalancePending: 0,
     payoutBalancePaid: 0,
     failedAttempts: 0,

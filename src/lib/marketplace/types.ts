@@ -7,8 +7,9 @@ export interface Seller {
   phone: string;
   type: SellerType;
   status: SellerStatus;
-  /** Kenyan TSC number — present for teachers, used for admin verification. */
-  tscNumber?: string | null;
+  /** Type-specific registration number used for admin verification:
+   *  teacher → TSC, school → MoE/NEMIS code, tutor → National ID. */
+  regNumber?: string | null;
   payoutBalancePending: number;
   payoutBalancePaid: number;
 }

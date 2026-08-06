@@ -93,8 +93,8 @@ export default function SellerDashboard() {
           <div>
             <div className="font-bold text-[#92400e]">Account pending approval</div>
             <p className="text-sm text-[#b45309]">
-              Thanks for registering! We're verifying your TSC number. You can set things up now, but
-              selling unlocks once an admin approves your account.
+              Thanks for registering! We're verifying your registration details. You can set things up now,
+              but selling unlocks once an admin approves your account.
             </p>
           </div>
         </div>

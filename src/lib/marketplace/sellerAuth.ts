@@ -5,16 +5,17 @@ import { httpsCallable } from 'firebase/functions';
 import { auth, db, functions } from '../firebase';
 import type { Seller, SellerType } from './types';
 
-/** Create a seller account (server hashes the PIN) and sign in.
- *  Teachers must pass a Kenyan TSC number; the server validates + reviews it. */
+/** Create a seller account (server hashes the PIN) and sign in. Every seller
+ *  passes a type-specific registration number (teacher → TSC, school → MoE/NEMIS
+ *  code, tutor → National ID); the server validates it and holds for review. */
 export async function signupSeller(
-  phone: string, pin: string, displayName: string, type: SellerType, tscNumber?: string
+  phone: string, pin: string, displayName: string, type: SellerType, regNumber?: string
 ): Promise<string> {
   const fn = httpsCallable<
-    { phone: string; pin: string; displayName: string; type: SellerType; tscNumber?: string },
+    { phone: string; pin: string; displayName: string; type: SellerType; regNumber?: string },
     { token: string; sellerId: string }
   >(functions, 'sellerSignup');
-  const { token, sellerId } = (await fn({ phone, pin, displayName, type, tscNumber })).data;
+  const { token, sellerId } = (await fn({ phone, pin, displayName, type, regNumber })).data;
   await signInWithCustomToken(auth, token);
   return sellerId;
 }

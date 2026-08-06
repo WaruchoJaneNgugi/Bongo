@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { hashPin, pinMatches, cleanKenyanPhone, cleanTscNumber } from './auth.js';
+import {
+  hashPin, pinMatches, cleanKenyanPhone, cleanTscNumber,
+  cleanSchoolCode, cleanNationalId, cleanSellerRegNumber,
+} from './auth.js';
 
 describe('hashPin / pinMatches', () => {
   it('is deterministic for the same pin+salt', () => {
@@ -45,5 +48,43 @@ describe('cleanTscNumber', () => {
     expect(cleanTscNumber('1234567890')).toBeNull();
     expect(cleanTscNumber('TSC1234')).toBeNull();
     expect(cleanTscNumber('')).toBeNull();
+  });
+});
+
+describe('cleanSchoolCode', () => {
+  it('accepts alphanumeric codes and normalises to uppercase', () => {
+    expect(cleanSchoolCode('12345')).toBe('12345');
+    expect(cleanSchoolCode('abc123')).toBe('ABC123');
+    expect(cleanSchoolCode(' nrb 001 ')).toBe('NRB001');
+  });
+
+  it('rejects too short, too long, or symbol-laden input', () => {
+    expect(cleanSchoolCode('ab1')).toBeNull();
+    expect(cleanSchoolCode('1234567890123456')).toBeNull();
+    expect(cleanSchoolCode('code@#')).toBeNull();
+  });
+});
+
+describe('cleanNationalId', () => {
+  it('accepts 6–9 digit IDs', () => {
+    expect(cleanNationalId('12345678')).toBe('12345678');
+    expect(cleanNationalId(' 234567 ')).toBe('234567');
+  });
+
+  it('rejects non-numeric / wrong length', () => {
+    expect(cleanNationalId('12345')).toBeNull();
+    expect(cleanNationalId('1234567890')).toBeNull();
+    expect(cleanNationalId('ID123456')).toBeNull();
+  });
+});
+
+describe('cleanSellerRegNumber', () => {
+  it('dispatches to the matching validator by seller type', () => {
+    expect(cleanSellerRegNumber('teacher', '123456')).toBe('123456');
+    expect(cleanSellerRegNumber('school', 'nrb001')).toBe('NRB001');
+    expect(cleanSellerRegNumber('tutor', '12345678')).toBe('12345678');
+    // National-ID rule (6–9) is stricter than TSC (5+): a 5-digit tutor id fails.
+    expect(cleanSellerRegNumber('tutor', '12345')).toBeNull();
+    expect(cleanSellerRegNumber('unknown', '123456')).toBeNull();
   });
 });

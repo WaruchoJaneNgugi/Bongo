@@ -9,6 +9,13 @@ const STATUS_CLASS: Record<string, string> = {
   rejected: 'is-off',
 };
 
+// How each seller type's registration number is labelled in the queue.
+const REG_LABEL: Record<string, string> = {
+  teacher: 'TSC',
+  school: 'School code',
+  tutor: 'National ID',
+};
+
 const SellersSection: React.FC = () => {
   const [sellers, setSellers] = useState<AdminSeller[]>([]);
   const [search, setSearch] = useState('');
@@ -21,7 +28,7 @@ const SellersSection: React.FC = () => {
     return sellers.filter(s =>
       (s.displayName ?? '').toLowerCase().includes(term) ||
       (s.phone ?? '').includes(term) ||
-      (s.tscNumber ?? '').includes(term)
+      (s.regNumber ?? s.tscNumber ?? '').toLowerCase().includes(term)
     );
   }, [sellers, search]);
 
@@ -57,7 +64,7 @@ const SellersSection: React.FC = () => {
             <div className="admin-player-rank"><Store size={18} /></div>
             <div className="admin-player-main">
               <h3>{s.displayName ?? 'Unnamed'} <span style={{ color: 'var(--muted)', fontWeight: 500, textTransform: 'capitalize' }}>· {s.type ?? '—'}</span></h3>
-              <p>{[s.phone, s.tscNumber ? `TSC ${s.tscNumber}` : null].filter(Boolean).join(' · ') || '—'}</p>
+              <p>{[s.phone, (s.regNumber ?? s.tscNumber) ? `${REG_LABEL[s.type ?? ''] ?? 'ID'} ${s.regNumber ?? s.tscNumber}` : null].filter(Boolean).join(' · ') || '—'}</p>
             </div>
             <span className={`admin-status ${STATUS_CLASS[s.status ?? ''] ?? 'is-off'}`}>{s.status ?? 'unknown'}</span>
             <div className="admin-row-actions">

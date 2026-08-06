@@ -27,3 +27,25 @@ export function cleanTscNumber(tsc: string): string | null {
   const t = (tsc || '').trim();
   return /^\d{5,9}$/.test(t) ? t : null;
 }
+
+/** Normalise a Kenyan school registration code (MoE / NEMIS–KEMIS).
+ *  Codes may be numeric or alphanumeric; normalise to uppercase, 4–15 chars. */
+export function cleanSchoolCode(code: string): string | null {
+  const c = (code || '').replace(/\s/g, '').toUpperCase();
+  return /^[A-Z0-9]{4,15}$/.test(c) ? c : null;
+}
+
+/** Normalise a Kenyan National ID number (digits only, 6–9 digits). */
+export function cleanNationalId(id: string): string | null {
+  const n = (id || '').replace(/\s/g, '');
+  return /^\d{6,9}$/.test(n) ? n : null;
+}
+
+/** Validate the registration number for a seller type, returning the cleaned
+ *  value or null. Teacher → TSC, school → MoE/NEMIS code, tutor → National ID. */
+export function cleanSellerRegNumber(type: string, value: string): string | null {
+  if (type === 'teacher') return cleanTscNumber(value);
+  if (type === 'school') return cleanSchoolCode(value);
+  if (type === 'tutor') return cleanNationalId(value);
+  return null;
+}

@@ -11,7 +11,7 @@ interface SellerState {
   authReady: boolean;
   _unsub: Unsubscribe | null;
 
-  signup: (phone: string, pin: string, displayName: string, type: SellerType, tscNumber?: string) => Promise<void>;
+  signup: (phone: string, pin: string, displayName: string, type: SellerType, regNumber?: string) => Promise<void>;
   login: (phone: string, pin: string) => Promise<void>;
   logout: () => Promise<void>;
   /** Attach a live listener once we know the seller id (e.g. after auth restore). */
@@ -30,8 +30,8 @@ export const useSellerStore = create<SellerState>((set, get) => ({
     set({ sellerId, _unsub: unsub });
   },
 
-  signup: async (phone, pin, displayName, type, tscNumber) => {
-    const sellerId = await signupSeller(phone, pin, displayName, type, tscNumber);
+  signup: async (phone, pin, displayName, type, regNumber) => {
+    const sellerId = await signupSeller(phone, pin, displayName, type, regNumber);
     get().bind(sellerId);
   },
 
