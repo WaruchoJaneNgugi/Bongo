@@ -48,10 +48,10 @@ export default function MarketHome() {
         {/* Categories */}
         <section>
           <SectionHeader title="Browse by Category" onViewAll={() => navigate('/market/browse')} />
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 snap-x no-scrollbar">
             {categories.map(c => (
               <button key={c.key} onClick={() => navigate('/market/browse')}
-                className={`text-left ${ui.cardInteractive} p-4`}>
+                className={`text-left ${ui.cardInteractive} p-4 shrink-0 w-44 snap-start`}>
                 <div className="font-bold text-sm text-[#0f172a]">{c.label}</div>
                 <div className={`text-xs mt-0.5 ${ui.muted}`}>{c.sub}</div>
               </button>

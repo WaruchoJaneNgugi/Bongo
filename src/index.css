@@ -15,3 +15,7 @@ body{
     justify-content: center;
 
 }
+
+/* Horizontal scroll strips (e.g. category pills) — hide the scrollbar. */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
