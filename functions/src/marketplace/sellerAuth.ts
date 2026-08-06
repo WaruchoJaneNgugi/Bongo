@@ -12,6 +12,9 @@ const REG_LABEL: Record<string, string> = {
   school: 'school registration code',
   tutor: 'National ID number',
 };
+// TESTING: accept any non-empty registration number. Set to false to enforce
+// the per-type Kenyan formats (cleanSellerRegNumber).
+const LENIENT_REG = true;
 
 export const sellerSignup = onCall(async request => {
   const { phone, pin, displayName, type, regNumber } = (request.data ?? {}) as {
@@ -32,7 +35,9 @@ export const sellerSignup = onCall(async request => {
   // Every seller supplies a type-specific registration number (teacher → TSC,
   // school → MoE/NEMIS code, tutor → National ID). It must be valid and unique,
   // and the account is held for admin review before it can sell.
-  const cleanReg = cleanSellerRegNumber(type as string, regNumber ?? '');
+  const cleanReg = LENIENT_REG
+    ? ((regNumber ?? '').trim() || null)
+    : cleanSellerRegNumber(type as string, regNumber ?? '');
   if (!cleanReg) {
     throw new HttpsError('invalid-argument', `Enter a valid ${REG_LABEL[type as string]}.`);
   }

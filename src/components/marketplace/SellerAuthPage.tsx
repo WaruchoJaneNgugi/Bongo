@@ -36,6 +36,10 @@ const REG: Record<SellerType, {
   },
 };
 
+// TESTING: accept any non-empty registration number. Set to false to enforce
+// the per-type Kenyan formats above.
+const LENIENT_REG = true;
+
 export default function SellerAuthPage() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [phone, setPhone] = useState('');
@@ -53,7 +57,8 @@ export default function SellerAuthPage() {
     setError(null);
     // Fast client-side guard for instant feedback; the server re-validates and
     // is authoritative.
-    if (mode === 'signup' && !REG[type].test(reg)) {
+    const regOk = LENIENT_REG ? reg.trim().length > 0 : REG[type].test(reg);
+    if (mode === 'signup' && !regOk) {
       setError(`Enter a valid ${REG[type].label}.`);
       return;
     }
@@ -114,8 +119,8 @@ export default function SellerAuthPage() {
 
             <div>
               <input className={INPUT} placeholder={REG[type].label}
-                inputMode={REG[type].numeric ? 'numeric' : 'text'} value={reg}
-                onChange={e => setReg(REG[type].clean(e.target.value))} />
+                inputMode={LENIENT_REG ? 'text' : (REG[type].numeric ? 'numeric' : 'text')} value={reg}
+                onChange={e => setReg(LENIENT_REG ? e.target.value : REG[type].clean(e.target.value))} />
               <p className="text-xs text-[#94a3b8] mt-1.5">
                 {REG[type].hint} All seller accounts are verified before selling.
               </p>
