@@ -624,6 +624,8 @@ select.admin-secondary-btn { padding-right: 10px; }
 .admin-status.is-live { background: #ecfdf3; color: #067647; }
 .admin-status.is-off { background: #fef3f2; color: #b42318; }
 .admin-status.is-draft { background: #fffaeb; color: #b54708; }
+.admin-status.is-pending { background: #fffaeb; color: #b54708; text-transform: capitalize; }
+.admin-status.is-live { text-transform: capitalize; }
 
 .admin-row-actions { display: flex; align-items: center; gap: 6px; }
 .admin-row-actions button {

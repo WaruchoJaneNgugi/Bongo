@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { hashPin, pinMatches, cleanKenyanPhone } from './auth.js';
+import { hashPin, pinMatches, cleanKenyanPhone, cleanTscNumber } from './auth.js';
 
 describe('hashPin / pinMatches', () => {
   it('is deterministic for the same pin+salt', () => {
@@ -30,5 +30,20 @@ describe('cleanKenyanPhone', () => {
     expect(cleanKenyanPhone('12345')).toBeNull();
     expect(cleanKenyanPhone('0812345678')).toBeNull();
     expect(cleanKenyanPhone('')).toBeNull();
+  });
+});
+
+describe('cleanTscNumber', () => {
+  it('accepts 5–9 digit numbers and trims whitespace', () => {
+    expect(cleanTscNumber('12345')).toBe('12345');
+    expect(cleanTscNumber('  678901 ')).toBe('678901');
+    expect(cleanTscNumber('123456789')).toBe('123456789');
+  });
+
+  it('rejects non-numeric, too short, too long, or empty', () => {
+    expect(cleanTscNumber('1234')).toBeNull();
+    expect(cleanTscNumber('1234567890')).toBeNull();
+    expect(cleanTscNumber('TSC1234')).toBeNull();
+    expect(cleanTscNumber('')).toBeNull();
   });
 });

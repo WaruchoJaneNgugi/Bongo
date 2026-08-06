@@ -3,13 +3,13 @@
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { hashPin, pinMatches, cleanKenyanPhone, newSalt } from '../shared/auth.js';
+import { hashPin, pinMatches, cleanKenyanPhone, cleanTscNumber, newSalt } from '../shared/auth.js';
 
 const SELLER_TYPES = ['teacher', 'tutor', 'school'];
 
 export const sellerSignup = onCall(async request => {
-  const { phone, pin, displayName, type } = (request.data ?? {}) as {
-    phone?: string; pin?: string; displayName?: string; type?: string;
+  const { phone, pin, displayName, type, tscNumber } = (request.data ?? {}) as {
+    phone?: string; pin?: string; displayName?: string; type?: string; tscNumber?: string;
   };
   const db = getFirestore();
 
@@ -23,6 +23,19 @@ export const sellerSignup = onCall(async request => {
     throw new HttpsError('invalid-argument', 'type must be teacher, tutor, or school.');
   }
 
+  // Teachers must supply a valid, unique Kenyan TSC number and are held for
+  // admin review before they can sell. Tutors/schools are auto-active.
+  const isTeacher = type === 'teacher';
+  let cleanTsc: string | null = null;
+  if (isTeacher) {
+    cleanTsc = cleanTscNumber(tscNumber ?? '');
+    if (!cleanTsc) {
+      throw new HttpsError('invalid-argument', 'Enter a valid TSC number (5–9 digits).');
+    }
+    const dupTsc = await db.collection('sellers').where('tscNumber', '==', cleanTsc).limit(1).get();
+    if (!dupTsc.empty) throw new HttpsError('already-exists', 'This TSC number is already registered.');
+  }
+
   const existing = await db.collection('sellers').where('phone', '==', cleanPhone).limit(1).get();
   if (!existing.empty) throw new HttpsError('already-exists', 'This number is already a seller.');
 
@@ -33,7 +46,8 @@ export const sellerSignup = onCall(async request => {
     pinHash: hashPin(pin as string, salt),
     displayName: displayName.trim(),
     type,
-    status: 'active',
+    tscNumber: cleanTsc,
+    status: isTeacher ? 'pending' : 'active',
     payoutBalancePending: 0,
     payoutBalancePaid: 0,
     failedAttempts: 0,

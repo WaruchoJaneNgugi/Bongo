@@ -15,6 +15,7 @@ import {
   MessageCircle,
   ShieldCheck,
   Sparkles,
+  Store,
   Trophy,
   UserCog,
   Users,
@@ -29,6 +30,7 @@ import QuestionsSection from './QuestionsSection';
 import DashboardSection from './DashboardSection';
 import StudentsSection from './StudentsSection';
 import LeaderboardSection from './LeaderboardSection';
+import SellersSection from './SellersSection';
 import ExamsSection from './ExamsSection';
 import type { StaffRole } from '../../lib/types';
 
@@ -39,6 +41,7 @@ type AdminSection =
   | 'generate'
   | 'exams'
   | 'leaderboard'
+  | 'sellers'
   | 'support'
   | 'staff';
 
@@ -55,6 +58,7 @@ const adminSections: Array<{
   { id: 'generate', label: 'Curriculum', icon: Sparkles, roles: ['admin'] },
   { id: 'exams', label: 'Mock Exams', icon: ClipboardList, roles: ['admin'] },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy, roles: ['admin'] },
+  { id: 'sellers', label: 'Sellers', icon: Store, roles: ['admin'] },
   { id: 'staff', label: 'Staff', icon: UserCog, roles: ['admin'] },
 ];
 
@@ -219,6 +223,7 @@ const AdminContent: React.FC<{ section: AdminSection; role: StaffRole }> = ({ se
   if (section === 'generate') return role === 'admin' ? <CurriculumBrowser /> : <AccessDenied />;
   if (section === 'exams') return role === 'admin' ? <ExamsSection /> : <AccessDenied />;
   if (section === 'leaderboard') return role === 'admin' ? <LeaderboardSection /> : <AccessDenied />;
+  if (section === 'sellers') return role === 'admin' ? <SellersSection /> : <AccessDenied />;
   return <DashboardSection />;
 };
 

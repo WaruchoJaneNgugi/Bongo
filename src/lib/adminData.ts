@@ -13,6 +13,35 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 
+/* ── Marketplace sellers (admin review) ──────────────────── */
+export interface AdminSeller {
+  id: string;
+  displayName?: string;
+  phone?: string;
+  type?: 'teacher' | 'tutor' | 'school';
+  tscNumber?: string | null;
+  status?: 'active' | 'pending' | 'suspended' | 'rejected';
+  createdAt?: Timestamp | null;
+}
+
+/** Live list of sellers — pending first, then newest. */
+export function subscribeSellers(cb: (rows: AdminSeller[]) => void): Unsubscribe {
+  return onSnapshot(collection(db, 'sellers'), snap => {
+    const rows = snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<AdminSeller, 'id'>) }));
+    rows.sort((a, b) => {
+      // Pending accounts float to the top so admins act on them first.
+      if ((a.status === 'pending') !== (b.status === 'pending')) return a.status === 'pending' ? -1 : 1;
+      return (b.createdAt?.toMillis() ?? 0) - (a.createdAt?.toMillis() ?? 0);
+    });
+    cb(rows);
+  });
+}
+
+/** Approve or reject a seller (admin-only per Firestore rules). */
+export function setSellerStatus(id: string, status: AdminSeller['status']): Promise<void> {
+  return updateDoc(doc(db, 'sellers', id), { status });
+}
+
 /* ── Student accounts ────────────────────────────────────── */
 export interface AdminProfile {
   id?: string;

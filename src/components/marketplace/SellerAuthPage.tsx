@@ -13,6 +13,7 @@ export default function SellerAuthPage() {
   const [pin, setPin] = useState('');
   const [name, setName] = useState('');
   const [type, setType] = useState<SellerType>('teacher');
+  const [tsc, setTsc] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const { login, signup } = useSellerStore();
@@ -21,9 +22,15 @@ export default function SellerAuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    // Fast client-side guard so teachers get instant feedback; the server
+    // re-validates and is authoritative.
+    if (mode === 'signup' && type === 'teacher' && !/^\d{5,9}$/.test(tsc.trim())) {
+      setError('Enter a valid TSC number (5–9 digits).');
+      return;
+    }
     setBusy(true);
     try {
-      if (mode === 'signup') await signup(phone, pin, name, type);
+      if (mode === 'signup') await signup(phone, pin, name, type, tsc.trim());
       else await login(phone, pin);
       navigate('/seller/dashboard');
     } catch (err) {
@@ -75,6 +82,17 @@ export default function SellerAuthPage() {
                 ))}
               </div>
             </div>
+
+            {type === 'teacher' && (
+              <div>
+                <input className={INPUT} placeholder="TSC number"
+                  inputMode="numeric" value={tsc}
+                  onChange={e => setTsc(e.target.value.replace(/\D/g, ''))} />
+                <p className="text-xs text-[#94a3b8] mt-1.5">
+                  Your Kenyan Teachers Service Commission number. Teacher accounts are verified before selling.
+                </p>
+              </div>
+            )}
           </>
         )}
 

@@ -20,3 +20,10 @@ export function cleanKenyanPhone(phone: string): string | null {
 export function newSalt(): string {
   return randomBytes(16).toString('hex');
 }
+
+/** Normalise a Kenyan TSC number, returning the digits if valid, else null.
+ *  Numbers are digit-only; length has varied across eras, so accept 5–9 digits. */
+export function cleanTscNumber(tsc: string): string | null {
+  const t = (tsc || '').trim();
+  return /^\d{5,9}$/.test(t) ? t : null;
+}

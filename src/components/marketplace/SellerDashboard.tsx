@@ -85,6 +85,31 @@ export default function SellerDashboard() {
   const firstName = seller?.displayName?.split(/\s+/)[0] ?? 'there';
 
   return (
+    <div className="space-y-6">
+      {/* Teacher accounts await TSC verification before they can sell. */}
+      {seller?.status === 'pending' && (
+        <div className="flex items-start gap-3 rounded-2xl border border-[#fef3c7] bg-[#fffbeb] p-4">
+          <Check size={18} className="text-[#b45309] mt-0.5 shrink-0" />
+          <div>
+            <div className="font-bold text-[#92400e]">Account pending approval</div>
+            <p className="text-sm text-[#b45309]">
+              Thanks for registering! We're verifying your TSC number. You can set things up now, but
+              selling unlocks once an admin approves your account.
+            </p>
+          </div>
+        </div>
+      )}
+      {seller?.status === 'rejected' && (
+        <div className="flex items-start gap-3 rounded-2xl border border-[#fee2e2] bg-[#fef2f2] p-4">
+          <div>
+            <div className="font-bold text-[#991b1b]">Account not approved</div>
+            <p className="text-sm text-[#b91c1c]">
+              We couldn't verify your teacher registration. Please contact support if you think this is a mistake.
+            </p>
+          </div>
+        </div>
+      )}
+
     <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_336px] gap-6">
       {/* ── Main column ─────────────────────────────────────── */}
       <div className="space-y-6">
@@ -285,6 +310,7 @@ export default function SellerDashboard() {
           </div>
         </section>
       </div>
+    </div>
     </div>
   );
 }
