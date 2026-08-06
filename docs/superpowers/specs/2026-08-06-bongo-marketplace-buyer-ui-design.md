@@ -11,6 +11,12 @@ top-nav has a **"Sell"** tab pointing at `/seller` (a seller login gate). We rep
 with a **"Market"** tab that opens a full buyer marketplace (`/market`) — its own shell
 with an 8-item sidebar and eight pages, matching the provided mockup.
 
+The **seller portal also gets a working marketplace**: the currently-dead "Marketplace"
+sidebar item in `SellerLayout` becomes a real route (`/seller/marketplace`) that renders
+the **same storefront pages** inside the seller's own chrome. The marketplace page
+components are therefore **shell-agnostic** — one set of components, rendered in two shells
+(buyer chrome for students, seller chrome for sellers).
+
 This build is **UI-first with mock data**: every page is fully laid out and clickable,
 populated with realistic sample data. Buy / wishlist / cart actions update local state
 (with toasts) but are **not** wired to Firestore or M-Pesa. Real wiring lands later via
@@ -38,8 +44,22 @@ established by `src/lib/marketplace/mockDashboard.ts`.
 - `/market` is wrapped in the existing `ProtectedRoute` → any logged-in student opens it
   directly, no extra login.
 - The seller entry point is **moved into** the marketplace: a "Become a Seller" CTA in the
-  sidebar links to the existing `/seller` gate. The top-nav "Sell" tab is removed in favour
-  of "Market".
+  buyer sidebar links to the existing `/seller` gate. The top-nav "Sell" tab is removed in
+  favour of "Market".
+- `/seller/marketplace` sits inside the existing `SellerProtectedRoute` + `SellerLayout` →
+  only logged-in sellers reach it, from their own sidebar.
+
+## Two shells, shared pages
+
+The storefront content (marketplace **Home** landing and **Browse** grid) is factored into
+shell-agnostic components under `.../buyer/pages/`. They depend only on `mockBuyer.ts` and
+`useMarketStore` — never on a specific layout — so the same component renders correctly
+whether the surrounding chrome is `MarketLayout` (buyer) or `SellerLayout` (seller).
+
+- **Buyer shell** (`MarketLayout`, `/market/*`): full 8-item sidebar + all 8 pages.
+- **Seller shell** (`SellerLayout`, `/seller/marketplace`): renders the shared **Browse**
+  storefront (`MarketBrowse`) inside the seller's existing sidebar/topbar. The seller keeps
+  their own sidebar; only the main content is the shared storefront.
 
 ## Navigation changes
 
@@ -53,6 +73,12 @@ established by `src/lib/marketplace/mockDashboard.ts`.
 - Hide the learner `Navbar` and `Footer` on `/market` (extend the existing `isSeller` conditions),
   because the marketplace renders its own full-screen shell.
 - Register the `/market` route group (below).
+- Add `/seller/marketplace` inside the existing seller route group (`SellerProtectedRoute` →
+  `SellerLayout`), rendering `MarketBrowse`.
+
+`src/components/marketplace/SellerLayout.tsx`
+- The `NAV` "Marketplace" entry becomes real: `{ label: 'Marketplace', icon: Store,
+  to: '/seller/marketplace', real: true }` so it renders as an active `NavLink`.
 
 ## Routes
 
@@ -68,6 +94,12 @@ Wrapped in `ProtectedRoute` → `MarketLayout` (renders `<Outlet/>`):
 | `/market/orders`         | `Orders`         | Orders          |
 | `/market/subscriptions`  | `Subscriptions`  | Subscriptions   |
 | `/market/payments`       | `Payments`       | Payments        |
+
+Plus, inside the **seller** route group (`SellerProtectedRoute` → `SellerLayout`):
+
+| Path                     | Component        | Sidebar label   |
+|--------------------------|------------------|-----------------|
+| `/seller/marketplace`    | `MarketBrowse`   | Marketplace     |
 
 ## Files
 
@@ -99,6 +131,8 @@ src/store/
   cart/wishlist counts from `useMarketStore`. Renders `<Outlet/>`. Knows nothing about page data.
 - **Pages** — each reads its slice from `mockBuyer.ts` and, where interactive, calls
   `useMarketStore` actions. Each page is independently understandable and renders in isolation.
+  Pages are **shell-agnostic**: no imports from `MarketLayout`/`SellerLayout`, no assumptions
+  about surrounding chrome. `MarketBrowse` is the page shared between both shells.
 - **ResourceCard** — presentational; takes a `Resource` + handlers. Reused by Home, Browse,
   Wishlist, Library.
 - **useMarketStore** — the only stateful logic. `cart`, `wishlist` arrays of resource ids;
@@ -147,6 +181,8 @@ UI-first, so tests focus on the parts with real behaviour:
 - Smoke render tests: `MarketLayout` renders the 8 sidebar items; each page renders without
   crashing given mock data.
 - Nav test: `Navbar` renders a **Market** link to `/market` and no longer a "Sell" link.
+- `MarketBrowse` renders standalone (shell-agnostic) — the seller `/seller/marketplace` reuse
+  works because the page has no layout dependency.
 
 ## Rollout / follow-ups
 
