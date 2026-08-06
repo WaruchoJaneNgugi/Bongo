@@ -117,7 +117,7 @@ export default function SellerLayout() {
             <button className="flex items-center gap-2 bg-[#16a34a] hover:bg-[#15913f] text-white text-sm font-bold rounded-full px-4 py-2.5 transition">
               <UploadCloud size={17} /> <span className="hidden sm:inline">Upload Resource</span>
             </button>
-            <button className="relative w-10 h-10 grid place-items-center rounded-full hover:bg-[#eef7ef]">
+            <button aria-label="Notifications" className="relative w-10 h-10 grid place-items-center rounded-full hover:bg-[#eef7ef]">
               <Bell size={19} className="text-[#4b5563]" />
               <span className="absolute top-1.5 right-1.5 text-[10px] font-bold text-white bg-[#16a34a] rounded-full w-4 h-4 grid place-items-center">3</span>
             </button>

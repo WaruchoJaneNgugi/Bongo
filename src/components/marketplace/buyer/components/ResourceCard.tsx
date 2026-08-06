@@ -40,7 +40,7 @@ export default function ResourceCard({ resource }: Props) {
         <button
           onClick={() => addToCart(resource.id)}
           className={`w-full rounded-xl py-2 text-sm font-bold transition ${
-            carted ? 'bg-[#f0fdf4] text-[#15803d]' : `${ui.btnPrimary} px-4`
+            carted ? 'flex items-center justify-center bg-[#f0fdf4] text-[#15803d]' : `${ui.btnPrimary} px-4`
           }`}
         >
           {carted ? 'In Cart ✓' : resource.cta}

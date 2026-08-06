@@ -86,7 +86,6 @@ const Navbar: React.FC = () => {
                 <User size={16} /> Profile
               </Link>
               )}
-              {isLoggedIn && <></>}
             </div>
           </div>
 

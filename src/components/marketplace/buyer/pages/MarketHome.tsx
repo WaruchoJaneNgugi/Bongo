@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, BookOpen, Wallet, Store } from 'lucide-react';
-import { resources, categories, popularSubjects, stats, wallet } from '../../../../lib/marketplace/mockBuyer';
+import { resources, categories, popularSubjects, stats, wallet, library, orders } from '../../../../lib/marketplace/mockBuyer';
+import { useMarketStore } from '../../../../store/useMarketStore';
 import ResourceCard from '../components/ResourceCard';
 import SectionHeader from '../components/SectionHeader';
 import { ui } from '../ui';
@@ -11,6 +12,7 @@ type Tab = 'Popular' | 'Latest' | 'Top Rated';
 export default function MarketHome() {
   const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('Popular');
+  const wishlistCount = useMarketStore(s => s.wishlist.length);
 
   const shown = [...resources]
     .filter(r => (tab === 'Latest' ? r.latest : true))
@@ -91,9 +93,9 @@ export default function MarketHome() {
         <div className={`${ui.card} p-4`}>
           <div className="flex items-center gap-2 font-bold text-[#0f172a]"><BookOpen size={18} className="text-[#16a34a]" /> My Learning</div>
           <ul className={`mt-3 space-y-2 text-sm ${ui.muted}`}>
-            <li className="flex justify-between"><span>My Library</span><span className={ui.faint}>2 items</span></li>
-            <li className="flex justify-between"><span>Wishlist</span><span className={ui.faint}>2 items</span></li>
-            <li className="flex justify-between"><span>Recent Orders</span><span className={ui.faint}>3 orders</span></li>
+            <li className="flex justify-between"><span>My Library</span><span className={ui.faint}>{library.length} items</span></li>
+            <li className="flex justify-between"><span>Wishlist</span><span className={ui.faint}>{wishlistCount} items</span></li>
+            <li className="flex justify-between"><span>Recent Orders</span><span className={ui.faint}>{orders.length} orders</span></li>
           </ul>
         </div>
 
