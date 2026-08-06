@@ -41,8 +41,9 @@ describe('MarketLayout', () => {
   it('shows the auth gate (Log In / Sign Up) when logged out', () => {
     logout();
     renderAt('/market');
-    expect(screen.getByRole('button', { name: /Log In/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Sign Up/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Log In$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /^Sign Up$/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Seller Log In/i })).toBeInTheDocument();
     // The marketplace shell / outlet must NOT render for a signed-out visitor.
     expect(screen.queryByText('HOME PAGE')).toBeNull();
   });

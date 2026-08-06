@@ -43,6 +43,19 @@ export default function MarketAuthGate() {
             </button>
           </div>
 
+          {/* Seller path — teachers, tutors and schools sign in / register separately. */}
+          <div className="mt-6 flex items-center gap-3">
+            <span className={`flex-1 h-px ${ui.hairline} border-t`} />
+            <span className={`text-xs ${ui.faint}`}>Selling on HighScores?</span>
+            <span className={`flex-1 h-px ${ui.hairline} border-t`} />
+          </div>
+          <button
+            onClick={() => navigate('/seller')}
+            className={`mt-4 ${ui.btnGhost} w-full px-4 py-3`}
+          >
+            <Store size={18} className="text-[#16a34a]" /> Seller Log In / Sign Up
+          </button>
+
           <button onClick={() => navigate('/')} className={`mt-5 text-sm ${ui.muted} hover:text-[#0f172a]`}>
             Back to home
           </button>
