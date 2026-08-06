@@ -59,12 +59,22 @@ export default function SellerAuthPage() {
           <>
             <input className={INPUT} placeholder="Your name"
               value={name} onChange={e => setName(e.target.value)} />
-            <select className={INPUT}
-              value={type} onChange={e => setType(e.target.value as SellerType)}>
-              <option value="teacher">Teacher</option>
-              <option value="tutor">Tutor</option>
-              <option value="school">School</option>
-            </select>
+            <div>
+              <label className="block text-xs font-semibold text-[#64748b] mb-1.5">I'm registering as</label>
+              <div className="grid grid-cols-3 gap-2">
+                {(['teacher', 'tutor', 'school'] as SellerType[]).map(t => (
+                  <button key={t} type="button" onClick={() => setType(t)}
+                    aria-pressed={type === t}
+                    className={`rounded-xl border px-3 py-2.5 text-sm font-semibold capitalize transition-colors ${
+                      type === t
+                        ? 'border-[#16a34a] bg-[#f0fdf4] text-[#15803d]'
+                        : 'border-[#e5e9f0] bg-white text-[#64748b] hover:bg-[#f8fafc]'
+                    }`}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
           </>
         )}
 
