@@ -44,11 +44,13 @@ export const sellerSignup = onCall(async request => {
   const dupReg = await db.collection('sellers').where('regNumber', '==', cleanReg).limit(1).get();
   if (!dupReg.empty) throw new HttpsError('already-exists', `This ${REG_LABEL[type as string]} is already registered.`);
 
-  // Schools capture a location (town / county); other types don't.
-  let schoolLocation: string | null = null;
-  if (type === 'school') {
-    schoolLocation = (location ?? '').trim();
-    if (schoolLocation.length < 2) throw new HttpsError('invalid-argument', 'Enter the school location.');
+  // Schools and tutors capture a location (town / county); teachers don't.
+  let sellerLocation: string | null = null;
+  if (type === 'school' || type === 'tutor') {
+    sellerLocation = (location ?? '').trim();
+    if (sellerLocation.length < 2) {
+      throw new HttpsError('invalid-argument', type === 'school' ? 'Enter the school location.' : 'Enter your location.');
+    }
   }
 
   const existing = await db.collection('sellers').where('phone', '==', cleanPhone).limit(1).get();
@@ -62,7 +64,7 @@ export const sellerSignup = onCall(async request => {
     displayName: displayName.trim(),
     type,
     regNumber: cleanReg,
-    location: schoolLocation,
+    location: sellerLocation,
     status: 'pending',
     payoutBalancePending: 0,
     payoutBalancePaid: 0,

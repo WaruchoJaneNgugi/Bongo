@@ -63,14 +63,15 @@ export default function SellerAuthPage() {
       setError(`Enter a valid ${REG[type].label}.`);
       return;
     }
-    if (mode === 'signup' && type === 'school' && location.trim().length < 2) {
-      setError('Enter the school location.');
+    const needsLocation = type === 'school' || type === 'tutor';
+    if (mode === 'signup' && needsLocation && location.trim().length < 2) {
+      setError(type === 'school' ? 'Enter the school location.' : 'Enter your location.');
       return;
     }
     setBusy(true);
     try {
       if (mode === 'signup') {
-        await signup(phone, pin, name, type, reg.trim(), type === 'school' ? location.trim() : undefined);
+        await signup(phone, pin, name, type, reg.trim(), needsLocation ? location.trim() : undefined);
       } else await login(phone, pin);
       navigate('/seller/dashboard');
     } catch (err) {
@@ -123,8 +124,9 @@ export default function SellerAuthPage() {
               </div>
             </div>
 
-            {type === 'school' && (
-              <input className={INPUT} placeholder="School location (town / county)"
+            {type !== 'teacher' && (
+              <input className={INPUT}
+                placeholder={type === 'school' ? 'School location (town / county)' : 'Location (town / county)'}
                 value={location} onChange={e => setLocation(e.target.value)} />
             )}
 
