@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import {
   GraduationCap, Home, Store, Library, MessageSquare, Heart, ShoppingBag,
-  CreditCard, Wallet, Search, Bell, ShoppingCart, Menu, X, Store as SellerIcon,
+  CreditCard, Wallet, Search, Bell, ShoppingCart, Menu, X, ArrowLeft, Store as SellerIcon,
 } from 'lucide-react';
 import { useStore } from '../../../store/useStore';
 import { useMarketStore } from '../../../store/useMarketStore';
@@ -30,12 +30,16 @@ export default function MarketLayout() {
 
   const sidebar = (
     <>
-      <div className={`flex items-center gap-2 px-5 h-16 border-b ${ui.hairline}`}>
+      <button
+        onClick={() => { navigate('/home'); setOpen(false); }}
+        title="Back to HighScores"
+        className={`flex items-center gap-2 px-5 h-16 border-b ${ui.hairline} w-full hover:bg-[#f8fafc] transition-colors`}
+      >
         <GraduationCap className="text-[#16a34a]" size={26} />
         <span className="font-extrabold text-lg tracking-tight">
           <span className="text-[#16a34a]">High</span><span className="text-[#0f172a]">Scores</span>
         </span>
-      </div>
+      </button>
 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {NAV.map(({ label, icon: Icon, to, end, badge }) => (
@@ -86,6 +90,14 @@ export default function MarketLayout() {
         <header className={`sticky top-0 z-10 bg-white/90 backdrop-blur border-b ${ui.hairline} h-16 flex items-center gap-3 px-4 md:px-6`}>
           <button className="lg:hidden w-10 h-10 grid place-items-center rounded-full hover:bg-[#f1f5f9]" onClick={() => setOpen(v => !v)} aria-label="Menu">
             {open ? <X size={20} /> : <Menu size={20} />}
+          </button>
+          <button
+            onClick={() => navigate('/home')}
+            aria-label="Exit marketplace"
+            title="Back to HighScores"
+            className={`${ui.btnGhost} px-3 py-2 text-sm`}
+          >
+            <ArrowLeft size={16} /> <span className="hidden sm:inline">Exit</span>
           </button>
           <div className="flex-1 max-w-xl relative hidden sm:block">
             <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#94a3b8]" />
