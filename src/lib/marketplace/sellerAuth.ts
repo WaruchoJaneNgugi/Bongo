@@ -8,15 +8,21 @@ import type { Seller, SellerType } from './types';
 /** Create a seller account (server hashes the PIN) and sign in. Every seller
  *  passes a type-specific registration number (teacher → TSC, school → MoE/NEMIS
  *  code, tutor → National ID); the server validates it and holds for review. */
-export async function signupSeller(
-  phone: string, pin: string, displayName: string, type: SellerType,
-  regNumber?: string, location?: string
-): Promise<string> {
-  const fn = httpsCallable<
-    { phone: string; pin: string; displayName: string; type: SellerType; regNumber?: string; location?: string },
-    { token: string; sellerId: string }
-  >(functions, 'sellerSignup');
-  const { token, sellerId } = (await fn({ phone, pin, displayName, type, regNumber, location })).data;
+export interface SellerSignupInput {
+  phone: string;
+  pin: string;
+  displayName: string;
+  type: SellerType;
+  regNumber?: string;
+  /** Town / county — schools and tutors. */
+  location?: string;
+  /** School the teacher operates in — teachers only. */
+  schoolName?: string;
+}
+
+export async function signupSeller(input: SellerSignupInput): Promise<string> {
+  const fn = httpsCallable<SellerSignupInput, { token: string; sellerId: string }>(functions, 'sellerSignup');
+  const { token, sellerId } = (await fn(input)).data;
   await signInWithCustomToken(auth, token);
   return sellerId;
 }

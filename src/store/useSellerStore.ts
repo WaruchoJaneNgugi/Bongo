@@ -1,8 +1,9 @@
 import { create } from 'zustand';
 import type { Unsubscribe } from 'firebase/firestore';
-import type { Seller, SellerType } from '../lib/marketplace/types';
+import type { Seller } from '../lib/marketplace/types';
 import {
   signupSeller, loginSeller, logoutSeller, subscribeSeller,
+  type SellerSignupInput,
 } from '../lib/marketplace/sellerAuth';
 
 interface SellerState {
@@ -11,7 +12,7 @@ interface SellerState {
   authReady: boolean;
   _unsub: Unsubscribe | null;
 
-  signup: (phone: string, pin: string, displayName: string, type: SellerType, regNumber?: string, location?: string) => Promise<void>;
+  signup: (input: SellerSignupInput) => Promise<void>;
   login: (phone: string, pin: string) => Promise<void>;
   logout: () => Promise<void>;
   /** Attach a live listener once we know the seller id (e.g. after auth restore). */
@@ -30,8 +31,8 @@ export const useSellerStore = create<SellerState>((set, get) => ({
     set({ sellerId, _unsub: unsub });
   },
 
-  signup: async (phone, pin, displayName, type, regNumber, location) => {
-    const sellerId = await signupSeller(phone, pin, displayName, type, regNumber, location);
+  signup: async (input) => {
+    const sellerId = await signupSeller(input);
     get().bind(sellerId);
   },
 

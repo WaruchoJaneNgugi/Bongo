@@ -17,8 +17,9 @@ const REG_LABEL: Record<string, string> = {
 const LENIENT_REG = true;
 
 export const sellerSignup = onCall(async request => {
-  const { phone, pin, displayName, type, regNumber, location } = (request.data ?? {}) as {
-    phone?: string; pin?: string; displayName?: string; type?: string; regNumber?: string; location?: string;
+  const { phone, pin, displayName, type, regNumber, location, schoolName } = (request.data ?? {}) as {
+    phone?: string; pin?: string; displayName?: string; type?: string;
+    regNumber?: string; location?: string; schoolName?: string;
   };
   const db = getFirestore();
 
@@ -53,6 +54,13 @@ export const sellerSignup = onCall(async request => {
     }
   }
 
+  // Teachers record the school they operate in.
+  let teacherSchool: string | null = null;
+  if (type === 'teacher') {
+    teacherSchool = (schoolName ?? '').trim();
+    if (teacherSchool.length < 2) throw new HttpsError('invalid-argument', 'Enter the school you teach at.');
+  }
+
   const existing = await db.collection('sellers').where('phone', '==', cleanPhone).limit(1).get();
   if (!existing.empty) throw new HttpsError('already-exists', 'This number is already a seller.');
 
@@ -65,6 +73,7 @@ export const sellerSignup = onCall(async request => {
     type,
     regNumber: cleanReg,
     location: sellerLocation,
+    schoolName: teacherSchool,
     status: 'pending',
     payoutBalancePending: 0,
     payoutBalancePaid: 0,

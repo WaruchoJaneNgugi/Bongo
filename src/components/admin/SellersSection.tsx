@@ -68,6 +68,7 @@ const SellersSection: React.FC = () => {
                 s.phone,
                 (s.regNumber ?? s.tscNumber) ? `${REG_LABEL[s.type ?? ''] ?? 'ID'} ${s.regNumber ?? s.tscNumber}` : null,
                 s.location,
+                s.schoolName,
               ].filter(Boolean).join(' · ') || '—'}</p>
             </div>
             <span className={`admin-status ${STATUS_CLASS[s.status ?? ''] ?? 'is-off'}`}>{s.status ?? 'unknown'}</span>
