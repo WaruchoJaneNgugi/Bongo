@@ -78,8 +78,8 @@ const Navbar: React.FC = () => {
               <Link to="/games" className={`nb-link ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={17} /> Games
               </Link>
-              <Link to="/seller" className={`nb-link ${isActive('/seller') ? 'active' : ''}`}>
-                <Store size={17} /> Sell
+              <Link to="/market" className={`nb-link ${isActive('/market') ? 'active' : ''}`}>
+                <Store size={17} /> Market
               </Link>
               {isLoggedIn && (
               <Link to="/profile" className={`nb-link ${isActive('/profile') ? 'active' : ''}`} >
@@ -154,8 +154,8 @@ const Navbar: React.FC = () => {
               <Link to="/games" className={`nb-drawer-item ${isActive('/games') ? 'active' : ''}`}>
                 <Gamepad2 size={20} /> Games
               </Link>
-              <Link to="/seller" className={`nb-drawer-item ${isActive('/seller') ? 'active' : ''}`}>
-                <Store size={20} /> Sell on Bongo
+              <Link to="/market" className={`nb-drawer-item ${isActive('/market') ? 'active' : ''}`}>
+                <Store size={20} /> Market
               </Link>
               {isLoggedIn && (
                 <>

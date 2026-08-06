@@ -39,6 +39,15 @@ import SellerAuthPage from './components/marketplace/SellerAuthPage';
 import SellerLayout from './components/marketplace/SellerLayout';
 import SellerDashboard from './components/marketplace/SellerDashboard';
 import SellerProtectedRoute from './components/marketplace/SellerProtectedRoute';
+import MarketLayout from './components/marketplace/buyer/MarketLayout';
+import MarketHome from './components/marketplace/buyer/pages/MarketHome';
+import MarketBrowse from './components/marketplace/buyer/pages/MarketBrowse';
+import MyLibrary from './components/marketplace/buyer/pages/MyLibrary';
+import Wishlist from './components/marketplace/buyer/pages/Wishlist';
+import Orders from './components/marketplace/buyer/pages/Orders';
+import Subscriptions from './components/marketplace/buyer/pages/Subscriptions';
+import Payments from './components/marketplace/buyer/pages/Payments';
+import Messages from './components/marketplace/buyer/pages/Messages';
 
 const StarField: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,6 +96,7 @@ const AppContent: React.FC = () => {
   const isGames = location.pathname === '/games';
   const isAdmin = location.pathname.startsWith('/admin');
   const isSeller = location.pathname.startsWith('/seller');
+  const isMarket = location.pathname.startsWith('/market');
   const LEARNER_PREFIXES = ['/home', '/learn', '/subjects', '/exams', '/revision', '/books', '/book', '/leaderboard', '/achievements', '/challenges', '/community', '/settings'];
   const isLearner = LEARNER_PREFIXES.some(p => location.pathname === p || location.pathname.startsWith(p + '/'));
 
@@ -94,6 +104,7 @@ const AppContent: React.FC = () => {
   const hideFooter =
     isAdmin ||
     isSeller ||
+    isMarket ||
     location.pathname === '/games/mahjong' ||
     /^\/learn\/topic\//.test(location.pathname) ||
     /^\/exams\/[^/]+$/.test(location.pathname) ||
@@ -108,13 +119,23 @@ const AppContent: React.FC = () => {
   return (
     <div className={`main-body-container${isGames ? ' games-mode' : ''}${isAdmin ? ' admin-mode' : ''}${isLearner ? ' learner-mode' : ''}`}>
       {isGames && <StarField />}
-      {!isAdmin && !isSeller && <Navbar />}
+      {!isAdmin && !isSeller && !isMarket && <Navbar />}
 
       <Routes>
         <Route path="/admin/*" element={<AdminPanel />} />
         <Route path="/seller" element={<SellerAuthPage />} />
         <Route element={<SellerProtectedRoute><SellerLayout /></SellerProtectedRoute>}>
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
+        </Route>
+        <Route element={<ProtectedRoute><MarketLayout /></ProtectedRoute>}>
+          <Route path="/market"               element={<MarketHome />} />
+          <Route path="/market/browse"        element={<MarketBrowse />} />
+          <Route path="/market/library"       element={<MyLibrary />} />
+          <Route path="/market/messages"      element={<Messages />} />
+          <Route path="/market/wishlist"      element={<Wishlist />} />
+          <Route path="/market/orders"        element={<Orders />} />
+          <Route path="/market/subscriptions" element={<Subscriptions />} />
+          <Route path="/market/payments"      element={<Payments />} />
         </Route>
         {/* Wait for Firebase to resolve the session before choosing landing vs dashboard
             (prevents a logged-in user briefly seeing the landing page on refresh). */}
