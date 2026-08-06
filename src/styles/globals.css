@@ -410,6 +410,16 @@ body {
   padding-top: var(--nav-h);
 }
 
+/* Full-screen shells (marketplace + seller portal) render their own chrome —
+   no navbar offset, no centered max-width cap: they own the whole viewport. */
+.main-body-container.fullbleed-mode {
+  max-width: 100%;
+}
+.main-body-container.fullbleed-mode > main,
+.main-body-container.fullbleed-mode > div:not(.nb-root) {
+  padding-top: 0;
+}
+
 /*.main-body-container {*/
 /*  flex: 1;*/
 /*  min-height: 0;  !* 👈 CRITICAL for scrolling in flex layouts *!*/

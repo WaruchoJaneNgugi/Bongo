@@ -117,7 +117,7 @@ const AppContent: React.FC = () => {
   }, [isGames]);
 
   return (
-    <div className={`main-body-container${isGames ? ' games-mode' : ''}${isAdmin ? ' admin-mode' : ''}${isLearner ? ' learner-mode' : ''}`}>
+    <div className={`main-body-container${isGames ? ' games-mode' : ''}${isAdmin ? ' admin-mode' : ''}${isLearner ? ' learner-mode' : ''}${isMarket || isSeller ? ' fullbleed-mode' : ''}`}>
       {isGames && <StarField />}
       {!isAdmin && !isSeller && !isMarket && <Navbar />}
 
