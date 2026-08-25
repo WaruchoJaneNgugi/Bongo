@@ -139,11 +139,14 @@ export async function createResource(
     thumbnailUrl = t.url; thumbnailPath = t.path; tick();
   }
 
+  // One primary media file per resource, so a stable subject+grade name is safe
+  // (no dedup numbering needed as with bundle files).
   const media = opts?.media
     ? await uploadMedia(sellerId, id, opts.media, `${baseName(input.subject, input.grade)}.${extOf(opts.media.name)}`)
     : null;
   const quiz = opts?.quiz ?? [];
   const quizAnswers = opts?.quizAnswers ?? [];
+  const hasQuiz = input.kind === 'video' && quiz.length > 0;
 
   await setDoc(resRef, {
     sellerId, sellerName,
@@ -157,7 +160,7 @@ export async function createResource(
     kind: input.kind,
     media,
     durationSec: opts?.durationSec ?? null,
-    hasQuiz: input.kind === 'video' && quiz.length > 0,
+    hasQuiz,
     quiz,
     thumbnailUrl,
     thumbnailPath,
@@ -167,7 +170,7 @@ export async function createResource(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
-  if (input.kind === 'video' && quiz.length > 0) {
+  if (hasQuiz) {
     await setDoc(doc(db, 'resources', id, 'private', 'quiz'), { answers: quizAnswers });
   }
   onProgress?.(1);

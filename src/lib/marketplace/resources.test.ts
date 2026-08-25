@@ -66,6 +66,32 @@ describe('createResource', () => {
     });
   });
 
+  it('writes gated media + a private quiz doc for a video resource', async () => {
+    const videoInput: ResourceInput = { ...input, kind: 'video' };
+    const quiz = [{ prompt: 'What is 2+2?', options: ['3', '4'] }];
+    const quizAnswers = [{ correctIndex: 1, explanation: 'basic maths' }];
+
+    const id = await createResource(
+      'seller1', 'Ms Jane', videoInput, [], null, undefined,
+      { media: new File(['x'], 'lesson.mp4', { type: 'video/mp4' }), quiz, quizAnswers },
+    );
+    expect(id).toBe('gen-id');
+
+    const setDoc = fs.setDoc as unknown as ReturnType<typeof vi.fn>;
+
+    // Resource doc: video kind, quiz flag, gated media (empty url + media/ path), quiz array.
+    const [, payload] = setDoc.mock.calls[0];
+    expect(payload).toMatchObject({ kind: 'video', hasQuiz: true, quiz });
+    expect(payload.media).toMatchObject({ url: '' });
+    expect(payload.media.path).toMatch(/^media\//);
+
+    // Private answers doc written to resources/{id}/private/quiz.
+    expect(fs.doc).toHaveBeenCalledWith({}, 'resources', 'gen-id', 'private', 'quiz');
+    const privateCall = setDoc.mock.calls.find(([, p]) => p && 'answers' in p);
+    expect(privateCall).toBeDefined();
+    expect(privateCall![1]).toEqual({ answers: quizAnswers });
+  });
+
   it('uploads a thumbnail when provided', async () => {
     await createResource('seller1', 'Ms Jane', input, [fileOf('a.pdf')], fileOf('t.png'));
     expect(st.ref).toHaveBeenCalledWith({}, 'marketplace/seller1/gen-id/thumb/t.png');
