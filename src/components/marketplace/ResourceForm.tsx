@@ -12,7 +12,7 @@ import {
 import { saveDraft, loadDraft, clearDraft } from '../../lib/marketplace/formDraft';
 import type {
   ResourceLevel, ResourceStatus, ResourceFile,
-  ResourceKind, QuizQuestionPublic, QuizAnswer,
+  ResourceKind, QuizQuestionPublic, QuizAnswer, MarketResource,
 } from '../../lib/marketplace/types';
 
 function formatBytes(n: number): string {
@@ -54,6 +54,9 @@ export default function ResourceForm() {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [oldThumbnailPath, setOldThumbnailPath] = useState<string | null>(null);
   const [kind, setKind] = useState<ResourceKind>('document');
+  // The already-saved resource being edited — used to show read-only notes about
+  // media/quiz that the edit path can't yet replace.
+  const [loaded, setLoaded] = useState<MarketResource | null>(null);
   const [media, setMedia] = useState<File | null>(null);
   const [durationSec, setDurationSec] = useState<number | null>(null);
   const [quiz, setQuiz] = useState<QuizDraft[]>([]);
@@ -89,6 +92,7 @@ export default function ResourceForm() {
           setLevel(r.level); setGrade(r.grade); setSubject(r.subject);
           setPriceKsh(r.priceKsh); setKeptFiles(r.files);
           setOldThumbnailPath(r.thumbnailPath);
+          setKind(r.kind ?? 'document'); setLoaded(r);
         }
       }
       const draft = await loadDraft(draftKey);
@@ -129,6 +133,7 @@ export default function ResourceForm() {
         setLevel(r.level); setGrade(r.grade); setSubject(r.subject);
         setPriceKsh(r.priceKsh); setKeptFiles(r.files);
         setOldThumbnailPath(r.thumbnailPath);
+        setKind(r.kind ?? 'document'); setLoaded(r);
       }
     } else {
       setTitle(''); setDescription(''); setLevel('lower_primary');
@@ -456,6 +461,15 @@ export default function ResourceForm() {
               Upload the primary {kind} file — {kind === 'audio' ? 'audio' : 'video'}/* up to {kind === 'audio' ? 100 : 500}&nbsp;MB.
             </p>
 
+            {editing ? (
+              <div className="text-sm text-[#7a847a]">
+                {loaded?.media?.name && (
+                  <p className="text-[#1f2937] font-medium">{loaded.media.name}</p>
+                )}
+                <p className="mt-1">Replacing the video/audio file isn't available yet.</p>
+              </div>
+            ) : (
+            <>
             {media && (
               <div className="mb-4 flex items-center gap-3 rounded-xl border border-[#dcfce7] bg-[#f3faf5] px-3 py-2.5">
                 <span className="w-9 h-9 rounded-lg bg-[#eaf7ee] grid place-items-center text-[#16a34a] shrink-0">
@@ -486,11 +500,23 @@ export default function ResourceForm() {
               <input id="media" type="file" accept={kind === 'audio' ? 'audio/*' : 'video/*'} className="sr-only"
                 onChange={e => { const f = e.target.files?.[0]; if (f) onMediaSelected(f); e.target.value = ''; }} />
             </label>
+            </>
+            )}
           </section>
         )}
 
-        {/* Quiz builder (video only) */}
-        {kind === 'video' && (
+        {/* Quiz — read-only note on the edit path (editing quiz questions isn't wired yet). */}
+        {kind === 'video' && editing && loaded?.hasQuiz && (
+          <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
+            <h2 className="text-sm font-bold text-[#1f2937]">Quiz</h2>
+            <p className="text-sm text-[#7a847a] mt-2">
+              This video has a quiz. Editing quiz questions isn't available yet.
+            </p>
+          </section>
+        )}
+
+        {/* Quiz builder (video only, create path) */}
+        {kind === 'video' && !editing && (
           <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
             <div className="flex items-center justify-between mb-1">
               <h2 className="text-sm font-bold text-[#1f2937]">Quiz <span className="font-normal text-[#9aa39a]">(optional)</span></h2>

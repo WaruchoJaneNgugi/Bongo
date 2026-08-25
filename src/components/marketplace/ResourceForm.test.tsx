@@ -4,14 +4,16 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import ResourceForm from './ResourceForm';
 
-const { createResource } = vi.hoisted(() => ({
+const { createResource, getResource, updateResource } = vi.hoisted(() => ({
   createResource: vi.fn<(...a: unknown[]) => Promise<string>>(),
+  getResource: vi.fn<(...a: unknown[]) => Promise<unknown>>(async () => null),
+  updateResource: vi.fn<(...a: unknown[]) => Promise<void>>(async () => undefined),
 }));
 
 vi.mock('../../lib/marketplace/resources', () => ({
   createResource,
-  getResource: vi.fn(async () => null),
-  updateResource: vi.fn(async () => undefined),
+  getResource,
+  updateResource,
   // Mirror the real subject+grade naming so the form's chip preview is exercised.
   previewUploadNames: (files: File[], subject: string, grade: string, taken: string[]) => {
     const label = `${subject} ${grade}`.replace(/[^\w\s-]/g, '').replace(/\s+/g, ' ').trim();
@@ -45,6 +47,17 @@ function renderNew() {
   );
 }
 
+function renderEdit(id = 'r1') {
+  return render(
+    <MemoryRouter initialEntries={[`/seller/resources/${id}/edit`]}>
+      <Routes>
+        <Route path="/seller/resources/:id/edit" element={<ResourceForm />} />
+        <Route path="/seller/resources" element={<div>LIST</div>} />
+      </Routes>
+    </MemoryRouter>,
+  );
+}
+
 async function fillRequired() {
   await userEvent.type(screen.getByLabelText(/title/i), 'Fractions Pack');
   await userEvent.selectOptions(screen.getByLabelText(/level/i), 'middle_school');
@@ -54,7 +67,12 @@ async function fillRequired() {
   await userEvent.upload(screen.getByLabelText(/files/i), file);
 }
 
-beforeEach(() => createResource.mockClear());
+beforeEach(() => {
+  createResource.mockClear();
+  updateResource.mockClear();
+  getResource.mockReset();
+  getResource.mockResolvedValue(null);
+});
 
 describe('ResourceForm (create)', () => {
   it('blocks submit until required fields + a file are present', async () => {
@@ -192,4 +210,40 @@ describe('ResourceForm (create)', () => {
     expect(await screen.findByText(/audio resources need a thumbnail/i)).toBeInTheDocument();
   });
 
+});
+
+describe('ResourceForm (edit)', () => {
+  function videoResource() {
+    return {
+      id: 'r1', sellerId: 'seller1', sellerName: 'Ms Jane',
+      title: 'Cell Biology', description: 'A lesson',
+      level: 'middle_school', grade: 'Grade 5', subject: 'Mathematics',
+      priceKsh: 100, files: [], thumbnailUrl: null, thumbnailPath: null,
+      kind: 'video',
+      media: { name: 'lesson.mp4', url: 'u', path: 'p', size: 1000, contentType: 'video/mp4' },
+      durationSec: 120, hasQuiz: true, quiz: [{ prompt: 'Q?', options: ['A', 'B'] }],
+      status: 'published', sales: 0, views: 0, createdAt: null, updatedAt: null,
+    };
+  }
+
+  it('editing a video with no supporting files is not blocked by the document file guard', async () => {
+    getResource.mockResolvedValue(videoResource());
+    renderEdit();
+
+    // The read-only media note is shown instead of the interactive uploader.
+    expect(await screen.findByText(/replacing the video\/audio file isn't available yet/i))
+      .toBeInTheDocument();
+    // The saved media filename is surfaced.
+    expect(screen.getByText('lesson.mp4')).toBeInTheDocument();
+    // Video is reflected as the active kind.
+    expect(screen.getByRole('button', { name: /^video$/i })).toHaveAttribute('aria-pressed', 'true');
+    // The quiz read-only note is shown (builder is hidden on the edit path).
+    expect(screen.getByText(/editing quiz questions isn't available yet/i)).toBeInTheDocument();
+
+    // Publishing a media resource with no supporting files must NOT trip the
+    // document-only "Add at least one file." guard — update should be attempted.
+    await userEvent.click(screen.getByRole('button', { name: /^publish$/i }));
+    await waitFor(() => expect(updateResource).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText(/add at least one file/i)).toBeNull();
+  });
 });
