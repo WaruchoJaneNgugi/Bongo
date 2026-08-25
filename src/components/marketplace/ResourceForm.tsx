@@ -234,7 +234,13 @@ export default function ResourceForm() {
     setQuiz(q => q.map((item, idx) => {
       if (idx !== i || item.options.length <= 2) return item;
       const options = item.options.filter((_, o) => o !== optIdx);
-      const correctIndex = item.correctIndex >= options.length ? options.length - 1 : item.correctIndex;
+      // Keep correctIndex pointing at the SAME option after removal.
+      let correctIndex = item.correctIndex;
+      if (optIdx === item.correctIndex) {
+        correctIndex = Math.max(0, Math.min(item.correctIndex, options.length - 1));
+      } else if (optIdx < item.correctIndex) {
+        correctIndex = item.correctIndex - 1;
+      }
       return { ...item, options, correctIndex };
     }));
   }
@@ -262,11 +268,24 @@ export default function ResourceForm() {
 
     if (kind !== 'document' && !editing && !media) { setError('Add the video/audio file.'); return; }
     if (kind === 'audio' && !thumbnail && !oldThumbnailPath) { setError('Audio resources need a thumbnail.'); return; }
-    if (kind === 'video' && quiz.some(q => !q.prompt.trim() || q.options.filter(o => o.trim()).length < 2)) {
-      setError('Each quiz question needs a prompt and at least 2 options.'); return;
+    if (kind === 'video' && quiz.some(q =>
+      !q.prompt.trim()
+      || q.options.filter(o => o.trim()).length < 2
+      || !q.options[q.correctIndex]?.trim()
+    )) {
+      setError('Each quiz question needs a prompt, at least 2 answered options, and a marked correct answer.');
+      return;
     }
-    const quizPublic: QuizQuestionPublic[] = quiz.map(q => ({ prompt: q.prompt.trim(), options: q.options.filter(o => o.trim()) }));
-    const quizAnswers: QuizAnswer[] = quiz.map(q => ({ correctIndex: q.correctIndex, explanation: q.explanation.trim() || undefined }));
+    const quizPublic: QuizQuestionPublic[] = [];
+    const quizAnswers: QuizAnswer[] = [];
+    for (const q of quiz) {
+      const kept = q.options.map((o, i) => ({ text: o.trim(), i })).filter(x => x.text);
+      quizPublic.push({ prompt: q.prompt.trim(), options: kept.map(x => x.text) });
+      quizAnswers.push({
+        correctIndex: Math.max(0, kept.findIndex(x => x.i === q.correctIndex)),
+        explanation: q.explanation.trim() || undefined,
+      });
+    }
 
     const meta = { title: title.trim(), description: description.trim(), level, grade, subject, priceKsh, status, kind };
     setProgress(0);

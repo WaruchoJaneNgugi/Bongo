@@ -144,6 +144,38 @@ describe('ResourceForm (create)', () => {
     expect(screen.getByText(/add a cover/i)).toBeInTheDocument();
   });
 
+  it('keeps quiz correctIndex aligned when a blank option is dropped', async () => {
+    renderNew();
+    await userEvent.click(screen.getByRole('button', { name: /^video$/i }));
+    await userEvent.type(screen.getByLabelText(/title/i), 'Cell Biology');
+    await userEvent.selectOptions(screen.getByLabelText(/level/i), 'middle_school');
+    await userEvent.selectOptions(screen.getByLabelText(/grade/i), 'Grade 5');
+    await userEvent.selectOptions(screen.getByLabelText(/subject/i), 'Mathematics');
+
+    const video = new File(['x'], 'lesson.mp4', { type: 'video/mp4' });
+    await userEvent.upload(screen.getByLabelText(/add video file/i), video);
+
+    // One question, three options with the MIDDLE one left blank: "A", "", "C".
+    await userEvent.click(screen.getByRole('button', { name: /add question/i }));
+    await userEvent.type(screen.getByLabelText(/question 1 prompt/i), 'What is a cell?');
+    await userEvent.click(screen.getByRole('button', { name: /add option/i })); // now 3 options
+    await userEvent.type(screen.getByLabelText(/question 1 option 1/i), 'A');
+    // option 2 left blank
+    await userEvent.type(screen.getByLabelText(/question 1 option 3/i), 'C');
+    // Mark the THIRD option ("C") as correct.
+    await userEvent.click(screen.getByLabelText(/mark option 3 correct for question 1/i));
+
+    await userEvent.click(screen.getByRole('button', { name: /^publish$/i }));
+    await waitFor(() => expect(createResource).toHaveBeenCalledTimes(1));
+
+    const opts = createResource.mock.calls[0][6] as {
+      quiz: { options: string[] }[];
+      quizAnswers: { correctIndex: number }[];
+    };
+    expect(opts.quiz[0].options).toEqual(['A', 'C']);
+    expect(opts.quizAnswers[0].correctIndex).toBe(1);
+  });
+
   it('requires a thumbnail for an audio resource', async () => {
     renderNew();
     await userEvent.click(screen.getByRole('button', { name: /^audio$/i }));
