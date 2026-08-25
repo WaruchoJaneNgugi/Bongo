@@ -1,6 +1,18 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // Sellers upload resource files/thumbnails under their own prefix.
+    // Public read (paid-file gating is deferred to the payments slice).
+    match /marketplace/{sellerId}/{allPaths=**} {
+      allow read:  if true;
+      // `write` covers create/update/delete. On delete there is no incoming
+      // object (request.resource == null), so only size-check actual uploads.
+      allow write: if request.auth != null
+                   && request.auth.uid == sellerId
+                   && request.auth.token.seller == true
+                   && (request.resource == null || request.resource.size < 50 * 1024 * 1024);
+    }
+
     // Game banners, exam images, avatars — public read, admin-only write.
     match /{allPaths=**} {
       allow read: if true;

@@ -9,7 +9,11 @@ const INPUT =
 
 // Per-type registration number (how we uniquely identify each Kenyan seller).
 // The server re-validates with the matching rule in shared/auth.ts.
-const REG: Record<SellerType, {
+//
+// TEACHERS ONLY: HighScores currently onboards teachers as the only seller type.
+// The tutor and school configs are kept below, commented out, so they can be
+// re-enabled later without rewriting this logic.
+const REG: Record<'teacher', {
   label: string; hint: string; numeric: boolean;
   clean: (v: string) => string; test: (v: string) => boolean;
 }> = {
@@ -20,20 +24,20 @@ const REG: Record<SellerType, {
     clean: v => v.replace(/\D/g, ''),
     test: v => /^\d{5,9}$/.test(v.trim()),
   },
-  school: {
-    label: 'School registration code',
-    hint: 'Your Ministry of Education (NEMIS / KEMIS) school code.',
-    numeric: false,
-    clean: v => v.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(),
-    test: v => /^[A-Z0-9]{4,15}$/.test(v.trim()),
-  },
-  tutor: {
-    label: 'National ID number',
-    hint: 'Your Kenyan National ID number.',
-    numeric: true,
-    clean: v => v.replace(/\D/g, ''),
-    test: v => /^\d{6,9}$/.test(v.trim()),
-  },
+  // school: {
+  //   label: 'School registration code',
+  //   hint: 'Your Ministry of Education (NEMIS / KEMIS) school code.',
+  //   numeric: false,
+  //   clean: v => v.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(),
+  //   test: v => /^[A-Z0-9]{4,15}$/.test(v.trim()),
+  // },
+  // tutor: {
+  //   label: 'National ID number',
+  //   hint: 'Your Kenyan National ID number.',
+  //   numeric: true,
+  //   clean: v => v.replace(/\D/g, ''),
+  //   test: v => /^\d{6,9}$/.test(v.trim()),
+  // },
 };
 
 // TESTING: accept any non-empty registration number. Set to false to enforce
@@ -45,8 +49,11 @@ export default function SellerAuthPage() {
   const [phone, setPhone] = useState('');
   const [pin, setPin] = useState('');
   const [name, setName] = useState('');
-  const [type, setType] = useState<SellerType>('teacher');
-  const [location, setLocation] = useState('');
+  // TEACHERS ONLY: seller type is fixed to 'teacher'. Re-introduce this as
+  // `useState<SellerType>('teacher')` (plus the selector below) to re-enable
+  // tutor and school sellers.
+  const type: SellerType = 'teacher';
+  // const [location, setLocation] = useState(''); // tutor / school only
   const [schoolName, setSchoolName] = useState('');
   const [reg, setReg] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -59,17 +66,18 @@ export default function SellerAuthPage() {
     setError(null);
     // Fast client-side guard for instant feedback; the server re-validates and
     // is authoritative.
-    const regOk = LENIENT_REG ? reg.trim().length > 0 : REG[type].test(reg);
+    const regOk = LENIENT_REG ? reg.trim().length > 0 : REG.teacher.test(reg);
     if (mode === 'signup' && !regOk) {
-      setError(`Enter a valid ${REG[type].label}.`);
+      setError(`Enter a valid ${REG.teacher.label}.`);
       return;
     }
-    const needsLocation = type === 'school' || type === 'tutor';
-    if (mode === 'signup' && needsLocation && location.trim().length < 2) {
-      setError(type === 'school' ? 'Enter the school location.' : 'Enter your location.');
-      return;
-    }
-    if (mode === 'signup' && type === 'teacher' && schoolName.trim().length < 2) {
+    // TEACHERS ONLY: location was captured for tutor / school sellers.
+    // const needsLocation = type === 'school' || type === 'tutor';
+    // if (mode === 'signup' && needsLocation && location.trim().length < 2) {
+    //   setError(type === 'school' ? 'Enter the school location.' : 'Enter your location.');
+    //   return;
+    // }
+    if (mode === 'signup' && schoolName.trim().length < 2) {
       setError('Enter the school you teach at.');
       return;
     }
@@ -79,8 +87,8 @@ export default function SellerAuthPage() {
         await signup({
           phone, pin, displayName: name, type,
           regNumber: reg.trim(),
-          location: needsLocation ? location.trim() : undefined,
-          schoolName: type === 'teacher' ? schoolName.trim() : undefined,
+          // location: undefined, // tutor / school only
+          schoolName: schoolName.trim(),
         });
       } else await login(phone, pin);
       navigate('/seller/dashboard');
@@ -115,8 +123,11 @@ export default function SellerAuthPage() {
 
         {mode === 'signup' && (
           <>
-            <input className={INPUT} placeholder={type === 'school' ? 'School name' : 'Your name'}
+            <input className={INPUT} placeholder="Your name"
               value={name} onChange={e => setName(e.target.value)} />
+            {/* TEACHERS ONLY: seller-type selector is disabled — teachers are the
+                only seller type today. Restore this block (with the tutor / school
+                state and inputs) to re-enable them.
             <div>
               <label className="block text-xs font-semibold text-[#64748b] mb-1.5">I'm registering as</label>
               <div className="grid grid-cols-3 gap-2">
@@ -139,18 +150,17 @@ export default function SellerAuthPage() {
                 placeholder={type === 'school' ? 'School location (town / county)' : 'Location (town / county)'}
                 value={location} onChange={e => setLocation(e.target.value)} />
             )}
+            */}
 
-            {type === 'teacher' && (
-              <input className={INPUT} placeholder="School you teach at"
-                value={schoolName} onChange={e => setSchoolName(e.target.value)} />
-            )}
+            <input className={INPUT} placeholder="School you teach at"
+              value={schoolName} onChange={e => setSchoolName(e.target.value)} />
 
             <div>
-              <input className={INPUT} placeholder={REG[type].label}
-                inputMode={LENIENT_REG ? 'text' : (REG[type].numeric ? 'numeric' : 'text')} value={reg}
-                onChange={e => setReg(LENIENT_REG ? e.target.value : REG[type].clean(e.target.value))} />
+              <input className={INPUT} placeholder={REG.teacher.label}
+                inputMode={LENIENT_REG ? 'text' : (REG.teacher.numeric ? 'numeric' : 'text')} value={reg}
+                onChange={e => setReg(LENIENT_REG ? e.target.value : REG.teacher.clean(e.target.value))} />
               <p className="text-xs text-[#94a3b8] mt-1.5">
-                {REG[type].hint} All seller accounts are verified before selling.
+                {REG.teacher.hint} All seller accounts are verified before selling.
               </p>
             </div>
           </>

@@ -7,7 +7,17 @@ import {
 import { useStore } from '../../../store/useStore';
 import { useMarketStore } from '../../../store/useMarketStore';
 import MarketAuthGate from './MarketAuthGate';
+import BottomNav from '../BottomNav';
 import { ui } from './ui';
+
+// Primary destinations for the mobile bottom tab bar (short labels).
+const BOTTOM = [
+  { label: 'Home', icon: Home, to: '/market', end: true },
+  { label: 'Market', icon: Store, to: '/market/browse' },
+  { label: 'Library', icon: Library, to: '/market/library' },
+  { label: 'Wishlist', icon: Heart, to: '/market/wishlist' },
+  { label: 'Cart', icon: ShoppingCart, to: '/market/checkout' },
+];
 
 const NAV = [
   { label: 'Home', icon: Home, to: '/market', end: true },
@@ -111,7 +121,8 @@ export default function MarketLayout() {
               className={`w-full ${ui.input} pl-10 pr-4 py-2.5 text-sm`} />
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <button className="relative w-10 h-10 grid place-items-center rounded-full hover:bg-[#f1f5f9]" aria-label="Cart">
+            <button onClick={() => navigate('/market/checkout')}
+              className="relative w-10 h-10 grid place-items-center rounded-full hover:bg-[#f1f5f9]" aria-label="Cart">
               <ShoppingCart size={19} className="text-[#64748b]" />
               {cart.length > 0 && <span className="absolute top-1 right-1 text-[10px] font-bold text-white bg-[#16a34a] rounded-full w-4 h-4 grid place-items-center">{cart.length}</span>}
             </button>
@@ -131,10 +142,13 @@ export default function MarketLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-6 pb-24 lg:pb-6">
           <Outlet />
         </main>
       </div>
+
+      {/* Mobile bottom tab bar */}
+      <BottomNav items={BOTTOM} />
     </div>
   );
 }

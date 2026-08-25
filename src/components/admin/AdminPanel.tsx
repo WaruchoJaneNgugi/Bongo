@@ -19,6 +19,7 @@ import {
   Trophy,
   UserCog,
   Users,
+  Wallet,
   X,
 } from 'lucide-react';
 import '../../styles/admin.css';
@@ -31,6 +32,7 @@ import DashboardSection from './DashboardSection';
 import StudentsSection from './StudentsSection';
 import LeaderboardSection from './LeaderboardSection';
 import SellersSection from './SellersSection';
+import WalletsSection from './WalletsSection';
 import ExamsSection from './ExamsSection';
 import type { StaffRole } from '../../lib/types';
 
@@ -42,6 +44,7 @@ type AdminSection =
   | 'exams'
   | 'leaderboard'
   | 'sellers'
+  | 'wallets'
   | 'support'
   | 'staff';
 
@@ -59,6 +62,7 @@ const adminSections: Array<{
   { id: 'exams', label: 'Mock Exams', icon: ClipboardList, roles: ['admin'] },
   { id: 'leaderboard', label: 'Leaderboard', icon: Trophy, roles: ['admin'] },
   { id: 'sellers', label: 'Sellers', icon: Store, roles: ['admin'] },
+  { id: 'wallets', label: 'Wallets', icon: Wallet, roles: ['admin'] },
   { id: 'staff', label: 'Staff', icon: UserCog, roles: ['admin'] },
 ];
 
@@ -69,9 +73,15 @@ const firestoreCollections = [
   'exams/{examId}',
   '  └─ questions/{questionId}',
   'accounts/{accountId}',
+  '  └─ walletTx/{txId}',
   'leaderboard/{scoreId}',
   'staff/{uid}',
   'conversations/{conversationId}',
+  'sellers/{sellerId}',
+  'resources/{resourceId}',
+  'purchases/{purchaseId}',
+  'ledger/{entryId}',
+  'platformSettings/marketplace',
 ];
 
 const getInitialSection = (pathname: string): AdminSection => {
@@ -80,11 +90,12 @@ const getInitialSection = (pathname: string): AdminSection => {
 };
 
 const AdminLogin: React.FC = () => {
-  const { signIn, signOutStaff, error, user } = useStaffAuth();
+  const { signIn, resetPassword, signOutStaff, error, user } = useStaffAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
   const [bootstrapMsg, setBootstrapMsg] = useState<string | null>(null);
+  const [resetMsg, setResetMsg] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,6 +104,24 @@ const AdminLogin: React.FC = () => {
       await signIn(email, password);
     } catch {
       /* error surfaced via context */
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setResetMsg(null);
+    if (!email.trim()) {
+      setResetMsg('Enter your email above first, then tap “Forgot password?”.');
+      return;
+    }
+    setBusy(true);
+    try {
+      await resetPassword(email);
+      // Don't reveal whether the account exists (email-enumeration protection).
+      setResetMsg(`If an account exists for ${email.trim()}, a password-reset link is on its way. Check your inbox and spam.`);
+    } catch {
+      setResetMsg('Could not send the reset email. Check the address and try again.');
     } finally {
       setBusy(false);
     }
@@ -186,6 +215,15 @@ const AdminLogin: React.FC = () => {
             <KeyRound size={18} />
             {busy ? 'Signing in…' : 'Sign in with Firebase'}
           </button>
+          <button
+            type="button"
+            onClick={() => void handleForgotPassword()}
+            disabled={busy}
+            style={{ background: 'none', border: 0, color: 'inherit', cursor: 'pointer', textDecoration: 'underline', font: 'inherit', fontSize: 13, alignSelf: 'flex-start', padding: 0, opacity: busy ? 0.6 : 1 }}
+          >
+            Forgot password?
+          </button>
+          {resetMsg && <p style={{ color: '#0ea5e9', fontSize: 13, margin: 0 }}>{resetMsg}</p>}
         </form>
 
         <div className="admin-login-note">
@@ -224,6 +262,7 @@ const AdminContent: React.FC<{ section: AdminSection; role: StaffRole }> = ({ se
   if (section === 'exams') return role === 'admin' ? <ExamsSection /> : <AccessDenied />;
   if (section === 'leaderboard') return role === 'admin' ? <LeaderboardSection /> : <AccessDenied />;
   if (section === 'sellers') return role === 'admin' ? <SellersSection /> : <AccessDenied />;
+  if (section === 'wallets') return role === 'admin' ? <WalletsSection /> : <AccessDenied />;
   return <DashboardSection />;
 };
 

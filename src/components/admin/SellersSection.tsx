@@ -10,10 +10,13 @@ const STATUS_CLASS: Record<string, string> = {
 };
 
 // How each seller type's registration number is labelled in the queue.
+// TEACHERS ONLY: tutor and school seller types are disabled; their labels are
+// kept commented for when those types are re-enabled. Existing tutor/school
+// rows (if any) fall back to the raw type string via REG_LABEL[...] ?? type.
 const REG_LABEL: Record<string, string> = {
   teacher: 'TSC',
-  school: 'School code',
-  tutor: 'National ID',
+  // school: 'School code',
+  // tutor: 'National ID',
 };
 
 const SellersSection: React.FC = () => {

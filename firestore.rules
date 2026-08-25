@@ -20,13 +20,20 @@ service cloud.firestore {
     // The owner (auth.uid == accountId, via custom token) reads/updates their
     // own account; staff read all; admins have full write.
     match /accounts/{id} {
-      allow read:   if isStaff() || (request.auth != null && request.auth.uid == id);
-      allow update: if isAdmin() || (request.auth != null && request.auth.uid == id);
+      allow read:   if isStaff() || isOwner(id);
+      // The owner may update their own profile fields but NOT their wallet
+      // balance — that is server-authoritative. Cloud Functions (admin SDK)
+      // bypass these rules; admins match isAdmin().
+      allow update: if isAdmin()
+                    || (isOwner(id)
+                        && request.resource.data.walletBalanceKsh == resource.data.walletBalanceKsh);
       allow create, delete: if isAdmin();
 
-      // Per-profile learning progress (subcollection) — owner & staff only.
-      match /{document=**} {
-        allow read, write: if isStaff() || (request.auth != null && request.auth.uid == id);
+      // Account subcollections: learning progress + revisions are owner/staff
+      // read-write; the walletTx ledger is written only by Cloud Functions.
+      match /{sub}/{docId} {
+        allow read:  if isStaff() || isOwner(id);
+        allow write: if (isStaff() || isOwner(id)) && sub != 'walletTx';
       }
     }
 
@@ -86,6 +93,42 @@ service cloud.firestore {
       allow read:   if isStaff() || (isSeller() && request.auth.uid == id);
       allow update: if isAdmin();
       allow create, delete: if false;
+    }
+
+    /* ── Marketplace resources ── */
+    // A seller creates/edits/deletes only their own resources. Published
+    // resources are world-readable (buyer browse, a later slice); drafts are
+    // visible only to their owner and staff. The owner cannot be reassigned.
+    match /resources/{id} {
+      allow read:   if resource.data.status == 'published'
+                    || isStaff()
+                    || (isSeller() && request.auth.uid == resource.data.sellerId);
+      allow create: if isSeller()
+                    && request.auth.uid == request.resource.data.sellerId;
+      allow update: if (isSeller()
+                        && request.auth.uid == resource.data.sellerId
+                        && request.resource.data.sellerId == resource.data.sellerId)
+                    || isAdmin();
+      allow delete: if (isSeller() && request.auth.uid == resource.data.sellerId)
+                    || isAdmin();
+    }
+
+    /* ── Marketplace orders (purchases), commission ledger, settings ── */
+    // Purchases and ledger are written only by Cloud Functions (money logic is
+    // server-authoritative). Buyers read their own orders; staff read all.
+    match /purchases/{id} {
+      allow read:  if isStaff()
+                   || (request.auth != null && request.auth.uid == resource.data.buyerAccountId);
+      allow write: if false;
+    }
+    match /ledger/{id} {
+      allow read:  if isStaff();
+      allow write: if false;
+    }
+    // Commission % etc. — world-readable (checkout needs it), admin-writable.
+    match /platformSettings/{id} {
+      allow read:  if true;
+      allow write: if isAdmin();
     }
 
     /* Everything else is denied by default. */

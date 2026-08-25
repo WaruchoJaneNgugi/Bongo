@@ -31,8 +31,9 @@ describe('MarketLayout', () => {
 
   it('renders all 8 sidebar items and the outlet when logged in', () => {
     renderAt('/market');
+    // Labels may appear in both the sidebar and the mobile bottom nav.
     for (const label of ['Home', 'Marketplace', 'My Library', 'Messages', 'Wishlist', 'Orders', 'Subscriptions', 'Payments']) {
-      expect(screen.getByText(label)).toBeInTheDocument();
+      expect(screen.getAllByText(label).length).toBeGreaterThan(0);
     }
     expect(screen.getByText('HOME PAGE')).toBeInTheDocument();
     expect(screen.getByText('Become a Seller')).toBeInTheDocument();

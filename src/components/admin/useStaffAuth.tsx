@@ -5,6 +5,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import {
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signOut,
   type User,
@@ -19,6 +20,7 @@ interface StaffAuthState {
   staff: StaffMember | null;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
   signOutStaff: () => Promise<void>;
 }
 
@@ -74,13 +76,22 @@ export const StaffAuthProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
+  // Send a Firebase password-reset email. We deliberately do NOT reveal whether
+  // the address maps to a real account — with email-enumeration protection on,
+  // Firebase resolves silently for unknown emails, and the UI shows the same
+  // "if an account exists…" message either way.
+  const resetPassword = async (email: string) => {
+    setError(null);
+    await sendPasswordResetEmail(auth, email.trim());
+  };
+
   const signOutStaff = async () => {
     await signOut(auth);
     setStaff(null);
   };
 
   return (
-    <StaffAuthContext.Provider value={{ loading, user, staff, error, signIn, signOutStaff }}>
+    <StaffAuthContext.Provider value={{ loading, user, staff, error, signIn, resetPassword, signOutStaff }}>
       {children}
     </StaffAuthContext.Provider>
   );

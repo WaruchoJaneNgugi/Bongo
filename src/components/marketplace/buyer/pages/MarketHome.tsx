@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, BookOpen, Wallet, Store } from 'lucide-react';
-import { resources, categories, popularSubjects, stats, wallet, library, orders } from '../../../../lib/marketplace/mockBuyer';
+import { categories, popularSubjects, stats, wallet, library, orders } from '../../../../lib/marketplace/mockBuyer';
 import { useMarketStore } from '../../../../store/useMarketStore';
+import { usePublishedResources } from '../usePublishedResources';
 import ResourceCard from '../components/ResourceCard';
 import SectionHeader from '../components/SectionHeader';
 import { ui } from '../ui';
@@ -14,10 +15,15 @@ export default function MarketHome() {
   const [tab, setTab] = useState<Tab>('Popular');
   const wishlistCount = useMarketStore(s => s.wishlist.length);
 
-  const shown = [...resources]
-    .filter(r => (tab === 'Latest' ? r.latest : true))
-    .sort((a, b) => (tab === 'Top Rated' ? b.rating - a.rating : 0))
-    .slice(0, 8);
+  const { resources: all, loading, error, reload } = usePublishedResources();
+
+  const shown = (() => {
+    const arr = [...(all ?? [])];
+    if (tab === 'Popular') arr.sort((a, b) => b.views - a.views);
+    else if (tab === 'Top Rated') arr.sort((a, b) => b.sales - a.sales);
+    // 'Latest' keeps the createdAt-desc order from the query.
+    return arr.slice(0, 8);
+  })();
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6">
@@ -69,9 +75,20 @@ export default function MarketHome() {
               ))}
             </div>
           } />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {shown.map(r => <ResourceCard key={r.id} resource={r} />)}
-          </div>
+          {loading ? (
+            <div className={`${ui.muted} py-10 text-center`}>Loading resources…</div>
+          ) : error ? (
+            <div className="py-10 text-center space-y-2">
+              <p className={ui.muted}>Couldn’t load resources right now.</p>
+              <button onClick={reload} className={`${ui.btnGhost} px-4 py-2 text-sm`}>Try again</button>
+            </div>
+          ) : shown.length === 0 ? (
+            <div className={`${ui.muted} py-10 text-center`}>No resources have been published yet.</div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {shown.map(r => <ResourceCard key={r.id} resource={r} />)}
+            </div>
+          )}
         </section>
 
         {/* Popular subjects */}

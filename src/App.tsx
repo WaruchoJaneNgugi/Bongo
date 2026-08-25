@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import './styles/globals.css';
 import { useStore } from './store/useStore';
+import { useSellerStore } from './store/useSellerStore';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { SplashScreen } from './components/SplashScreen';
@@ -38,6 +39,8 @@ import SettingsPage from "./components/learn/SettingsPage.tsx";
 import SellerAuthPage from './components/marketplace/SellerAuthPage';
 import SellerLayout from './components/marketplace/SellerLayout';
 import SellerDashboard from './components/marketplace/SellerDashboard';
+import MyResources from './components/marketplace/MyResources';
+import ResourceForm from './components/marketplace/ResourceForm';
 import SellerProtectedRoute from './components/marketplace/SellerProtectedRoute';
 import MarketLayout from './components/marketplace/buyer/MarketLayout';
 import MarketHome from './components/marketplace/buyer/pages/MarketHome';
@@ -48,6 +51,8 @@ import Orders from './components/marketplace/buyer/pages/Orders';
 import Subscriptions from './components/marketplace/buyer/pages/Subscriptions';
 import Payments from './components/marketplace/buyer/pages/Payments';
 import Messages from './components/marketplace/buyer/pages/Messages';
+import ResourceDetail from './components/marketplace/buyer/pages/ResourceDetail';
+import Checkout from './components/marketplace/buyer/pages/Checkout';
 
 const StarField: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -126,6 +131,9 @@ const AppContent: React.FC = () => {
         <Route path="/seller" element={<SellerAuthPage />} />
         <Route element={<SellerProtectedRoute><SellerLayout /></SellerProtectedRoute>}>
           <Route path="/seller/dashboard" element={<SellerDashboard />} />
+          <Route path="/seller/resources" element={<MyResources />} />
+          <Route path="/seller/resources/new" element={<ResourceForm />} />
+          <Route path="/seller/resources/:id/edit" element={<ResourceForm />} />
           <Route path="/seller/marketplace" element={<MarketBrowse />} />
         </Route>
         {/* Not ProtectedRoute: MarketLayout itself shows an auth gate (Log In /
@@ -133,6 +141,8 @@ const AppContent: React.FC = () => {
         <Route element={<MarketLayout />}>
           <Route path="/market"               element={<MarketHome />} />
           <Route path="/market/browse"        element={<MarketBrowse />} />
+          <Route path="/market/resource/:id"  element={<ResourceDetail />} />
+          <Route path="/market/checkout"      element={<Checkout />} />
           <Route path="/market/library"       element={<MyLibrary />} />
           <Route path="/market/messages"      element={<Messages />} />
           <Route path="/market/wishlist"      element={<Wishlist />} />
@@ -195,7 +205,8 @@ const App: React.FC = () => {
   const [splashDone, setSplashDone] = useState(false);
   const authReady = useStore(s => s.authReady);
   useEffect(() => {
-    useStore.getState().bootstrap(); // wire the Firebase auth listener once
+    useStore.getState().bootstrap();       // student/family auth listener
+    useSellerStore.getState().bootstrap(); // seller auth listener (restores seller session on refresh)
   }, []);
   // Hold the splash until the intro animation finishes AND the auth session resolves,
   // so we never flash the landing page before the dashboard.

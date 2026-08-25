@@ -5,19 +5,23 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { hashPin, pinMatches, cleanKenyanPhone, cleanSellerRegNumber, newSalt } from '../shared/auth.js';
 
-const SELLER_TYPES = ['teacher', 'tutor', 'school'];
+// TEACHERS ONLY: teachers are currently the only accepted seller type. The
+// tutor and school entries are kept commented so they can be re-enabled later.
+const SELLER_TYPES = ['teacher' /*, 'tutor', 'school' */];
 // Human label for each type's registration number, used in error messages.
 const REG_LABEL: Record<string, string> = {
   teacher: 'TSC number',
-  school: 'school registration code',
-  tutor: 'National ID number',
+  // school: 'school registration code',
+  // tutor: 'National ID number',
 };
 // TESTING: accept any non-empty registration number. Set to false to enforce
 // the per-type Kenyan formats (cleanSellerRegNumber).
 const LENIENT_REG = true;
 
 export const sellerSignup = onCall(async request => {
-  const { phone, pin, displayName, type, regNumber, location, schoolName } = (request.data ?? {}) as {
+  // TEACHERS ONLY: `location` (tutor / school) is no longer read; re-add it here
+  // when those seller types return.
+  const { phone, pin, displayName, type, regNumber, schoolName } = (request.data ?? {}) as {
     phone?: string; pin?: string; displayName?: string; type?: string;
     regNumber?: string; location?: string; schoolName?: string;
   };
@@ -30,7 +34,7 @@ export const sellerSignup = onCall(async request => {
     throw new HttpsError('invalid-argument', 'Enter your name (2+ characters).');
   }
   if (!SELLER_TYPES.includes(type ?? '')) {
-    throw new HttpsError('invalid-argument', 'type must be teacher, tutor, or school.');
+    throw new HttpsError('invalid-argument', 'type must be teacher.');
   }
 
   // Every seller supplies a type-specific registration number (teacher → TSC,
@@ -45,21 +49,19 @@ export const sellerSignup = onCall(async request => {
   const dupReg = await db.collection('sellers').where('regNumber', '==', cleanReg).limit(1).get();
   if (!dupReg.empty) throw new HttpsError('already-exists', `This ${REG_LABEL[type as string]} is already registered.`);
 
-  // Schools and tutors capture a location (town / county); teachers don't.
-  let sellerLocation: string | null = null;
-  if (type === 'school' || type === 'tutor') {
-    sellerLocation = (location ?? '').trim();
-    if (sellerLocation.length < 2) {
-      throw new HttpsError('invalid-argument', type === 'school' ? 'Enter the school location.' : 'Enter your location.');
-    }
-  }
+  // TEACHERS ONLY: schools and tutors captured a location (town / county);
+  // teachers don't. Restore this block when re-enabling those seller types.
+  const sellerLocation: string | null = null;
+  // if (type === 'school' || type === 'tutor') {
+  //   sellerLocation = (location ?? '').trim();
+  //   if (sellerLocation.length < 2) {
+  //     throw new HttpsError('invalid-argument', type === 'school' ? 'Enter the school location.' : 'Enter your location.');
+  //   }
+  // }
 
   // Teachers record the school they operate in.
-  let teacherSchool: string | null = null;
-  if (type === 'teacher') {
-    teacherSchool = (schoolName ?? '').trim();
-    if (teacherSchool.length < 2) throw new HttpsError('invalid-argument', 'Enter the school you teach at.');
-  }
+  const teacherSchool = (schoolName ?? '').trim();
+  if (teacherSchool.length < 2) throw new HttpsError('invalid-argument', 'Enter the school you teach at.');
 
   const existing = await db.collection('sellers').where('phone', '==', cleanPhone).limit(1).get();
   if (!existing.empty) throw new HttpsError('already-exists', 'This number is already a seller.');

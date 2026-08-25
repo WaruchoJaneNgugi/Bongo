@@ -1,6 +1,5 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { wishlistSeed } from '../lib/marketplace/mockBuyer';
 
 interface MarketState {
   cart: string[];
@@ -17,7 +16,7 @@ export const useMarketStore = create<MarketState>()(
   persist(
     (set, get) => ({
       cart: [],
-      wishlist: [...wishlistSeed],
+      wishlist: [],
       addToCart: (id) => set(s => (s.cart.includes(id) ? s : { cart: [...s.cart, id] })),
       removeFromCart: (id) => set(s => ({ cart: s.cart.filter(x => x !== id) })),
       toggleWishlist: (id) => set(s => ({

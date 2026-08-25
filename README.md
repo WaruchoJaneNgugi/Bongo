@@ -72,3 +72,28 @@ export default defineConfig([
 ])
 ```
 # Bongo
+
+## TODO — Admin marketplace gaps (do 2026-08-08)
+
+Audit of the admin panel vs. sellers (teachers/tutors/schools), the marketplace, and sales.
+
+**Already done ✅**
+- Sellers review queue: verify type + registration number (TSC / school code / National ID) + location/school; approve / reject / suspend (`pending → active/rejected`).
+
+**To add:**
+
+### Sellers (teachers / tutors / schools)
+- [ ] Earnings & payouts view — show each seller's `payoutBalancePending` / `payoutBalancePaid`, and a **record-payout** action (mark `ledger` rows settled → move pending → paid).
+- [ ] Seller detail drill-in — their resources + sales.
+
+### Marketplace (resources)
+- [ ] **Resources moderation** section — list all resources, filter by seller/status, **unpublish / take down** content.
+- [ ] (Optional) admin approval gate before publish (`pending → approved/rejected`), per the Phase-1 design.
+
+### Sales (depends on the payments slice — spec: `docs/superpowers/specs/2026-08-07-marketplace-cart-checkout-wallet-design.md`)
+- [ ] Sales / Orders view — `purchases` (buyer, item, amount, method, date).
+- [ ] Commission ledger / revenue — platform + per-seller earnings from `ledger`.
+- [ ] **Credit wallet** admin action (`creditWallet`) — top up a buyer's wallet.
+- [ ] Platform settings — commission % (`platformSettings/marketplace`, default 15).
+
+**Build order:** payments slice (brings Orders view, ledger, credit-wallet, commission setting) → resources moderation → seller payout/earnings view.
