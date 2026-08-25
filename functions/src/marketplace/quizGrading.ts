@@ -38,5 +38,5 @@ export function canAccess(
   resource: { sellerId: string; priceKsh: number },
   hasPaidPurchase: boolean,
 ): boolean {
-  return uid === resource.sellerId || resource.priceKsh === 0 || hasPaidPurchase;
+  return uid === resource.sellerId || resource.priceKsh <= 0 || hasPaidPurchase;
 }
