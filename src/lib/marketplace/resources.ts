@@ -8,7 +8,10 @@ import {
   ref as storageRef, uploadBytes, getDownloadURL, deleteObject,
 } from 'firebase/storage';
 import { db, storage } from '../firebase';
-import type { MarketResource, ResourceFile, ResourceInput, ResourceStatus } from './types';
+import type {
+  MarketResource, ResourceFile, ResourceInput, ResourceStatus,
+  QuizQuestionPublic, QuizAnswer,
+} from './types';
 import { normalizeResource } from './resourceDefaults';
 
 type ResourceDoc = Omit<MarketResource, 'id'>;
@@ -22,6 +25,22 @@ async function uploadFile(
   await uploadBytes(r, file);
   const url = await getDownloadURL(r);
   return { name, url, path, size: file.size, contentType: file.type };
+}
+
+export function mediaPath(sellerId: string, resourceId: string, name: string): string {
+  return `media/${sellerId}/${resourceId}/${name}`;
+}
+
+/** Upload a primary media file (video/audio) to the PRIVATE gated prefix.
+ *  Unlike uploadFile we do NOT fetch a download URL — gated media is streamed
+ *  via short-lived signed URLs from the getResourceMediaUrl function. */
+async function uploadMedia(
+  sellerId: string, resourceId: string, file: File, name: string = file.name,
+): Promise<ResourceFile> {
+  const path = mediaPath(sellerId, resourceId, name);
+  const r = storageRef(storage, path);
+  await uploadBytes(r, file);
+  return { name, url: '', path, size: file.size, contentType: file.type };
 }
 
 function extOf(name: string): string {
@@ -93,6 +112,12 @@ export async function createResource(
   files: File[],
   thumbnail?: File | null,
   onProgress?: (p: number) => void,
+  opts?: {
+    media?: File | null;
+    durationSec?: number | null;
+    quiz?: QuizQuestionPublic[];
+    quizAnswers?: QuizAnswer[];
+  },
 ): Promise<string> {
   const resRef = doc(collection(db, 'resources'));
   const id = resRef.id;
@@ -114,6 +139,12 @@ export async function createResource(
     thumbnailUrl = t.url; thumbnailPath = t.path; tick();
   }
 
+  const media = opts?.media
+    ? await uploadMedia(sellerId, id, opts.media, `${baseName(input.subject, input.grade)}.${extOf(opts.media.name)}`)
+    : null;
+  const quiz = opts?.quiz ?? [];
+  const quizAnswers = opts?.quizAnswers ?? [];
+
   await setDoc(resRef, {
     sellerId, sellerName,
     title: input.title,
@@ -123,6 +154,11 @@ export async function createResource(
     subject: input.subject,
     priceKsh: input.priceKsh,
     files: uploaded,
+    kind: input.kind,
+    media,
+    durationSec: opts?.durationSec ?? null,
+    hasQuiz: input.kind === 'video' && quiz.length > 0,
+    quiz,
     thumbnailUrl,
     thumbnailPath,
     status: input.status,
@@ -131,6 +167,9 @@ export async function createResource(
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
   });
+  if (input.kind === 'video' && quiz.length > 0) {
+    await setDoc(doc(db, 'resources', id, 'private', 'quiz'), { answers: quizAnswers });
+  }
   onProgress?.(1);
   return id;
 }

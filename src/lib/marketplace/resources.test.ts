@@ -4,6 +4,7 @@ import * as st from 'firebase/storage';
 import {
   createResource, setResourceStatus, deleteResource,
   getResource, subscribeSellerResources, updateResource, previewUploadNames,
+  mediaPath,
 } from './resources';
 import type { ResourceInput } from './types';
 
@@ -82,6 +83,13 @@ describe('previewUploadNames', () => {
   it('avoids collisions with already-kept names', () => {
     expect(previewUploadNames([f('a.pdf')], 'Biology', 'Grade 11', ['Biology Grade 11 - HighScores.pdf']))
       .toEqual(['Biology Grade 11 - HighScores 2.pdf']);
+  });
+});
+
+describe('mediaPath', () => {
+  it('puts media under the private media/ prefix, not marketplace/', () => {
+    expect(mediaPath('s1', 'r1', 'Maths Grade 5 - HighScores.mp4'))
+      .toBe('media/s1/r1/Maths Grade 5 - HighScores.mp4');
   });
 });
 
