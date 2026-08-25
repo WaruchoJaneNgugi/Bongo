@@ -111,6 +111,14 @@ service cloud.firestore {
                     || isAdmin();
       allow delete: if (isSeller() && request.auth.uid == resource.data.sellerId)
                     || isAdmin();
+
+      // Correct answers + explanations for the video quiz. Readable only by the
+      // owning seller / staff; written by the seller. Cloud Functions (admin
+      // SDK) bypass these rules when grading. Buyers can NEVER read this.
+      match /private/{docId} {
+        allow read, write: if isAdmin()
+                           || (isSeller() && request.auth.uid == get(/databases/$(database)/documents/resources/$(id)).data.sellerId);
+      }
     }
 
     /* ── Marketplace orders (purchases), commission ledger, settings ── */
@@ -118,6 +126,13 @@ service cloud.firestore {
     // server-authoritative). Buyers read their own orders; staff read all.
     match /purchases/{id} {
       allow read:  if isStaff()
+                   || (request.auth != null && request.auth.uid == resource.data.buyerAccountId);
+      allow write: if false;
+    }
+    /* ── Video quiz results ── written only by the submitVideoQuiz function. */
+    match /quizResults/{id} {
+      allow read:  if isStaff()
+                   || (isSeller() && request.auth.uid == resource.data.sellerId)
                    || (request.auth != null && request.auth.uid == resource.data.buyerAccountId);
       allow write: if false;
     }
