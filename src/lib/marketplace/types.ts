@@ -45,6 +45,21 @@ export interface QuizAnswer {
   explanation?: string;
 }
 
+/** One graded question returned by the server after quiz submission. */
+export interface GradedQuestion {
+  correctIndex: number;
+  chosen: number | null;
+  correct: boolean;
+  explanation?: string;
+}
+
+/** Server-side grading result for a submitted video quiz. */
+export interface GradeResult {
+  score: number;
+  total: number;
+  perQuestion: GradedQuestion[];
+}
+
 export interface MarketResource {
   id: string;
   sellerId: string;
