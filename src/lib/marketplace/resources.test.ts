@@ -33,7 +33,7 @@ vi.mock('firebase/storage', () => ({
 const input: ResourceInput = {
   title: 'Fractions Pack', description: 'Worksheets',
   level: 'middle_school', grade: 'Grade 5', subject: 'Mathematics',
-  priceKsh: 150, status: 'published',
+  priceKsh: 150, status: 'published', kind: 'document',
 };
 
 function fileOf(name: string) {
@@ -136,7 +136,10 @@ describe('subscribeSellerResources', () => {
     const unsub = subscribeSellerResources('s1', r => rows.push(...r));
     expect(fs.where).toHaveBeenCalledWith('sellerId', '==', 's1');
     expect(fs.orderBy).toHaveBeenCalledWith('createdAt', 'desc');
-    expect(rows).toEqual([{ id: 'r1', title: 'A' }]);
+    expect(rows).toEqual([{
+      id: 'r1', title: 'A',
+      kind: 'document', media: null, durationSec: null, hasQuiz: false, quiz: [],
+    }]);
     expect(typeof unsub).toBe('function');
   });
 });

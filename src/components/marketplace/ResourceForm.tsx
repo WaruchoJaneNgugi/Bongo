@@ -184,7 +184,7 @@ export default function ResourceForm() {
     if (!subject) { setError('Choose a subject.'); return; }
     if (!sellerId) { setError('You must be signed in.'); return; }
 
-    const meta = { title: title.trim(), description: description.trim(), level, grade, subject, priceKsh, status };
+    const meta = { title: title.trim(), description: description.trim(), level, grade, subject, priceKsh, status, kind: 'document' as const };
     setProgress(0);
     try {
       if (editing && id) {

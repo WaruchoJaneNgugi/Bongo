@@ -28,6 +28,7 @@ function makeRow(over: Partial<MarketResource> = {}): MarketResource {
     title: 'Fractions Pack', description: 'x',
     level: 'middle_school', grade: 'Grade 5', subject: 'Mathematics',
     priceKsh: 150, files: [], thumbnailUrl: null, thumbnailPath: null,
+    kind: 'document', media: null, durationSec: null, hasQuiz: false, quiz: [],
     status: 'published', sales: 0, views: 0, createdAt: 0, updatedAt: 0, ...over,
   };
 }

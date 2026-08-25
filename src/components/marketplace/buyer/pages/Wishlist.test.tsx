@@ -10,6 +10,7 @@ const rows: MarketResource[] = [{
   title: 'Physics Live Classes', description: 'x',
   level: 'senior_school', grade: 'Grade 11', subject: 'Physics',
   priceKsh: 500, files: [], thumbnailUrl: null, thumbnailPath: null,
+  kind: 'document', media: null, durationSec: null, hasQuiz: false, quiz: [],
   status: 'published', sales: 0, views: 0, createdAt: 0, updatedAt: 0,
 }];
 

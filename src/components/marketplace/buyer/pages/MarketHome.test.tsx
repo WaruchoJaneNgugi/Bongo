@@ -9,6 +9,7 @@ const rows: MarketResource[] = [{
   title: 'KCSE Biology 2026 Revision', description: 'x',
   level: 'senior_school', grade: 'Grade 11', subject: 'Biology',
   priceKsh: 250, files: [], thumbnailUrl: null, thumbnailPath: null,
+  kind: 'document', media: null, durationSec: null, hasQuiz: false, quiz: [],
   status: 'published', sales: 0, views: 0, createdAt: 0, updatedAt: 0,
 }];
 

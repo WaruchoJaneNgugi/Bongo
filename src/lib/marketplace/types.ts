@@ -31,6 +31,20 @@ export interface ResourceFile {
   contentType: string;
 }
 
+export type ResourceKind = 'document' | 'video' | 'audio';
+
+/** A quiz question as shown to the student — NO correct answer is included. */
+export interface QuizQuestionPublic {
+  prompt: string;
+  options: string[];            // 2–4 options
+}
+
+/** The gradable half of a question, stored in resources/{id}/private/quiz. */
+export interface QuizAnswer {
+  correctIndex: number;
+  explanation?: string;
+}
+
 export interface MarketResource {
   id: string;
   sellerId: string;
@@ -44,6 +58,11 @@ export interface MarketResource {
   files: ResourceFile[];
   thumbnailUrl: string | null;
   thumbnailPath: string | null;
+  kind: ResourceKind;
+  media: ResourceFile | null;
+  durationSec: number | null;
+  hasQuiz: boolean;
+  quiz: QuizQuestionPublic[];
   status: ResourceStatus;
   sales: number;
   views: number;
@@ -87,4 +106,5 @@ export interface ResourceInput {
   subject: string;
   priceKsh: number;
   status: ResourceStatus;
+  kind: ResourceKind;
 }

@@ -17,6 +17,7 @@ const resource: MarketResource = {
   priceKsh: 250,
   files: [{ name: 'notes.pdf', url: 'https://secret/notes.pdf', path: 'p', size: 1, contentType: 'application/pdf' }],
   thumbnailUrl: null, thumbnailPath: null,
+  kind: 'document', media: null, durationSec: null, hasQuiz: false, quiz: [],
   status: 'published', sales: 0, views: 0, createdAt: 0, updatedAt: 0,
 };
 

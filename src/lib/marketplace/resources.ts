@@ -9,6 +9,7 @@ import {
 } from 'firebase/storage';
 import { db, storage } from '../firebase';
 import type { MarketResource, ResourceFile, ResourceInput, ResourceStatus } from './types';
+import { normalizeResource } from './resourceDefaults';
 
 type ResourceDoc = Omit<MarketResource, 'id'>;
 
@@ -74,13 +75,13 @@ export function subscribeSellerResources(
     orderBy('createdAt', 'desc'),
   );
   return onSnapshot(q, snap => {
-    cb(snap.docs.map(d => ({ id: d.id, ...(d.data() as ResourceDoc) })));
+    cb(snap.docs.map(d => normalizeResource({ id: d.id, ...(d.data() as ResourceDoc) })));
   });
 }
 
 export async function getResource(id: string): Promise<MarketResource | null> {
   const snap = await getDoc(doc(db, 'resources', id));
-  return snap.exists() ? { id: snap.id, ...(snap.data() as ResourceDoc) } : null;
+  return snap.exists() ? normalizeResource({ id: snap.id, ...(snap.data() as ResourceDoc) }) : null;
 }
 
 /** Create a resource: upload files (+ optional thumbnail) then write the doc.
