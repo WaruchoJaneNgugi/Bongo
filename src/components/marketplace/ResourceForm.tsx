@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   ArrowLeft, UploadCloud, FileText, X, ImagePlus, AlertCircle, ChevronDown, RotateCcw,
+  FileType, Video, Music, Plus, Trash2,
 } from 'lucide-react';
 import { useSellerStore } from '../../store/useSellerStore';
 import { RESOURCE_LEVELS, levelByKey } from '../../lib/marketplace/taxonomy';
@@ -11,6 +12,7 @@ import {
 import { saveDraft, loadDraft, clearDraft } from '../../lib/marketplace/formDraft';
 import type {
   ResourceLevel, ResourceStatus, ResourceFile,
+  ResourceKind, QuizQuestionPublic, QuizAnswer,
 } from '../../lib/marketplace/types';
 
 function formatBytes(n: number): string {
@@ -18,6 +20,20 @@ function formatBytes(n: number): string {
   if (n < 1024 * 1024) return `${(n / 1024).toFixed(0)} KB`;
   return `${(n / (1024 * 1024)).toFixed(1)} MB`;
 }
+
+function formatDuration(sec: number): string {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${m}:${String(s).padStart(2, '0')}`;
+}
+
+type QuizDraft = { prompt: string; options: string[]; correctIndex: number; explanation: string };
+
+const KIND_OPTIONS: { key: ResourceKind; label: string; icon: typeof FileType }[] = [
+  { key: 'document', label: 'Document', icon: FileType },
+  { key: 'video', label: 'Video', icon: Video },
+  { key: 'audio', label: 'Audio', icon: Music },
+];
 
 export default function ResourceForm() {
   const { id } = useParams();
@@ -37,6 +53,10 @@ export default function ResourceForm() {
   const [removedPaths, setRemovedPaths] = useState<string[]>([]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
   const [oldThumbnailPath, setOldThumbnailPath] = useState<string | null>(null);
+  const [kind, setKind] = useState<ResourceKind>('document');
+  const [media, setMedia] = useState<File | null>(null);
+  const [durationSec, setDurationSec] = useState<number | null>(null);
+  const [quiz, setQuiz] = useState<QuizDraft[]>([]);
   const [error, setError] = useState('');
   const [progress, setProgress] = useState<number | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -167,6 +187,62 @@ export default function ResourceForm() {
     setRemovedPaths(p => [...p, path]);
   }
 
+  function readDuration(file: File): Promise<number | null> {
+    if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') {
+      return Promise.resolve(null);
+    }
+    return new Promise(resolve => {
+      const el = document.createElement(file.type.startsWith('audio') ? 'audio' : 'video');
+      el.preload = 'metadata';
+      el.onloadedmetadata = () => { URL.revokeObjectURL(el.src); resolve(Math.round(el.duration) || null); };
+      el.onerror = () => resolve(null);
+      el.src = URL.createObjectURL(file);
+    });
+  }
+
+  async function onMediaSelected(file: File) {
+    const cap = kind === 'audio' ? 100 : 500;
+    if (file.size > cap * 1024 * 1024) { setError(`File exceeds the ${cap} MB limit.`); return; }
+    setError('');
+    setMedia(file);
+    setDurationSec(await readDuration(file));
+  }
+
+  // Switch resource kind and clear kind-specific selections.
+  function changeKind(k: ResourceKind) {
+    setKind(k);
+    setMedia(null);
+    setDurationSec(null);
+    setQuiz([]);
+  }
+
+  // Quiz builder helpers — all edits flow through setQuiz.
+  function addQuestion() {
+    setQuiz(q => [...q, { prompt: '', options: ['', ''], correctIndex: 0, explanation: '' }]);
+  }
+  function removeQuestion(i: number) {
+    setQuiz(q => q.filter((_, idx) => idx !== i));
+  }
+  function updateQuestion(i: number, patch: Partial<QuizDraft>) {
+    setQuiz(q => q.map((item, idx) => (idx === i ? { ...item, ...patch } : item)));
+  }
+  function addOption(i: number) {
+    setQuiz(q => q.map((item, idx) =>
+      idx === i && item.options.length < 4 ? { ...item, options: [...item.options, ''] } : item));
+  }
+  function removeOption(i: number, optIdx: number) {
+    setQuiz(q => q.map((item, idx) => {
+      if (idx !== i || item.options.length <= 2) return item;
+      const options = item.options.filter((_, o) => o !== optIdx);
+      const correctIndex = item.correctIndex >= options.length ? options.length - 1 : item.correctIndex;
+      return { ...item, options, correctIndex };
+    }));
+  }
+  function setOption(i: number, optIdx: number, value: string) {
+    setQuiz(q => q.map((item, idx) =>
+      idx === i ? { ...item, options: item.options.map((o, o2) => (o2 === optIdx ? value : o)) } : item));
+  }
+
   const fileCount = keptFiles.length + newFiles.length;
 
   // Preview the "<Subject> <Grade>" names the new files will be saved as.
@@ -178,13 +254,21 @@ export default function ResourceForm() {
 
   async function submit(status: ResourceStatus) {
     setError('');
-    if (fileCount === 0) { setError('Add at least one file.'); return; }
+    if (kind === 'document' && fileCount === 0) { setError('Add at least one file.'); return; }
     if (!title.trim()) { setError('Enter a title.'); return; }
     if (!grade) { setError('Choose a grade.'); return; }
     if (!subject) { setError('Choose a subject.'); return; }
     if (!sellerId) { setError('You must be signed in.'); return; }
 
-    const meta = { title: title.trim(), description: description.trim(), level, grade, subject, priceKsh, status, kind: 'document' as const };
+    if (kind !== 'document' && !editing && !media) { setError('Add the video/audio file.'); return; }
+    if (kind === 'audio' && !thumbnail && !oldThumbnailPath) { setError('Audio resources need a thumbnail.'); return; }
+    if (kind === 'video' && quiz.some(q => !q.prompt.trim() || q.options.filter(o => o.trim()).length < 2)) {
+      setError('Each quiz question needs a prompt and at least 2 options.'); return;
+    }
+    const quizPublic: QuizQuestionPublic[] = quiz.map(q => ({ prompt: q.prompt.trim(), options: q.options.filter(o => o.trim()) }));
+    const quizAnswers: QuizAnswer[] = quiz.map(q => ({ correctIndex: q.correctIndex, explanation: q.explanation.trim() || undefined }));
+
+    const meta = { title: title.trim(), description: description.trim(), level, grade, subject, priceKsh, status, kind };
     setProgress(0);
     try {
       if (editing && id) {
@@ -193,7 +277,8 @@ export default function ResourceForm() {
           newThumbnail: thumbnail, oldThumbnailPath,
         });
       } else {
-        await createResource(sellerId, sellerName, meta, newFiles, thumbnail, setProgress);
+        await createResource(sellerId, sellerName, meta, newFiles, thumbnail, setProgress,
+          { media, durationSec, quiz: quizPublic, quizAnswers });
       }
       await clearDraft(draftKey);
       setProgress(null);
@@ -243,6 +328,29 @@ export default function ResourceForm() {
       )}
 
       <div className="space-y-5">
+        {/* Resource kind */}
+        <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
+          <h2 className="text-sm font-bold text-[#1f2937]">Type</h2>
+          <p className="text-xs text-[#7a847a] mt-0.5 mb-4">Choose what kind of resource this is.</p>
+
+          <div className="grid grid-cols-3 gap-3">
+            {KIND_OPTIONS.map(({ key, label, icon: Icon }) => {
+              const active = kind === key;
+              return (
+                <button key={key} type="button" onClick={() => changeKind(key)}
+                  aria-pressed={active}
+                  className={`flex flex-col items-center justify-center gap-2 rounded-2xl border px-3 py-4 text-sm font-semibold transition ${
+                    active
+                      ? 'border-[#16a34a] bg-[#eaf7ee] text-[#15803d] ring-2 ring-[#16a34a]/20'
+                      : 'border-[#e2e8e2] bg-white text-[#374151] hover:border-[#16a34a] hover:bg-[#f3faf5]'}`}>
+                  <Icon size={20} className={active ? 'text-[#16a34a]' : 'text-[#9aa39a]'} />
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
         {/* Details */}
         <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
           <h2 className="text-sm font-bold text-[#1f2937]">Details</h2>
@@ -321,9 +429,117 @@ export default function ResourceForm() {
           </div>
         </section>
 
+        {/* Primary media (video / audio) */}
+        {kind !== 'document' && (
+          <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
+            <h2 className="text-sm font-bold text-[#1f2937]">{kind === 'audio' ? 'Audio' : 'Video'} file</h2>
+            <p className="text-xs text-[#7a847a] mt-0.5 mb-4">
+              Upload the primary {kind} file — {kind === 'audio' ? 'audio' : 'video'}/* up to {kind === 'audio' ? 100 : 500}&nbsp;MB.
+            </p>
+
+            {media && (
+              <div className="mb-4 flex items-center gap-3 rounded-xl border border-[#dcfce7] bg-[#f3faf5] px-3 py-2.5">
+                <span className="w-9 h-9 rounded-lg bg-[#eaf7ee] grid place-items-center text-[#16a34a] shrink-0">
+                  {kind === 'audio' ? <Music size={17} /> : <Video size={17} />}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-sm font-medium text-[#1f2937] truncate">{media.name}</span>
+                  <span className="block text-[11px] text-[#9aa39a]">
+                    {formatBytes(media.size)}{durationSec ? ` · ${formatDuration(durationSec)}` : ''}
+                  </span>
+                </span>
+                <button type="button" onClick={() => { setMedia(null); setDurationSec(null); }} aria-label={`Remove ${media.name}`}
+                  className="w-7 h-7 grid place-items-center rounded-full text-[#9aa39a] hover:bg-[#fef2f2] hover:text-[#ef4444] transition">
+                  <X size={15} />
+                </button>
+              </div>
+            )}
+
+            <label htmlFor="media"
+              className="group flex flex-col items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-[#d7ddd7] bg-[#fafcfa] px-4 py-8 text-center cursor-pointer transition hover:border-[#16a34a] hover:bg-[#f3faf5]">
+              <span className="w-12 h-12 rounded-full bg-[#eaf7ee] grid place-items-center text-[#16a34a] transition group-hover:scale-105">
+                {kind === 'audio' ? <Music size={22} /> : <Video size={22} />}
+              </span>
+              <span className="text-sm font-semibold text-[#374151]">
+                {media ? `Replace ${kind} file` : `Add ${kind} file`}
+              </span>
+              <span className="text-xs text-[#7a847a]">click to browse</span>
+              <input id="media" type="file" accept={kind === 'audio' ? 'audio/*' : 'video/*'} className="sr-only"
+                onChange={e => { const f = e.target.files?.[0]; if (f) onMediaSelected(f); e.target.value = ''; }} />
+            </label>
+          </section>
+        )}
+
+        {/* Quiz builder (video only) */}
+        {kind === 'video' && (
+          <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-sm font-bold text-[#1f2937]">Quiz <span className="font-normal text-[#9aa39a]">(optional)</span></h2>
+              <button type="button" onClick={addQuestion}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-[#d7ddd7] bg-white px-3 py-1.5 text-xs font-bold text-[#374151] hover:border-[#16a34a] hover:bg-[#f3faf5] transition">
+                <Plus size={14} /> Add question
+              </button>
+            </div>
+            <p className="text-xs text-[#7a847a] mt-0.5 mb-4">Add multiple-choice questions learners answer after watching.</p>
+
+            {quiz.length === 0 ? (
+              <p className="text-sm text-[#9aa39a]">No questions yet — add one to build a quiz.</p>
+            ) : (
+              <ul className="space-y-4">
+                {quiz.map((q, i) => (
+                  <li key={i} className="rounded-xl border border-[#eef1ee] bg-[#fafcfa] p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-xs font-bold text-[#7a847a]">Question {i + 1}</span>
+                      <button type="button" onClick={() => removeQuestion(i)} aria-label={`Remove question ${i + 1}`}
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-[#ef4444] hover:underline">
+                        <Trash2 size={13} /> Remove
+                      </button>
+                    </div>
+
+                    <input className={inputCls} value={q.prompt} placeholder="Question prompt"
+                      aria-label={`Question ${i + 1} prompt`}
+                      onChange={e => updateQuestion(i, { prompt: e.target.value })} />
+
+                    <div className="mt-3 space-y-2">
+                      {q.options.map((opt, o) => (
+                        <div key={o} className="flex items-center gap-2.5">
+                          <input type="radio" name={`correct-${i}`} checked={q.correctIndex === o}
+                            aria-label={`Mark option ${o + 1} correct for question ${i + 1}`}
+                            onChange={() => updateQuestion(i, { correctIndex: o })}
+                            className="accent-[#16a34a]" />
+                          <input className={`${inputCls} flex-1`} value={opt} placeholder={`Option ${o + 1}`}
+                            aria-label={`Question ${i + 1} option ${o + 1}`}
+                            onChange={e => setOption(i, o, e.target.value)} />
+                          {q.options.length > 2 && (
+                            <button type="button" onClick={() => removeOption(i, o)} aria-label={`Remove option ${o + 1}`}
+                              className="w-7 h-7 grid place-items-center rounded-full text-[#9aa39a] hover:bg-[#fef2f2] hover:text-[#ef4444] transition shrink-0">
+                              <X size={14} />
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {q.options.length < 4 && (
+                      <button type="button" onClick={() => addOption(i)}
+                        className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-[#16a34a] hover:underline">
+                        <Plus size={13} /> Add option
+                      </button>
+                    )}
+
+                    <input className={`${inputCls} mt-3`} value={q.explanation} placeholder="Explanation (optional)"
+                      aria-label={`Question ${i + 1} explanation`}
+                      onChange={e => updateQuestion(i, { explanation: e.target.value })} />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
+
         {/* Files */}
         <section className="bg-white border border-[#e8ece8] rounded-2xl p-5 md:p-6">
-          <h2 className="text-sm font-bold text-[#1f2937]">Files</h2>
+          <h2 className="text-sm font-bold text-[#1f2937]">{kind === 'document' ? 'Files' : 'Supporting files'} {kind !== 'document' && <span className="font-normal text-[#9aa39a]">(optional)</span>}</h2>
           <p className="text-xs text-[#7a847a] mt-0.5 mb-4">
             Upload the materials buyers receive — they’re saved named after your subject and grade.
           </p>

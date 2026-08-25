@@ -144,4 +144,20 @@ describe('ResourceForm (create)', () => {
     expect(screen.getByText(/add a cover/i)).toBeInTheDocument();
   });
 
+  it('requires a thumbnail for an audio resource', async () => {
+    renderNew();
+    await userEvent.click(screen.getByRole('button', { name: /^audio$/i }));
+    await userEvent.type(screen.getByLabelText(/title/i), 'Podcast Ep 1');
+    await userEvent.selectOptions(screen.getByLabelText(/level/i), 'middle_school');
+    await userEvent.selectOptions(screen.getByLabelText(/grade/i), 'Grade 5');
+    await userEvent.selectOptions(screen.getByLabelText(/subject/i), 'Mathematics');
+
+    const audio = new File(['x'], 'lesson.mp3', { type: 'audio/mpeg' });
+    await userEvent.upload(screen.getByLabelText(/add audio file/i), audio);
+
+    await userEvent.click(screen.getByRole('button', { name: /^publish$/i }));
+    expect(createResource).not.toHaveBeenCalled();
+    expect(await screen.findByText(/audio resources need a thumbnail/i)).toBeInTheDocument();
+  });
+
 });
