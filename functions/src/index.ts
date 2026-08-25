@@ -729,3 +729,4 @@ export const studentLogin = onCall(async request => {
 export { sellerSignup, sellerLogin } from './marketplace/sellerAuth.js';
 export { walletCheckout, creditWallet, mpesaInitiate } from './marketplace/checkoutFns.js';
 export { getResourceMediaUrl } from './marketplace/media.js';
+export { submitVideoQuiz } from './marketplace/quiz.js';
