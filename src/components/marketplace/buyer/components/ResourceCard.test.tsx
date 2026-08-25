@@ -26,4 +26,9 @@ describe('ResourceCard', () => {
     expect(screen.getByRole('link', { name: /KCSE Biology 2026 Revision/i }))
       .toHaveAttribute('href', '/market/resource/r1');
   });
+
+  it('shows a Video badge for video resources', () => {
+    render(<MemoryRouter><ResourceCard resource={{ ...resource, kind: 'video' }} /></MemoryRouter>);
+    expect(screen.getByText(/video/i)).toBeInTheDocument();
+  });
 });

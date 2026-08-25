@@ -27,6 +27,11 @@ export default function ResourceCard({ resource }: Props) {
         <span className="absolute top-2 left-2 z-10 text-[10px] font-bold uppercase tracking-wide text-white/90 bg-black/25 rounded px-2 py-0.5">
           {resource.grade}
         </span>
+        {resource.kind !== 'document' && (
+          <span className="absolute bottom-2 left-2 z-10 rounded-full bg-black/70 text-white text-xs font-semibold px-2 py-0.5">
+            {resource.kind === 'video' ? '▶ Video' : '🎧 Audio'}
+          </span>
+        )}
         <button
           onClick={() => toggleWishlist(resource.id)}
           aria-label={wished ? 'Remove from wishlist' : 'Add to wishlist'}
