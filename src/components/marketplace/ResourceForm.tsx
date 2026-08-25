@@ -52,6 +52,9 @@ export default function ResourceForm() {
   const [keptFiles, setKeptFiles] = useState<ResourceFile[]>([]);
   const [removedPaths, setRemovedPaths] = useState<string[]>([]);
   const [thumbnail, setThumbnail] = useState<File | null>(null);
+  // True when the current thumbnail was auto-captured from the video frame
+  // (so we can replace it when the video changes, but never clobber a manual one).
+  const [autoThumb, setAutoThumb] = useState(false);
   const [oldThumbnailPath, setOldThumbnailPath] = useState<string | null>(null);
   const [kind, setKind] = useState<ResourceKind>('document');
   // The already-saved resource being edited — used to show read-only notes about
@@ -205,12 +208,77 @@ export default function ResourceForm() {
     });
   }
 
+  // Grab a still frame from a video file (client-side) to use as a cover when
+  // the teacher doesn't upload one. Resolves null in jsdom / on any failure.
+  function extractVideoThumbnail(file: File): Promise<File | null> {
+    if (typeof URL === 'undefined' || typeof URL.createObjectURL !== 'function') {
+      return Promise.resolve(null);
+    }
+    return new Promise(resolve => {
+      const url = URL.createObjectURL(file);
+      const video = document.createElement('video');
+      // 'auto' + seek forces the browser to actually decode a frame (metadata
+      // alone never loads pixels, so drawImage would be blank).
+      video.preload = 'auto';
+      video.muted = true;
+      video.playsInline = true;
+      let done = false;
+      const finish = (result: File | null) => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        URL.revokeObjectURL(url);
+        resolve(result);
+      };
+      // Never hang the publish flow if the browser can't decode the file.
+      const timer = setTimeout(() => finish(null), 8000);
+      const capture = () => {
+        try {
+          if (!video.videoWidth) { finish(null); return; }
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          if (!ctx || typeof canvas.toBlob !== 'function') { finish(null); return; }
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob(
+            blob => finish(blob ? new File([blob], 'thumbnail.jpg', { type: 'image/jpeg' }) : null),
+            'image/jpeg', 0.8,
+          );
+        } catch { finish(null); }
+      };
+      // Seek a little in (skips a black opening frame); capture once seeked.
+      video.onloadedmetadata = () => {
+        const t = Math.min(1, (video.duration || 2) / 2);
+        video.currentTime = Number.isFinite(t) && t > 0 ? t : 0;
+      };
+      video.onseeked = capture;
+      video.onerror = () => finish(null);
+      video.src = url;
+    });
+  }
+
   async function onMediaSelected(file: File) {
     const cap = kind === 'audio' ? 100 : 500;
     if (file.size > cap * 1024 * 1024) { setError(`File exceeds the ${cap} MB limit.`); return; }
     setError('');
     setMedia(file);
     setDurationSec(await readDuration(file));
+    // Auto-generate a cover from the video unless the teacher set one manually.
+    if (kind === 'video' && (!thumbnail || autoThumb)) {
+      const thumb = await extractVideoThumbnail(file);
+      if (thumb) { setThumbnail(thumb); setAutoThumb(true); }
+    }
+  }
+
+  // Backfill a cover for an already-uploaded video: the teacher re-picks their
+  // local video file and we capture a frame from it (the stored video is
+  // cross-origin and would taint the canvas, so we use the local copy).
+  async function onCoverFromVideo(file: File) {
+    setError('');
+    const thumb = await extractVideoThumbnail(file);
+    if (thumb) { setThumbnail(thumb); setAutoThumb(true); }
+    else setError('Could not read a frame from that video. Upload a cover image instead.');
   }
 
   // Switch resource kind and clear kind-specific selections.
@@ -219,6 +287,7 @@ export default function ResourceForm() {
     setMedia(null);
     setDurationSec(null);
     setQuiz([]);
+    if (autoThumb) { setThumbnail(null); setAutoThumb(false); }
   }
 
   // Quiz builder helpers — all edits flow through setQuiz.
@@ -301,14 +370,25 @@ export default function ResourceForm() {
           newThumbnail: thumbnail, oldThumbnailPath,
         });
       } else {
-        await createResource(sellerId, sellerName, meta, newFiles, thumbnail, setProgress,
+        // Guarantee a cover for videos: if none was set (or the async capture on
+        // select hasn't finished), grab a frame now before uploading.
+        let finalThumbnail = thumbnail;
+        if (kind === 'video' && !finalThumbnail && media) {
+          finalThumbnail = await extractVideoThumbnail(media);
+        }
+        await createResource(sellerId, sellerName, meta, newFiles, finalThumbnail, setProgress,
           { media, durationSec, quiz: quizPublic, quizAnswers });
       }
       await clearDraft(draftKey);
       setProgress(null);
       navigate('/seller/resources');
-    } catch {
-      setError('Upload failed. Please try again.');
+    } catch (err) {
+      // Surface the real cause instead of a generic message — a Firebase
+      // Storage/Firestore error carries a `.code` (e.g. storage/unauthorized).
+      console.error('[ResourceForm] save failed:', err);
+      const code = (err as { code?: string })?.code;
+      const message = err instanceof Error ? err.message : String(err);
+      setError(`Upload failed: ${code ? `${code} — ` : ''}${message || 'please try again.'}`);
       setProgress(null);
     }
   }
@@ -467,6 +547,17 @@ export default function ResourceForm() {
                   <p className="text-[#1f2937] font-medium">{loaded.media.name}</p>
                 )}
                 <p className="mt-1">Replacing the video/audio file isn't available yet.</p>
+                {kind === 'video' && !thumbnail && !oldThumbnailPath && (
+                  <label htmlFor="cover-from-video"
+                    className="mt-3 inline-flex items-center gap-2 rounded-xl border border-[#16a34a]/40 bg-[#f3faf5] text-[#15803d] text-sm font-semibold px-3 py-2 cursor-pointer hover:bg-[#eaf7ee]">
+                    <ImagePlus size={16} /> Generate a cover from your video
+                    <input id="cover-from-video" type="file" accept="video/*" className="sr-only"
+                      onChange={e => { const f = e.target.files?.[0]; if (f) onCoverFromVideo(f); e.target.value = ''; }} />
+                  </label>
+                )}
+                {kind === 'video' && autoThumb && (
+                  <p className="mt-2 text-[#15803d]">✓ Cover generated — click Publish to save it.</p>
+                )}
               </div>
             ) : (
             <>
@@ -481,7 +572,7 @@ export default function ResourceForm() {
                     {formatBytes(media.size)}{durationSec ? ` · ${formatDuration(durationSec)}` : ''}
                   </span>
                 </span>
-                <button type="button" onClick={() => { setMedia(null); setDurationSec(null); }} aria-label={`Remove ${media.name}`}
+                <button type="button" onClick={() => { setMedia(null); setDurationSec(null); if (autoThumb) { setThumbnail(null); setAutoThumb(false); } }} aria-label={`Remove ${media.name}`}
                   className="w-7 h-7 grid place-items-center rounded-full text-[#9aa39a] hover:bg-[#fef2f2] hover:text-[#ef4444] transition">
                   <X size={15} />
                 </button>
@@ -658,11 +749,13 @@ export default function ResourceForm() {
                 {dragThumb
                   ? 'Drop image here'
                   : thumbnail
-                    ? thumbnail.name
+                    ? (autoThumb
+                      ? 'Auto-generated from your video — click to replace.'
+                      : thumbnail.name)
                     : 'Drag & drop or click — add a cover to help your resource stand out.'}
               </span>
               <input id="thumb" type="file" accept="image/*" className="sr-only"
-                onChange={e => setThumbnail(e.target.files?.[0] ?? null)} />
+                onChange={e => { setThumbnail(e.target.files?.[0] ?? null); setAutoThumb(false); }} />
             </label>
           </div>
         </section>

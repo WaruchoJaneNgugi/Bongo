@@ -68,7 +68,7 @@ export default function MarketBrowse() {
           {(all ?? []).length === 0 ? 'No resources have been published yet.' : 'No resources match your search.'}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-2.5 sm:gap-4 md:grid-cols-4 lg:grid-cols-5">
           {list.map(r => <ResourceCard key={r.id} resource={r} />)}
         </div>
       )}

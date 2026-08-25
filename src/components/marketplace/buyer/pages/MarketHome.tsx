@@ -85,7 +85,7 @@ export default function MarketHome() {
           ) : shown.length === 0 ? (
             <div className={`${ui.muted} py-10 text-center`}>No resources have been published yet.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-4 lg:grid-cols-4">
               {shown.map(r => <ResourceCard key={r.id} resource={r} />)}
             </div>
           )}

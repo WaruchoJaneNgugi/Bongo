@@ -25,6 +25,11 @@ vi.mock('../../store/useSellerStore', () => ({
     sel({ sellerId: 'seller1', seller: { displayName: 'Ms Jane' } }),
 }));
 
+// MediaPlayer fetches a signed URL on mount — stub it so no callable runs.
+vi.mock('../../lib/marketplace/media', () => ({
+  fetchMediaUrl: vi.fn(async () => ({ url: 'blob:signed' })),
+}));
+
 function makeRow(over: Partial<MarketResource> = {}): MarketResource {
   return {
     id: 'r1', sellerId: 'seller1', sellerName: 'Ms Jane',
@@ -58,6 +63,20 @@ describe('MyResources', () => {
     render(<MemoryRouter><MyResources /></MemoryRouter>);
     await userEvent.click(screen.getByRole('button', { name: /publish/i }));
     expect(setStatus).toHaveBeenCalledWith('r1', 'published');
+  });
+
+  it('labels a video resource and previews it on demand', async () => {
+    rows = [makeRow({
+      kind: 'video', durationSec: 34,
+      media: { name: 'v.mp4', url: '', path: 'media/seller1/r1/v.mp4', size: 10, contentType: 'video/mp4' },
+    })];
+    render(<MemoryRouter><MyResources /></MemoryRouter>);
+    // Media-aware sub-line instead of "0 files".
+    expect(screen.getByText(/Video · 0:34/)).toBeInTheDocument();
+    // Player is not mounted until the teacher clicks Preview.
+    expect(screen.queryByTestId('media-el')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: /preview/i }));
+    expect(await screen.findByTestId('media-el')).toBeInTheDocument();
   });
 
   it('deletes after confirm', async () => {
