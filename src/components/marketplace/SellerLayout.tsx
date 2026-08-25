@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom';
 import {
   GraduationCap, Home, LayoutDashboard, FileText, Store, ShoppingBag, Wallet,
   MessageSquare, BarChart3, CreditCard, FilePlus, Sparkles, HelpCircle,
-  Search, UploadCloud, Bell, ChevronDown, Banknote, Menu, X,
+  Search, UploadCloud, Bell, ChevronDown, Banknote, Menu, X, ClipboardList,
 } from 'lucide-react';
 import { useSellerStore } from '../../store/useSellerStore';
 import BottomNav from './BottomNav';
@@ -14,6 +14,7 @@ const NAV = [
   { label: 'Home', icon: Home, to: '/', real: true },
   { label: 'Teacher Dashboard', icon: LayoutDashboard, to: '/seller/dashboard', real: true },
   { label: 'My Resources', icon: FileText, to: '/seller/resources', real: true },
+  { label: 'Quiz Results', icon: ClipboardList, to: '/seller/results', real: true },
   { label: 'Marketplace', icon: Store, to: '/seller/marketplace', real: true },
   { label: 'Orders', icon: ShoppingBag },
   { label: 'Earnings', icon: Wallet },

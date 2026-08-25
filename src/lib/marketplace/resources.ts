@@ -98,6 +98,19 @@ export function subscribeSellerResources(
   });
 }
 
+export interface QuizResultRow {
+  id: string; resourceId: string; buyerAccountId: string;
+  resourceTitle: string; score: number; total: number;
+}
+
+/** Live subscription to a seller's quiz results across their resources. */
+export function subscribeQuizResults(
+  sellerId: string, cb: (rows: QuizResultRow[]) => void,
+): Unsubscribe {
+  const q = query(collection(db, 'quizResults'), where('sellerId', '==', sellerId));
+  return onSnapshot(q, snap => cb(snap.docs.map(d => ({ id: d.id, ...(d.data() as Omit<QuizResultRow, 'id'>) }))));
+}
+
 export async function getResource(id: string): Promise<MarketResource | null> {
   const snap = await getDoc(doc(db, 'resources', id));
   return snap.exists() ? normalizeResource({ id: snap.id, ...(snap.data() as ResourceDoc) }) : null;

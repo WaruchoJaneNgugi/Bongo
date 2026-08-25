@@ -40,6 +40,7 @@ import SellerAuthPage from './components/marketplace/SellerAuthPage';
 import SellerLayout from './components/marketplace/SellerLayout';
 import SellerDashboard from './components/marketplace/SellerDashboard';
 import MyResources from './components/marketplace/MyResources';
+import ResourceResults from './components/marketplace/ResourceResults';
 import ResourceForm from './components/marketplace/ResourceForm';
 import SellerProtectedRoute from './components/marketplace/SellerProtectedRoute';
 import MarketLayout from './components/marketplace/buyer/MarketLayout';
@@ -134,6 +135,7 @@ const AppContent: React.FC = () => {
           <Route path="/seller/resources" element={<MyResources />} />
           <Route path="/seller/resources/new" element={<ResourceForm />} />
           <Route path="/seller/resources/:id/edit" element={<ResourceForm />} />
+          <Route path="/seller/results" element={<ResourceResults />} />
           <Route path="/seller/marketplace" element={<MarketBrowse />} />
         </Route>
         {/* Not ProtectedRoute: MarketLayout itself shows an auth gate (Log In /
